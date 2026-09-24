@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KHAYR | Authentic perfume decants</title>
+<meta name="description" content="Find your signature scent before committing to a full bottle. 100% authentic fragrance decants in 3, 6, 10, 15 and 30ml. Order on WhatsApp.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<style>
+:root{
+  --paper:#FFFFFF; --ink:#000000; --graphite:#5E5E5E; --line:#E6E6E6; --box:#D4D4D4; --soft:#F6F6F4; --red:#B00020;
+  --serif:'Bodoni Moda', Didot, 'Bodoni 72', 'Times New Roman', serif;
+  --sans:'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --r:12px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:80px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body.has-bar{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* Header */
+.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:10px}
+.logo{font-family:var(--serif);font-weight:600;font-size:1.6rem;letter-spacing:.24em;margin-right:-.24em;text-decoration:none;color:var(--ink);line-height:1}
+.hbtns{display:flex;gap:8px;align-items:center}
+.icon-btn{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:var(--paper);display:grid;place-items:center}
+.cart-btn{height:44px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);padding:0 16px 0 14px;display:flex;align-items:center;gap:8px;font-weight:600}
+.cart-btn .count{background:var(--paper);color:var(--ink);min-width:22px;height:22px;border-radius:11px;display:inline-grid;place-items:center;font-size:.8rem;padding:0 6px}
+
+/* Hero */
+.hero{text-align:center;padding:44px 0 30px}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(1.85rem,6.4vw,3.3rem);line-height:1.12;margin:0 auto;max-width:21ch;letter-spacing:-.005em}
+.hero .sub{margin:16px 0 0;font-weight:600;font-size:clamp(1rem,3.6vw,1.15rem)}
+.hero .kinds{margin:8px 0 0;color:var(--graphite);font-size:.88rem;letter-spacing:.04em}
+
+/* Search + filters */
+.tools{padding-bottom:6px}
+.search{display:flex;align-items:center;gap:10px;height:54px;border:1.5px solid var(--ink);border-radius:var(--r);padding:0 8px 0 16px;background:var(--paper)}
+.search input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font-size:16px}
+.search input::-webkit-search-cancel-button{display:none}
+.search .clear{border:0;background:var(--soft);width:34px;height:34px;border-radius:50%;display:none;color:var(--graphite)}
+.search.has .clear{display:block}
+.filters{display:flex;gap:8px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:none;height:40px;padding:0 16px;border:1px solid var(--box);background:var(--paper);border-radius:999px;font-weight:500;font-size:.93rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.cats{padding-top:6px}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 10px;color:var(--graphite);font-size:.9rem}
+.sort{border:1px solid var(--line);border-radius:10px;background:var(--paper);height:38px;padding:0 8px;font-size:.88rem;color:var(--ink)}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:48px}
+.card{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--paper);display:flex;flex-direction:column;gap:14px}
+.card .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card h2{margin:0;font-size:1.08rem;font-weight:600;line-height:1.3}
+.card h2 .no{font-variant-numeric:tabular-nums;margin-right:2px}
+.card .brand{font-size:.82rem;color:var(--graphite);margin-top:2px}
+.copy{flex:none;border:1px solid var(--line);background:var(--paper);border-radius:8px;height:32px;padding:0 10px;font-size:.8rem;color:var(--graphite);display:flex;align-items:center;gap:5px}
+.copy:hover{color:var(--ink);border-color:var(--ink)}
+.boxes{display:grid;gap:6px}
+.box{height:58px;border:1px solid var(--box);border-radius:10px;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0 2px;min-width:0}
+.box .ml{font-size:.76rem;color:var(--graphite);font-weight:500}
+.box .pr{font-size:1rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.box:hover{border-color:var(--ink)}
+.box[aria-checked="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.box[aria-checked="true"] .ml{color:#CFCFCF}
+.box.gap{visibility:hidden}
+.boxes.need .box:not(.gap){border-color:var(--red)}
+@keyframes nudge{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.boxes.need{animation:nudge .22s 2}
+.add{height:48px;border:0;border-radius:var(--r);background:var(--ink);color:var(--paper);font-weight:600;font-size:.98rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.add.done{background:#1E6B3A}
+.add:active{transform:translateY(1px)}
+
+.empty{grid-column:1/-1;text-align:center;padding:56px 16px;border:1px dashed var(--box);border-radius:14px}
+.empty p{color:var(--graphite);margin:6px 0 16px}
+.empty button{height:44px;padding:0 18px;border:1px solid var(--ink);border-radius:10px;background:var(--paper)}
+.loading{grid-column:1/-1;text-align:center;padding:40px 0;color:var(--graphite)}
+
+footer{border-top:1px solid var(--line);padding:30px 0 36px;text-align:center;font-size:.9rem;color:var(--graphite)}
+footer .logo{font-size:1.2rem;display:inline-block;margin-bottom:8px}
+footer a{color:var(--ink);font-weight:600}
+footer p{margin:4px 0}
+
+/* Floating cart bar */
+.bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:25;max-width:560px;margin:0 auto;height:58px;border:0;border-radius:14px;background:var(--ink);color:var(--paper);display:none;align-items:center;justify-content:space-between;padding:0 18px;font-weight:600;font-size:1rem;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+body.has-bar .bar{display:flex}
+body.open .bar{display:none}
+.bar .t{font-variant-numeric:tabular-nums}
+
+/* Cart drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--paper);z-index:41;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body.open{overflow:hidden}
+body.open .scrim{opacity:1;pointer-events:auto}
+body.open .drawer{transform:none}
+.dhead{display:flex;justify-content:space-between;align-items:center;height:60px;padding:0 12px 0 18px;border-bottom:1px solid var(--line);flex:none}
+.dhead h3{margin:0;font-size:1.2rem;font-weight:600}
+.x{width:44px;height:44px;border:0;background:var(--soft);border-radius:50%;font-size:1.1rem}
+.dbody{flex:1;overflow-y:auto;padding:4px 18px 20px;-webkit-overflow-scrolling:touch}
+.line{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.line .n{font-weight:600;line-height:1.3}
+.line .m{color:var(--graphite);font-size:.9rem;margin-top:2px}
+.line .rt{text-align:right;flex:none}
+.line .lp{font-weight:700;font-variant-numeric:tabular-nums;font-size:1.02rem}
+.rm{border:0;background:none;color:var(--graphite);font-size:.85rem;text-decoration:underline;padding:6px 0 0}
+.cart-empty{padding:60px 0;text-align:center;color:var(--graphite)}
+.cart-empty button{margin-top:12px;height:46px;padding:0 20px;border-radius:12px;border:1px solid var(--ink);background:var(--paper);color:var(--ink)}
+.form{margin-top:20px}
+.form h4{margin:0 0 12px;font-size:1.05rem;font-weight:600}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;font-size:.9rem;font-weight:500;margin-bottom:6px}
+.field input,.field textarea{width:100%;height:50px;border:1px solid #C4C4C4;border-radius:10px;padding:0 14px;background:var(--paper);font-size:16px}
+.field textarea{height:auto;min-height:76px;padding:12px 14px;resize:vertical;line-height:1.4}
+.field input:focus,.field textarea:focus{border-color:var(--ink);outline:0;box-shadow:0 0 0 1px var(--ink)}
+.field.bad input,.field.bad textarea{border-color:var(--red)}
+.field .err{display:none;color:var(--red);font-size:.84rem;margin-top:5px}
+.field.bad .err{display:block}
+.areas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.area{min-height:56px;border:1px solid #C4C4C4;border-radius:10px;background:var(--paper);text-align:left;padding:8px 12px;font-weight:500}
+.area small{display:block;color:var(--graphite);font-weight:400}
+.area[aria-checked="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.areas.bad .area{border-color:var(--red)}
+.totals{margin-top:16px;border-top:1px solid var(--ink);padding-top:10px}
+.totals div{display:flex;justify-content:space-between;padding:3px 0;font-variant-numeric:tabular-nums}
+.totals .grand{font-weight:700;font-size:1.2rem;padding-top:8px}
+.hint{font-size:.86rem;color:var(--graphite);margin:8px 0 0}
+.dfoot{flex:none;border-top:1px solid var(--line);padding:12px 18px 14px;display:grid;gap:8px;background:var(--paper)}
+.wa,.cp{height:52px;border-radius:var(--r);font-weight:600;font-size:1rem;display:flex;align-items:center;justify-content:center;gap:10px}
+.wa{border:0;background:var(--ink);color:var(--paper)}
+.cp{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink)}
+.note{font-size:.82rem;color:var(--graphite);margin:2px 0 0;text-align:center}
+
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:10px;font-size:.94rem;opacity:0;transition:.2s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+body.open .toast{bottom:auto;top:calc(70px + env(safe-area-inset-top,0px))}
+@media (max-width:759px){ #sizeFilter .chip{flex:1 0 auto;padding:0 12px} }
+@media (min-width:760px){
+  .wrap{padding:0 24px}
+  .hero{padding:64px 0 40px}
+  .tools{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+  .filters{padding:0}
+  .cats{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="./" id="logo" aria-label="KHAYR home">KHAYR</a>
+    <div class="hbtns">
+      <button class="icon-btn" id="findBtn" type="button" aria-label="Search perfumes">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      </button>
+      <button class="cart-btn" id="cartBtn" type="button" aria-label="Open cart">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+        Cart <span class="count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Find your signature scent before committing to a full bottle.</h1>
+      <p class="sub">100% Authentic Fragrances Decant</p>
+      <p class="kinds">Niche • Designer • Middle Eastern Fragrances</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="tools" id="tools">
+      <label class="search" id="searchBox">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input type="search" id="q" placeholder="Search perfume or brand" aria-label="Search perfume, brand or number" autocomplete="off" enterkeyhint="search">
+        <button class="clear" id="clearQ" type="button" aria-label="Clear search">✕</button>
+      </label>
+      <div class="filters" id="sizeFilter" role="group" aria-label="Filter by size"></div>
+      <div class="filters cats" id="catFilter" role="group" aria-label="Filter by category"></div>
+    </div>
+    <div class="meta">
+      <span id="count" aria-live="polite"></span>
+      <select class="sort" id="sort" aria-label="Sort perfumes">
+        <option value="no">Sort by number</option>
+        <option value="az">Name A to Z</option>
+        <option value="low">Price low to high</option>
+        <option value="high">Price high to low</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"><div class="loading">Loading perfumes…</div></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="logo" aria-hidden="true">KHAYR</span>
+    <p>100% authentic fragrances, decanted from original bottles.</p>
+    <p>Orders and questions on WhatsApp: <a id="waLink" href="#" target="_blank" rel="noopener"></a></p>
+  </div>
+</footer>
+
+<button class="bar" id="bar" type="button" aria-label="View cart"><span id="barItems">View cart</span><span class="t" id="barTotal"></span></button>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Your cart" aria-hidden="true">
+  <div class="dhead">
+    <h3 id="cartTitle">Your cart</h3>
+    <button class="x" id="closeCart" type="button" aria-label="Close cart">✕</button>
+  </div>
+  <div class="dbody" id="dbody"></div>
+  <div class="dfoot" id="dfoot"></div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+const CFG = window.SHOP_CONFIG || {};
+const SHOP = CFG.shopName || 'KHAYR';
+const SIZES = CFG.sizes || [3,6,10,15,30];
+const DEFAULTS = {whatsapp:'8801673080800', deliveryInside:60, deliveryOutside:120, freeDeliveryOver:3000, sizesEnabled:{}, orderNote:''};
+let S = {...DEFAULTS};
+let products = [];                 // customer-visible perfumes, in number order
+const state = {q:'', size:'all', cat:'All', sort:'no', sel:{}, area:''};
+let cart = [];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const price = n => String(Math.round(Number(n) || 0));   // 1500, no commas, no currency
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+const sizeOn = s => S.sizesEnabled[s] !== false && S.sizesEnabled[String(s)] !== false;
+const activeSizes = () => SIZES.filter(sizeOn);
+function sizesFor(p){ return activeSizes().filter(s => (p.sizes||{})[s] !== false && Number((p.prices||{})[s]) > 0); }
+const priceOf = (p, s) => Number((p.prices||{})[s]) || 0;
+const findP = id => products.find(p => p.id === id);
+function displayName(p){
+  const b = (p.brand||'').trim();
+  return b && !p.name.toLowerCase().includes(b.toLowerCase()) ? `${b} ${p.name}` : p.name;
+}
+
+/* ---------- Data: Supabase first, products.json as backup ---------- */
+async function fetchData(){
+  const sb = CFG.supabase || {};
+  if(sb.url && sb.anonKey && !/YOUR-/.test(sb.url + sb.anonKey)){
+    try{
+      const h = {apikey: sb.anonKey};
+      const base = sb.url.replace(/\/$/, '') + '/rest/v1/';
+      const [pr, st] = await Promise.all([
+        fetch(base + 'products?select=id,name,brand,category,prices,sizes,visible,sort_order&order=sort_order.asc,created_at.asc', {headers:h, cache:'no-store'}),
+        fetch(base + 'settings?select=data&id=eq.1', {headers:h, cache:'no-store'})
+      ]);
+      if(pr.ok && st.ok){
+        const list = await pr.json(), set = await st.json();
+        if(list.length) return {settings: (set[0] && set[0].data) || {}, products: list};
+      }
+    }catch(e){ /* fall back below */ }
+  }
+  const r = await fetch('products.json?v=' + Date.now(), {cache:'no-store'});
+  if(!r.ok) throw new Error('load');
+  return r.json();
+}
+
+async function load(){
+  let data;
+  try { data = await fetchData(); }
+  catch(e){ $('grid').innerHTML = '<div class="loading">The price list could not load. Check your internet and refresh the page.</div>'; return; }
+  S = {...DEFAULTS, ...(data.settings||{})};
+  S.sizesEnabled = S.sizesEnabled || {};
+  const all = (data.products||[]).slice().sort((a,b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  products = all.filter(p => p.visible !== false && sizesFor(p).length);
+  products.forEach((p, i) => p.no = i + 1);          // automatic serial numbers 1, 2, 3...
+  const wa = String(S.whatsapp).replace(/\D/g,'');
+  $('waLink').href = 'https://wa.me/' + wa; $('waLink').textContent = '+' + wa;
+  cart = store.get('cart', store.get('bag', []))
+    .map(i => ({id:i.id, size:Number(i.size)}))
+    .filter((i, k, arr) => { const p = findP(i.id); return p && sizesFor(p).includes(i.size) && arr.findIndex(x => x.id===i.id && x.size===i.size) === k; });
+  buildFilters();
+  render();
+  renderCart();
+}
+
+/* ---------- Filters ---------- */
+function buildFilters(){
+  const sizes = activeSizes();
+  if(state.size !== 'all' && !sizes.includes(state.size)) state.size = 'all';
+  $('sizeFilter').innerHTML = ['all', ...sizes].map(s =>
+    `<button class="chip" type="button" data-size="${s}" aria-pressed="${s===state.size}">${s==='all' ? 'All' : s + 'ml'}</button>`).join('');
+  const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
+  $('catFilter').style.display = cats.length > 1 ? '' : 'none';
+  $('catFilter').innerHTML = ['All', ...cats].map(c => `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${c===state.cat}">${esc(c)}</button>`).join('');
+}
+$('sizeFilter').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if(!b) return;
+  state.size = b.dataset.size === 'all' ? 'all' : Number(b.dataset.size);
+  [...$('sizeFilter').children].forEach(x => x.setAttribute('aria-pressed', x === b));
+  render();
+});
+$('catFilter').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if(!b) return;
+  state.cat = b.dataset.cat;
+  [...$('catFilter').children].forEach(x => x.setAttribute('aria-pressed', x === b));
+  render();
+});
+let qt;
+$('q').addEventListener('input', e => {
+  $('searchBox').classList.toggle('has', !!e.target.value);
+  clearTimeout(qt); qt = setTimeout(() => { state.q = e.target.value; render(); }, 120);
+});
+$('q').addEventListener('keydown', e => { if(e.key === 'Enter') e.target.blur(); });
+$('clearQ').addEventListener('click', e => { e.preventDefault(); $('q').value=''; state.q=''; $('searchBox').classList.remove('has'); render(); $('q').focus(); });
+$('sort').addEventListener('change', e => { state.sort = e.target.value; render(); });
+$('findBtn').addEventListener('click', () => { $('tools').scrollIntoView({behavior:'smooth', block:'start'}); setTimeout(() => $('q').focus({preventScroll:true}), 350); });
+
+const norm = s => String(s||'').toLowerCase().replace(/[^a-z0-9\u0980-\u09FF]+/g,' ').trim();
+function visibleList(){
+  const q = norm(state.q), words = q.split(' ').filter(Boolean), numOnly = /^\d+$/.test(q);
+  let list = products.filter(p => {
+    if(state.size !== 'all' && !sizesFor(p).includes(state.size)) return false;
+    if(state.cat !== 'All' && p.category !== state.cat) return false;
+    if(!words.length) return true;
+    if(numOnly && p.no === Number(q)) return true;
+    const hay = norm(`${displayName(p)} ${p.brand} ${p.category}`);
+    return words.every(w => hay.includes(w)) || hay.replace(/ /g,'').includes(words.join(''));
+  });
+  const ref = p => state.size !== 'all' ? priceOf(p, state.size) : Math.min(...sizesFor(p).map(s => priceOf(p,s)));
+  if(state.sort === 'az') list.sort((a,b) => displayName(a).localeCompare(displayName(b)));
+  else if(state.sort === 'low') list.sort((a,b) => ref(a) - ref(b));
+  else if(state.sort === 'high') list.sort((a,b) => ref(b) - ref(a));
+  else list.sort((a,b) => a.no - b.no);
+  if(numOnly) list.sort((a,b) => (b.no === Number(q)) - (a.no === Number(q)));   // exact number first
+  return list;
+}
+
+/* ---------- Cards ---------- */
+function cardHTML(p){
+  const cols = activeSizes(), avail = sizesFor(p);
+  let sel = state.sel[p.id];
+  if(state.size !== 'all' && avail.includes(state.size) && !state.touched?.[p.id]) sel = state.size;
+  if(!avail.includes(sel)) sel = null;
+  const boxes = cols.map(s => avail.includes(s)
+    ? `<button class="box" type="button" role="radio" aria-checked="${s===sel}" data-id="${esc(p.id)}" data-size="${s}" aria-label="${s}ml, ${price(priceOf(p,s))}" tabindex="${(sel ? s===sel : s===avail[0]) ? 0 : -1}"><span class="ml">${s}ml</span><span class="pr">${price(priceOf(p,s))}</span></button>`
+    : `<span class="box gap" aria-hidden="true"></span>`).join('');
+  const inCart = sel && cart.some(i => i.id===p.id && i.size===sel);
+  return `<article class="card" data-card="${esc(p.id)}">
+    <div class="head">
+      <div><h2><span class="no">${p.no}.</span> ${esc(displayName(p))}</h2>${p.brand && displayName(p) === p.name ? `<div class="brand">${esc(p.brand)}</div>` : ''}</div>
+      <button class="copy" type="button" data-copy="${esc(p.id)}" aria-label="Copy prices for ${esc(displayName(p))}">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button>
+    </div>
+    <div class="boxes" role="radiogroup" aria-label="Choose size" style="grid-template-columns:repeat(${cols.length},1fr)">${boxes}</div>
+    <button class="add ${inCart ? 'done' : ''}" type="button" data-add="${esc(p.id)}">${addLabel(sel, inCart)}</button>
+  </article>`;
+}
+function addLabel(sel, inCart){ return inCart ? 'In cart ✓' : sel ? `Add ${sel}ml to cart` : 'Add to cart'; }
+function render(){
+  const list = visibleList();
+  $('count').textContent = list.length === 1 ? '1 perfume' : `${list.length} perfumes`;
+  if(!list.length){
+    $('grid').innerHTML = `<div class="empty"><strong>No perfume matches${state.q ? ` “${esc(state.q)}”` : ' this size'}.</strong><p>Check the spelling, try the perfume number, or show all sizes.</p><button type="button" id="resetF">Show all perfumes</button></div>`;
+    $('resetF').onclick = () => { $('q').value=''; state.q=''; state.size='all'; state.cat='All'; $('searchBox').classList.remove('has'); buildFilters(); render(); };
+    return;
+  }
+  $('grid').innerHTML = list.map(cardHTML).join('');
+}
+function refreshCard(id){
+  const el = document.querySelector(`[data-card="${CSS.escape(id)}"]`);
+  if(el) el.outerHTML = cardHTML(findP(id));
+}
+function selectSize(id, size, focus){
+  state.sel[id] = size; (state.touched ||= {})[id] = true;
+  refreshCard(id);
+  if(focus){ const b = document.querySelector(`[data-card="${CSS.escape(id)}"] .box[data-size="${size}"]`); b && b.focus(); }
+}
+$('grid').addEventListener('click', e => {
+  const v = e.target.closest('.box[data-size]');
+  if(v){ selectSize(v.dataset.id, Number(v.dataset.size)); return; }
+  const a = e.target.closest('[data-add]');
+  if(a){
+    const id = a.dataset.add, card = a.closest('.card');
+    const on = card.querySelector('.box[aria-checked="true"]');
+    if(!on){
+      const bx = card.querySelector('.boxes'); bx.classList.remove('need'); void bx.offsetWidth; bx.classList.add('need');
+      toast('Select a size first'); return;
+    }
+    addToCart(id, Number(on.dataset.size)); return;
+  }
+  const c = e.target.closest('[data-copy]');
+  if(c) copyPrices(c.dataset.copy);
+});
+$('grid').addEventListener('keydown', e => {
+  const v = e.target.closest('.box[data-size]'); if(!v) return;
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) return;
+  e.preventDefault();
+  const p = findP(v.dataset.id), sizes = sizesFor(p);
+  let i = sizes.indexOf(Number(v.dataset.size)) + (e.key==='ArrowRight'||e.key==='ArrowDown' ? 1 : -1);
+  selectSize(p.id, sizes[(i + sizes.length) % sizes.length], true);
+});
+
+/* ---------- Copy ---------- */
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value = t; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+    let ok = false; try { ok = document.execCommand('copy'); } catch(_){}
+    ta.remove(); return ok;
+  }
+}
+async function copyPrices(id){
+  const p = findP(id);
+  const text = `${p.no}. ${displayName(p)}\n` + sizesFor(p).map(s => `${s}ml — ${price(priceOf(p,s))}`).join('\n');
+  toast(await copyText(text) ? 'Prices copied ✓' : 'Copy failed. Press and hold to copy manually.');
+}
+
+/* ---------- Cart (one of each perfume + size, no quantity) ---------- */
+function saveCart(){
+  store.set('cart', cart);
+  const n = cart.length;
+  $('cartCount').textContent = n;
+  document.body.classList.toggle('has-bar', n > 0);
+  $('barItems').textContent = `View cart (${n})`;
+  $('barTotal').textContent = price(subtotal());
+}
+function addToCart(id, size){
+  const p = findP(id);
+  if(cart.some(i => i.id===id && i.size===size)){ toast(`${size}ml is already in your cart`); return; }
+  cart.push({id, size});
+  saveCart(); renderCart(); refreshCard(id);
+  toast(`Added ${p.no}. ${displayName(p)}, ${size}ml`);
+}
+const subtotal = () => cart.reduce((t,i) => t + priceOf(findP(i.id), i.size), 0);
+function delivery(sub){
+  if(!state.area) return null;
+  if(sub >= Number(S.freeDeliveryOver)) return 0;
+  return state.area === 'inside' ? Number(S.deliveryInside) : Number(S.deliveryOutside);
+}
+const saved = store.get('customer', {});
+function renderCart(){
+  saveCart();
+  const body = $('dbody'), foot = $('dfoot');
+  const keepScroll = body.scrollTop;
+  keepForm();
+  $('cartTitle').textContent = cart.length ? `Your cart (${cart.length})` : 'Your cart';
+  if(!cart.length){
+    body.innerHTML = `<div class="cart-empty"><p>Your cart is empty.</p><p>Select a size on any perfume, then tap Add to cart.</p><button type="button" id="keepShop">Browse perfumes</button></div>`;
+    foot.innerHTML = '';
+    $('keepShop').onclick = closeCart;
+    return;
+  }
+  const sub = subtotal(), del = delivery(sub), away = Number(S.freeDeliveryOver) - sub;
+  body.innerHTML = cart.map((i, idx) => { const p = findP(i.id); return `
+    <div class="line">
+      <div><div class="n">${p.no}. ${esc(displayName(p))}</div><div class="m">${i.size}ml</div></div>
+      <div class="rt"><div class="lp">${price(priceOf(p, i.size))}</div><button type="button" class="rm" data-rm="${idx}">Remove</button></div>
+    </div>`; }).join('') + `
+    <div class="form">
+      <h4>Your details</h4>
+      <label class="field" id="fName"><span>Name</span><input id="cName" autocomplete="name" autocapitalize="words" enterkeyhint="next" value="${esc(saved.name||'')}"><div class="err">Enter your name.</div></label>
+      <label class="field" id="fPhone"><span>Phone Number</span><input id="cPhone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" placeholder="01XXXXXXXXX" value="${esc(saved.phone||'')}"><div class="err">Enter an 11 digit number starting with 01.</div></label>
+      <label class="field" id="fAddr"><span>Address</span><textarea id="cAddr" autocomplete="street-address" rows="2" placeholder="House, road, area, city">${esc(saved.address||'')}</textarea><div class="err">Enter your delivery address.</div></label>
+      <span style="display:block;font-size:.9rem;font-weight:500;margin-bottom:6px">Delivery area</span>
+      <div class="areas" id="areas" role="radiogroup" aria-label="Delivery area">
+        <button type="button" class="area" role="radio" data-area="inside" aria-checked="${state.area==='inside'}">Inside Sylhet<small>Delivery ${price(S.deliveryInside)}</small></button>
+        <button type="button" class="area" role="radio" data-area="outside" aria-checked="${state.area==='outside'}">Outside Sylhet<small>Delivery ${price(S.deliveryOutside)}</small></button>
+      </div>
+      <div class="totals">
+        <div><span>Subtotal</span><span>${price(sub)}</span></div>
+        <div><span>Delivery</span><span>${del === null ? 'Choose area' : del === 0 ? 'Free' : price(del)}</span></div>
+        <div class="grand"><span>Total</span><span>${price(sub + (del || 0))}</span></div>
+      </div>
+      <p class="hint">${away > 0 ? `Free delivery on orders of ${price(S.freeDeliveryOver)} or more. Add ${price(away)} more.` : 'This order gets free delivery.'}</p>
+    </div>`;
+  foot.innerHTML = `
+    <button class="wa" id="waBtn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.4-.3Z"/></svg>Order on WhatsApp</button>
+    <button class="cp" id="cpBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy Full Order</button>
+    ${S.orderNote ? `<p class="note">${esc(S.orderNote)}</p>` : ''}`;
+  $('waBtn').onclick = () => { const m = buildOrder(); if(m) openWhatsApp(m); };
+  $('cpBtn').onclick = async () => { const m = buildOrder(); if(m) toast(await copyText(m) ? 'Order copied ✓' : 'Copy failed. Use Order on WhatsApp instead.'); };
+  body.scrollTop = keepScroll;
+}
+$('dbody').addEventListener('click', e => {
+  const t = e.target.closest('button'); if(!t) return;
+  if(t.dataset.rm !== undefined){ const [gone] = cart.splice(+t.dataset.rm, 1); renderCart(); refreshCard(gone.id); }
+  else if(t.dataset.area){ state.area = t.dataset.area; renderCart(); }
+});
+function keepForm(){
+  if(!$('cName')) return;
+  saved.name = $('cName').value; saved.phone = $('cPhone').value; saved.address = $('cAddr').value;
+  store.set('customer', saved);
+}
+const cleanPhone = v => { let d = String(v).replace(/\D/g,''); if(d.startsWith('880')) d = d.slice(2); return d; };
+
+/* Same full order text for WhatsApp and Copy Full Order */
+function buildOrder(){
+  keepForm();
+  const name = $('cName').value.trim(), phone = cleanPhone($('cPhone').value), addr = $('cAddr').value.trim();
+  const bad = {fName: !name, fPhone: !/^01\d{9}$/.test(phone), fAddr: !addr};
+  Object.entries(bad).forEach(([k,v]) => $(k).classList.toggle('bad', v));
+  $('areas').classList.toggle('bad', !state.area);
+  const first = Object.keys(bad).find(k => bad[k]);
+  if(first){ const el = $(first).querySelector('input,textarea'); el.focus(); el.scrollIntoView({block:'center'}); return null; }
+  if(!state.area){ toast('Choose Inside Sylhet or Outside Sylhet'); $('areas').scrollIntoView({block:'center', behavior:'smooth'}); return null; }
+  const sub = subtotal(), del = delivery(sub);
+  const items = cart.map(i => { const p = findP(i.id); return `${p.no}. ${displayName(p)}\n${i.size}ml — ${price(priceOf(p, i.size))}`; });
+  return [
+    `${SHOP} ORDER`, ``,
+    `Name: ${name}`,
+    `Number: ${phone}`,
+    `Address: ${addr}`,
+    `Area: ${state.area === 'inside' ? 'Inside Sylhet' : 'Outside Sylhet'}`, ``,
+    items.join('\n\n'), ``,
+    `Subtotal: ${price(sub)}`,
+    `Delivery: ${del === 0 ? 'Free' : price(del)}`,
+    `Total: ${price(sub + del)}`
+  ].join('\n');
+}
+function openWhatsApp(msg){
+  const url = 'https://wa.me/' + String(S.whatsapp).replace(/\D/g,'') + '?text=' + encodeURIComponent(msg);
+  const w = window.open(url, '_blank', 'noopener');
+  if(!w) location.href = url;
+}
+
+/* ---------- Drawer + toast ---------- */
+function openCart(){ document.body.classList.add('open'); $('drawer').setAttribute('aria-hidden','false'); setTimeout(() => $('closeCart').focus(), 60); }
+function closeCart(){ keepForm(); document.body.classList.remove('open'); $('drawer').setAttribute('aria-hidden','true'); }
+$('cartBtn').onclick = openCart; $('bar').onclick = openCart;
+$('closeCart').onclick = closeCart; $('scrim').onclick = closeCart;
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && document.body.classList.contains('open')) closeCart(); });
+let tt;
+function toast(t){ const el = $('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 2200); }
+
+load();
+})();
+</script>
+</body>
+</html>
