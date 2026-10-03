@@ -14,7 +14,7 @@ window.SHOP_CONFIG = {
   // NEVER paste a "secret" or "service_role" key here.
   supabase: {
     url: "https://svecpdcymyphbyrjvymv.supabase.co",
-    anonKey: "PASTE-YOUR-PUBLISHABLE-KEY-HERE",
+    anonKey: "sb_publishable_8vFu-ix41r1eCBwL9HtLwg_pS0eRlGD",
     imageBucket: "perfume-images"
   },
 
