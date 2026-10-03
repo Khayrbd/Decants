@@ -156,8 +156,6 @@ body.open .drawer{transform:none;visibility:visible;transition:transform .25s ea
 .btn-line{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink)}
 .btn-link{border:0;background:none;color:var(--graphite);text-decoration:underline;height:40px}
 button:disabled{opacity:.5;cursor:not-allowed}
-.review h4{margin:16px 0 8px;font-size:1.05rem}
-.summary{white-space:pre-wrap;word-break:break-word;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:14px;font-size:.94rem;line-height:1.55;font-family:var(--sans)}
 .note{font-size:.84rem;color:var(--graphite);margin:10px 0 0}
 .done-msg{margin-top:14px;border:1px solid #BFDCC9;background:#F0F8F3;border-radius:12px;padding:12px 14px;font-size:.94rem}
 .done-msg b{display:block;margin-bottom:2px}
@@ -268,7 +266,6 @@ let S = {...DEFAULTS};
 let products = [];
 const state = {q:'', size:'all', cat:'All', sort:'no', sel:{}, touched:{}};
 let cart = [];
-let view = 'cart';
 let busy = false;
 
 const $ = id => document.getElementById(id);
@@ -512,7 +509,6 @@ function addToCart(id, size){
 function removeFromCart(idx){
   const [gone] = cart.splice(idx, 1);
   updateCartUI(); refreshCard(gone.id);
-  if(!cart.length) view = 'cart';
   renderDrawer();
 }
 
@@ -543,9 +539,13 @@ function newOrderId(){
   bytes.forEach(b => r += abc[b % abc.length]);
   return `KH-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${r}`;
 }
+function sigNow(){
+  const d = details();
+  return JSON.stringify([cart.map(i => i.id + ':' + i.size), d.name, d.phone, d.email, d.address, d.area]);
+}
 function currentOrder(){
   const d = details();
-  const sig = JSON.stringify([cart.map(i => i.id + ':' + i.size), d.name, d.phone, d.email, d.address, d.area]);
+  const sig = sigNow();
   if(!draft || draft.sig !== sig){ draft = {sig, id: newOrderId(), sent: {}}; store.set('order', draft); }
   const items = cart.map(i => { const p = findP(i.id); return {perfumeNumber: p.no, perfumeName: displayName(p), size: i.size, price: priceOf(p, i.size)}; });
   return {...d, orderId: draft.id, items, total: items.reduce((t, i) => t + i.price, 0)};
@@ -603,7 +603,7 @@ async function flushPending(){
 /* ---------- drawer ---------- */
 function openCart(){
   document.body.classList.add('open'); $('drawer').setAttribute('aria-hidden', 'false');
-  view = 'cart'; renderDrawer();
+  lastAction = null; renderDrawer();
   setTimeout(() => $('closeCart').focus(), 60);
 }
 function closeCart(){ document.body.classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); $('cartBtn').focus(); }
@@ -616,12 +616,12 @@ document.addEventListener('keydown', e => {
 
 function renderDrawer(){
   const body = $('dbody'), foot = $('dfoot'), keep = body.scrollTop;
-  $('cartTitle').textContent = view === 'review' ? 'Review order' : cart.length ? `Your cart (${cart.length})` : 'Your cart';
+  $('cartTitle').textContent = cart.length ? `Your cart (${cart.length})` : 'Your cart';
   if(!cart.length){
     body.innerHTML = `<div class="cart-empty"><p><strong>Your cart is empty.</strong></p><p>Select a size on any perfume, then tap Add to cart.</p><button type="button" id="keepShop">Browse perfumes</button></div>`;
     foot.innerHTML = ''; $('keepShop').onclick = closeCart; return;
   }
-  if(view === 'review') renderReview(); else renderCartView();
+  renderCartView();
   body.scrollTop = keep;
 }
 
@@ -645,9 +645,14 @@ function renderCartView(){
         <button type="button" class="area" role="radio" data-area="Outside Sylhet" aria-checked="${d.area === 'Outside Sylhet'}">Outside Sylhet</button>
       </div>
       <div class="err" id="eArea" style="${errs.area ? 'display:block' : ''}">${esc(errs.area || '')}</div>
-    </div>`;
-  $('dfoot').innerHTML = `<button class="btn-dark" id="goReview" type="button">Review order</button>`;
-  $('goReview').onclick = goReview;
+    </div>
+    ${lastAction && lastAction.sig === sigNow() ? `<div class="done-msg" role="status"><b>${lastAction.method === 'WhatsApp' ? 'WhatsApp opened with your order ✓' : 'Order copied ✓'}</b>Order ID: ${esc(lastAction.id)}. ${lastAction.method === 'WhatsApp' ? 'Press send in WhatsApp to finish.' : 'Paste it into WhatsApp, Messenger or SMS and send it to us.'}</div>
+      <button class="btn-link" id="newOrder" type="button">Start a new order</button>` : ''}
+    ${S.orderNote ? `<p class="note">${esc(S.orderNote)}</p>` : ''}`;
+  $('dfoot').innerHTML = `
+    <button class="btn-dark" id="waBtn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.4-.3Z"/></svg>Order on WhatsApp</button>
+    <button class="btn-line" id="cpBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy Full Order</button>`;
+  $('waBtn').onclick = orderOnWhatsApp; $('cpBtn').onclick = copyFullOrder;
 }
 $('dbody').addEventListener('input', e => {
   const map = {cName:'name', cPhone:'phone', cAddr:'address', cEmail:'email'};
@@ -659,45 +664,26 @@ $('dbody').addEventListener('click', e => {
   const t = e.target.closest('button'); if(!t) return;
   if(t.dataset.rm !== undefined) removeFromCart(+t.dataset.rm);
   else if(t.dataset.area){ saved.area = t.dataset.area; store.set('customer', saved); window.__errs = {...(window.__errs || {}), area: ''}; renderDrawer(); }
-  else if(t.id === 'editOrder'){ view = 'cart'; renderDrawer(); }
-  else if(t.id === 'newOrder'){ cart = []; draft = null; store.del('order'); view = 'cart'; updateCartUI(); render(); closeCart(); toast('Cart cleared'); }
+  else if(t.id === 'newOrder'){ cart = []; draft = null; lastAction = null; store.del('order'); updateCartUI(); render(); closeCart(); toast('Cart cleared'); }
 });
 
-function goReview(){
-  if(!cart.length){ toast('Your cart is empty.'); return; }
-  const d = details(), errs = problems(d);
-  window.__errs = errs;
-  if(Object.keys(errs).length){
-    renderCartView();
-    const firstId = {name:'cName', phone:'cPhone', address:'cAddr', email:'cEmail', area:'areas'}[Object.keys(errs)[0]];
-    const el = $(firstId); if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); if(el.focus && firstId !== 'areas') el.focus({preventScroll:true}); }
-    return;
-  }
-  window.__errs = {}; view = 'review'; renderDrawer(); $('dbody').scrollTop = 0;
-}
-
 let lastAction = null;
-function renderReview(){
-  const body = $('dbody'), o = currentOrder();
-  body.innerHTML = `<div class="review">
-      <h4>Please check your order</h4>
-      <div class="summary" id="summary">${esc(orderText(o))}</div>
-      <button class="btn-link" id="editOrder" type="button">← Edit details</button>
-      ${S.orderNote ? `<p class="note">${esc(S.orderNote)}</p>` : ''}
-      ${lastAction && lastAction.id === o.orderId ? `<div class="done-msg" role="status"><b>${lastAction.method === 'WhatsApp' ? 'WhatsApp opened with your order ✓' : 'Order copied ✓'}</b>Order ID: ${esc(o.orderId)}. ${lastAction.method === 'WhatsApp' ? 'Press send in WhatsApp to finish.' : 'Paste it into WhatsApp, Messenger or SMS and send it to us.'}</div>
-        <button class="btn-link" id="newOrder" type="button">Start a new order</button>` : ''}
-    </div>`;
-  $('dfoot').innerHTML = `
-    <button class="btn-dark" id="waBtn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.4-.3Z"/></svg>Order on WhatsApp</button>
-    <button class="btn-line" id="cpBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy Full Order</button>`;
-  $('waBtn').onclick = orderOnWhatsApp; $('cpBtn').onclick = copyFullOrder;
+/* Check the form. Shows red messages and returns false if something is missing. */
+function checkForm(){
+  const errs = problems(details());
+  window.__errs = errs;
+  if(!Object.keys(errs).length) return true;
+  renderCartView();
+  const firstId = {name:'cName', phone:'cPhone', address:'cAddr', email:'cEmail', area:'areas'}[Object.keys(errs)[0]];
+  const el = $(firstId);
+  if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); if(firstId !== 'areas') el.focus({preventScroll:true}); }
+  return false;
 }
 
 /* Both buttons use ONE order object and ONE text, so they always match */
 function readyOrder(){
   if(!cart.length){ toast('Your cart is empty.'); return null; }
-  const d = details();
-  if(Object.keys(problems(d)).length){ view = 'cart'; goReview(); return null; }
+  if(!checkForm()) return null;
   return currentOrder();
 }
 function orderOnWhatsApp(){
@@ -706,13 +692,13 @@ function orderOnWhatsApp(){
   const url = 'https://wa.me/' + String(S.whatsapp).replace(/\D/g, '') + '?text=' + encodeURIComponent(orderText(o));
   const w = window.open(url, '_blank', 'noopener');
   if(!w) location.href = url;
-  lastAction = {id: o.orderId, method: 'WhatsApp'}; renderReview();
+  lastAction = {id: o.orderId, sig: draft.sig, method: 'WhatsApp'}; renderCartView();
 }
 async function copyFullOrder(){
   const o = readyOrder(); if(!o) return;
   const ok = copyText(orderText(o));                                       // clipboard call must start inside the tap
   sendToSheet(o, 'Copy Full Order');
-  if(await ok){ lastAction = {id: o.orderId, method: 'Copy'}; renderReview(); toast('Order copied ✓'); }
+  if(await ok){ lastAction = {id: o.orderId, sig: draft.sig, method: 'Copy'}; renderCartView(); toast('Order copied ✓'); }
   else toast('Copy failed. Use Order on WhatsApp instead.');
 }
 
