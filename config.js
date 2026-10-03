@@ -24,7 +24,7 @@ window.SHOP_CONFIG = {
   // Google Sheets order log (Apps Script Web App). Leave the url empty to switch it off.
   // Paste the Web App URL that ends with /exec
   sheets: {
-    url: "",
+    url: "https://script.google.com/macros/s/AKfycbyrEkWNL1acmM2gDDcfynvyD4xGjZXgo49Hg-KN7HelGxIvRg6iU2xqPAVxlFwqe-1Ljw/exec",
     key: "khayr-orders-7f3a9c21e5b84d06"   // must be the same as SITE_KEY inside the Apps Script
   }
 };
