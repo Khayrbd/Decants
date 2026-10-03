@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>KHAYR Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--paper:#FFFFFF;--ink:#000000;--graphite:#5E5E5E;--line:#E6E6E6;--box:#D0D0D0;--soft:#F5F5F3;--amber:#A8741A;--amberbg:#FFF8EC;--red:#B00020;--green:#1E6B3A;
+  --serif:'Bodoni Moda',Didot,'Times New Roman',serif;--sans:'Instrument Sans','Helvetica Neue',Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+[hidden],.hidden{display:none!important}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.logo{font-family:var(--serif);font-weight:600;letter-spacing:.26em;margin-right:-.26em}
+.btn{height:44px;border:1px solid var(--box);background:var(--paper);border-radius:10px;padding:0 14px;white-space:nowrap;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.btn.dark{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.danger{color:var(--red)}
+.btn.sm{height:36px;padding:0 11px;font-size:.88rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input[type=text],input[type=number],input[type=password],input[type=search],input[type=email],select,textarea{width:100%;height:46px;border:1px solid #BDBDBD;border-radius:10px;padding:0 12px;background:var(--paper);font-size:16px}
+textarea{height:auto;padding:10px 12px}
+input:focus,textarea:focus,select:focus{border-color:var(--ink);outline:0;box-shadow:0 0 0 1px var(--ink)}
+.msg{padding:11px 13px;border-radius:10px;border:1px solid var(--line);margin:12px 0;font-size:.92rem}
+.msg.err{border-color:#E7B4BD;background:#FFF5F6;color:var(--red)}
+.msg.warn{border-color:#EBD9B5;background:var(--amberbg);color:#6B4A0F}
+.msg.ok{border-color:#BFDCC9;background:#F0F8F3;color:var(--green)}
+.help{font-size:.85rem;color:var(--graphite);margin:4px 0 10px}
+
+/* Login */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:var(--soft)}
+.login .card{width:min(420px,100%);background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px 22px}
+.login .logo{font-size:1.9rem;text-align:center;display:block}
+.login h1{font-size:1.05rem;font-weight:600;text-align:center;margin:8px 0 20px;color:var(--graphite)}
+.lf{display:block;margin-bottom:14px}
+.lf>span{display:block;font-size:.9rem;font-weight:500;margin-bottom:6px}
+.pw{position:relative}
+.pw input{padding-right:64px}
+.pw button{position:absolute;right:6px;top:6px;height:34px;border:0;background:var(--soft);border-radius:8px;padding:0 10px;font-size:.82rem}
+.remember{display:flex;align-items:center;gap:10px;margin:4px 0 18px;cursor:pointer}
+.remember input{width:20px;height:20px;accent-color:var(--ink)}
+.login .btn.dark{width:100%;height:50px;font-size:1rem}
+.login .link,.link{display:block;margin:14px auto 0;border:0;background:none;color:var(--graphite);text-decoration:underline;height:40px}
+.code{letter-spacing:.5em;text-align:center;font-size:1.6rem!important;font-weight:600;padding-left:.5em!important}
+.qr{display:grid;place-items:center;margin:10px 0}
+.qr img{width:210px;height:210px;border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff}
+.key{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92rem;word-break:break-all;background:var(--soft);padding:10px;border-radius:8px;user-select:all}
+details summary{cursor:pointer;color:var(--graphite);font-size:.9rem;margin:8px 0}
+
+/* Panel */
+.top{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:10px;height:58px}
+.top .logo{font-size:1.3rem}
+.top .tag{font-size:.85rem;color:var(--graphite);margin-right:auto}
+.status{font-size:.85rem;color:var(--graphite);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.status.busy i{background:var(--amber)} .status.bad{color:var(--red)} .status.bad i{background:var(--red)}
+.nav{border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:58px;z-index:19}
+.nav .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav .wrap::-webkit-scrollbar{display:none}
+.nav button{flex:none;border:0;background:none;height:46px;padding:0 14px;font-weight:500;color:var(--graphite);border-bottom:2px solid transparent}
+.nav button[aria-current=page]{color:var(--ink);border-bottom-color:var(--ink)}
+.view{padding:18px 0 80px}
+.view h2{font-size:1.15rem;margin:0 0 4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.stat{border:1px solid var(--line);border-radius:14px;padding:14px;text-align:left;background:var(--paper)}
+button.stat:hover{border-color:var(--ink)}
+.stat b{display:block;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem;color:var(--graphite)}
+.stat.warn b{color:var(--amber)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pill{display:inline-block;font-size:.76rem;border:1px solid var(--ink);border-radius:999px;padding:0 8px;font-weight:500}
+.pill.off{border-color:var(--box);color:var(--graphite);text-decoration:line-through}
+.pill.amber{border-color:var(--amber);color:var(--amber)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.gsizes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
+.gs{border:1px solid var(--box);border-radius:12px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;background:var(--paper)}
+.gs b{font-size:1.1rem}
+.gs small{font-size:.78rem;color:var(--graphite);font-weight:600}
+.gs.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.sw{appearance:none;-webkit-appearance:none;width:46px;height:27px;border-radius:14px;border:1.5px solid var(--ink);background:var(--paper);position:relative;margin:0;cursor:pointer;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--ink);transition:left .15s}
+.sw:checked{background:var(--ink)}
+.sw:checked::after{left:21px;background:var(--paper)}
+
+.findbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 4px}
+.findbar input[type=search]{flex:1 1 240px;width:auto}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.chip{flex:none;height:38px;padding:0 14px;border:1px solid var(--box);background:var(--paper);border-radius:999px;font-size:.9rem}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.summary{font-size:.88rem;color:var(--graphite);margin:10px 0 8px}
+.stepbox{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--graphite)}
+.stepbox select{width:auto;height:36px;padding:0 6px}
+
+.list{display:grid;gap:10px}
+.row{border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:64px minmax(160px,1.1fr) minmax(280px,1.7fr) auto auto;gap:10px 16px;align-items:center}
+.row.off{background:repeating-linear-gradient(135deg,#fff 0 10px,#FAFAFA 10px 20px)}
+.thumb{width:64px;height:64px;border-radius:10px;border:1px solid var(--line);background:var(--soft);padding:0;overflow:hidden;display:block}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb span{display:grid;place-items:center;height:100%;font-size:.7rem;color:var(--graphite);text-align:center;line-height:1.2;padding:4px}
+.row .nm{font-weight:600;line-height:1.3}
+.row .nm .no{color:var(--graphite);font-variant-numeric:tabular-nums;margin-right:2px}
+.row .sub{font-size:.84rem;color:var(--graphite);margin-top:2px}
+.sizes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.sz{height:50px;border-radius:9px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font-size:.76rem;line-height:1.15;padding:0 2px;min-width:0}
+.sz b{display:block;font-size:.95rem}
+.sz.off{background:var(--paper);color:var(--graphite);border-color:var(--box);text-decoration:line-through}
+.sz.none{background:var(--paper);color:var(--graphite);border:1px dashed var(--box)}
+.sz.gl{opacity:.35}
+.juice{display:flex;flex-direction:column;gap:6px;min-width:176px}
+.jctl{display:flex;align-items:center;gap:6px}
+.jctl button{width:42px;height:42px;border-radius:10px;border:1px solid var(--box);background:var(--paper);font-size:1.3rem;line-height:1;flex:none}
+.jctl button:active{background:var(--soft)}
+.jctl input{width:68px;height:42px;text-align:center;padding:0 4px;font-weight:700}
+.jctl span{font-size:.85rem;color:var(--graphite)}
+.jbar{height:6px;border-radius:3px;background:var(--soft);overflow:hidden}
+.jbar i{display:block;height:100%;background:var(--ink)}
+.juice.low .jbar i{background:var(--amber)}
+.juice .jl{font-size:.8rem;color:var(--graphite)}
+.juice.low .jl{color:var(--amber);font-weight:600}
+.ctrl{display:flex;gap:10px;align-items:center;justify-content:flex-end}
+.ctrl label{display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer}
+.empty{padding:46px 0;text-align:center;color:var(--graphite);border:1px dashed var(--box);border-radius:14px}
+
+.panel{border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+.panel h3{margin:0 0 4px;font-size:1rem}
+.flist{display:grid;gap:8px;margin:10px 0}
+.factor{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+
+/* Dialogs */
+dialog{border:0;border-radius:16px;padding:0;width:min(640px,96vw);max-height:92vh;box-shadow:0 20px 60px rgba(0,0,0,.25);color:var(--ink);background:var(--paper)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 12px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);z-index:1}
+.dh h3{margin:0;font-size:1.15rem}
+.x{width:40px;height:40px;border:0;border-radius:50%;background:var(--soft)}
+.db{padding:16px 20px}
+.df{display:flex;gap:8px;justify-content:flex-end;padding:12px 20px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--paper)}
+.fl{display:block;margin-bottom:12px}
+.fl>span{display:block;font-size:.88rem;font-weight:500;margin-bottom:5px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ptab{width:100%;border-collapse:collapse;margin:6px 0 14px}
+.ptab th{text-align:left;font-weight:500;font-size:.84rem;color:var(--graphite);padding:0 8px 6px 0}
+.ptab td{padding:5px 8px 5px 0;border-top:1px solid var(--line)}
+.ptab td:first-child{width:62px;font-weight:600}
+.ptab td:last-child{width:70px}
+.sect{font-weight:600;margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
+.private{background:var(--amberbg);border:1px solid #EBD9B5;border-radius:12px;padding:12px}
+.imgbox{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.imgprev{width:132px;height:132px;border-radius:12px;border:1px solid var(--line);background:var(--soft);overflow:hidden;display:grid;place-items:center;color:var(--graphite);font-size:.8rem;text-align:center}
+.imgprev img{width:100%;height:100%;object-fit:cover}
+.imgbtns{display:grid;gap:8px;min-width:150px}
+.radio{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}
+.radio input{margin-top:4px;accent-color:var(--ink);width:18px;height:18px}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
+.errlist{max-height:220px;overflow:auto;margin:8px 0 0;padding-left:20px;font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,16px);background:var(--ink);color:var(--paper);padding:11px 16px;border-radius:10px;opacity:0;transition:.2s;z-index:100;pointer-events:none;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.err{background:var(--red)}
+
+@media (max-width:980px){
+  .row{grid-template-columns:64px 1fr auto}
+  .row .sizes{grid-column:1/-1}
+  .row .juice{grid-column:1/3}
+  .row .ctrl{grid-column:3/4;align-self:end;flex-direction:column;align-items:flex-end}
+}
+@media (max-width:600px){
+  .top .tag{display:none}
+  .status{margin-right:auto}
+  .status span{display:none}
+  .g2,.g3{grid-template-columns:1fr}
+  .gsizes{gap:6px}
+  .gs{padding:10px 2px}
+  .actions .btn{flex:1 1 calc(50% - 8px)}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN / 2FA ================= -->
+<section class="login hidden" id="loginView">
+  <div class="card">
+    <span class="logo">KHAYR</span>
+    <h1 id="loginTitle">Admin login</h1>
+    <div id="loginMsg" aria-live="polite"></div>
+
+    <form id="loginForm" novalidate>
+      <label class="lf"><span>Username</span><input type="text" id="lUser" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+      <label class="lf"><span>Password</span><div class="pw"><input type="password" id="lPass" autocomplete="current-password"><button type="button" id="showPw">Show</button></div></label>
+      <label class="remember"><input type="checkbox" id="lRemember" checked> Remember me on this device</label>
+      <button class="btn dark" type="submit" id="lGo">Log in</button>
+    </form>
+
+    <form id="mfaForm" hidden novalidate>
+      <p class="help" style="margin-top:0">Open Google Authenticator (or your authenticator app) and enter the 6-digit code for <b>KHAYR Admin</b>.</p>
+      <label class="lf" id="factorRow" hidden><span>Authenticator</span><select id="mFactor"></select></label>
+      <label class="lf"><span>6-digit code</span><input type="text" id="mCode" class="code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000"></label>
+      <button class="btn dark" type="submit" id="mGo">Verify</button>
+      <button type="button" class="link" id="mCancel">Use a different account</button>
+    </form>
+
+    <div id="gateBox" hidden></div>
+    <button type="button" class="link" id="gateOut" hidden>Log out</button>
+  </div>
+</section>
+
+<!-- ================= PANEL ================= -->
+<div id="panel" class="hidden">
+  <header class="top">
+    <div class="wrap">
+      <span class="logo">KHAYR</span><span class="tag">Admin</span>
+      <span class="status" id="status"><i></i><span id="statusTxt">Saved</span></span>
+      <a class="btn sm" href="./" target="_blank" rel="noopener">View shop</a>
+      <button class="btn sm" id="logout" type="button">Logout</button>
+    </div>
+  </header>
+  <nav class="nav" aria-label="Admin sections"><div class="wrap" id="nav">
+    <button data-go="dashboard">Dashboard</button>
+    <button data-go="perfumes">Perfumes</button>
+    <button data-go="add">Add Perfume</button>
+    <button data-go="sizes">ML Settings</button>
+    <button data-go="import">CSV Import</button>
+    <button data-go="security">Security</button>
+  </div></nav>
+
+  <main class="wrap">
+    <!-- Dashboard -->
+    <section class="view" id="v-dashboard">
+      <h2>Dashboard</h2>
+      <div class="cards" id="dashCards"></div>
+      <div class="panel"><h3>Sizes customers can see</h3><div class="pills" id="dashSizes"></div></div>
+      <div class="actions" style="margin-top:14px">
+        <button class="btn dark" data-go="add">+ Add perfume</button>
+        <button class="btn" data-go="import">Import CSV</button>
+        <button class="btn" id="exportBtn">Export CSV</button>
+      </div>
+    </section>
+
+    <!-- Perfumes -->
+    <section class="view hidden" id="v-perfumes">
+      <h2>Perfumes</h2>
+      <div class="findbar">
+        <input type="search" id="q" placeholder="Search name, brand or number" aria-label="Search perfumes">
+        <div class="chips" id="filters" role="group" aria-label="Filter">
+          <button class="chip" data-f="all" aria-pressed="true">All</button>
+          <button class="chip" data-f="low" aria-pressed="false">Low juice</button>
+          <button class="chip" data-f="noimg" aria-pressed="false">No image</button>
+          <button class="chip" data-f="hidden" aria-pressed="false">Hidden</button>
+          <button class="chip" data-f="sizeoff" aria-pressed="false">Sizes off</button>
+        </div>
+        <label class="stepbox">Juice step <select id="jstep"><option>1</option><option>3</option><option>5</option><option>6</option><option>10</option></select> ml</label>
+      </div>
+      <p class="summary" id="summary"></p>
+      <div class="list" id="list"></div>
+    </section>
+
+    <!-- ML settings -->
+    <section class="view hidden" id="v-sizes">
+      <h2>ML Settings</h2>
+      <p class="help">Turn a size OFF to hide it everywhere customers look: cards, filters and cart.</p>
+      <div class="gsizes" id="gsizes"></div>
+      <div class="panel">
+        <h3>Shop settings</h3>
+        <div class="g2" style="margin-top:10px">
+          <label class="fl"><span>WhatsApp number for orders</span><input type="text" id="sWa" inputmode="tel" placeholder="+8801XXXXXXXXX"></label>
+          <label class="fl"><span>Low juice alert at (ml left or less)</span><input type="number" id="sLow" min="0" inputmode="numeric"></label>
+        </div>
+        <label class="fl"><span>Note shown when customers review their order (optional)</span><input type="text" id="sNote"></label>
+        <button class="btn dark" id="saveSettings" type="button">Save settings</button>
+      </div>
+    </section>
+
+    <!-- CSV import -->
+    <section class="view hidden" id="v-import">
+      <h2>Import / Update CSV</h2>
+      <p class="help">Needs a <code>Perfume Name</code> column and size columns like <code>3ml, 6ml, 10ml, 15ml, 30ml</code>. Optional: <code>SL</code> (perfume number), <code>Brand</code>, <code>Juice</code>. Other columns are ignored. Matching perfumes are updated, new ones are added, nothing is deleted, and photos are kept.</p>
+      <label class="fl"><span>Choose a CSV file</span><input type="file" id="impFile" accept=".csv,text/csv,text/plain"></label>
+      <label class="fl"><span>Or paste CSV text</span><textarea id="impText" rows="4"></textarea></label>
+      <div id="impOut" aria-live="polite"></div>
+    </section>
+
+    <!-- Security -->
+    <section class="view hidden" id="v-security">
+      <h2>Security</h2>
+      <div class="panel" id="secPanel"></div>
+    </section>
+  </main>
+</div>
+
+<!-- ================= ADD / EDIT PERFUME ================= -->
+<dialog id="editDlg" aria-labelledby="editTitle">
+  <div class="dh"><h3 id="editTitle">Add perfume</h3><button class="x" type="button" id="eClose" aria-label="Close">✕</button></div>
+  <div class="db">
+    <div id="eMsg"></div>
+    <p class="help" id="editNo" style="margin-top:0"></p>
+    <label class="fl"><span>Perfume Name</span><input type="text" id="eName" autocomplete="off" maxlength="120"></label>
+    <label class="fl"><span>Brand Name</span><input type="text" id="eBrand" autocomplete="off" maxlength="80" placeholder="Optional"></label>
+    <div class="sect">Prices</div>
+    <p class="help" style="margin-top:0">Leave a price empty, or turn Show off, to hide that size for this perfume only.</p>
+    <table class="ptab"><thead><tr><th>Size</th><th>Price</th><th>Show</th></tr></thead><tbody id="ePrices"></tbody></table>
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" class="sw" id="eVisible"> Show this perfume on the website</label>
+    <div class="sect">Juice Level</div>
+    <div class="private">
+      <p class="help" style="margin-top:0">Only you can see this. Customers never load it.</p>
+      <div class="g2">
+        <label class="fl"><span>ml left</span><div class="jctl"><button type="button" data-jd="-1" aria-label="Decrease">−</button><input type="number" id="eLeft" min="0" step="0.5" inputmode="decimal"><button type="button" data-jd="1" aria-label="Increase">+</button></div></label>
+        <label class="fl"><span>Full bottle size (ml)</span><input type="number" id="eBottle" min="0" step="1" inputmode="numeric" placeholder="e.g. 100"></label>
+      </div>
+      <label class="fl" style="margin-bottom:0"><span>Private note</span><input type="text" id="eNote" maxlength="200" placeholder="Batch code, where you bought it"></label>
+    </div>
+    <div class="sect">Product Image <span class="help" style="font-weight:400">(optional)</span></div>
+    <div class="imgbox">
+      <div class="imgprev" id="ePrev">No image</div>
+      <div class="imgbtns">
+        <input type="file" id="eFile" accept="image/webp,image/jpeg,image/png" hidden>
+        <button class="btn" type="button" id="eUpload">Upload image</button>
+        <button class="btn danger" type="button" id="eRemoveImg" hidden>Remove image</button>
+      </div>
+    </div>
+    <p class="help" id="eImgInfo">Best: square (1:1) WebP, about 1600 × 1600. The site makes a small fast copy for you automatically.</p>
+  </div>
+  <div class="df">
+    <button class="btn danger" type="button" id="eDelete" style="margin-right:auto">Delete</button>
+    <button class="btn" type="button" id="eCancel">Cancel</button>
+    <button class="btn dark" type="button" id="eSave">Save perfume</button>
+  </div>
+</dialog>
+
+<!-- ================= RE-VERIFY ================= -->
+<dialog id="reDlg" aria-labelledby="reTitle">
+  <div class="dh"><h3 id="reTitle">Confirm it's you</h3><button class="x" type="button" id="reClose" aria-label="Close">✕</button></div>
+  <div class="db">
+    <div id="reMsg"></div>
+    <p class="help" style="margin-top:0">Enter the current 6-digit code from your authenticator app to continue.</p>
+    <input type="text" id="reCode" class="code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" aria-label="6-digit code">
+  </div>
+  <div class="df"><button class="btn" type="button" id="reCancel">Cancel</button><button class="btn dark" type="button" id="reGo">Verify</button></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+const CFG = window.SHOP_CONFIG || {};
+const SBC = CFG.supabase || {};
+const SIZES = CFG.sizes || [3,6,10,15,30];
+const BUCKET = SBC.imageBucket || 'perfume-images';
+const DOMAIN = CFG.adminEmailDomain || 'khayr.shop';
+const DEF_SET = {whatsapp:'8801673080800', sizesEnabled:{}, orderNote:'', lowJuiceMl:15};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const price = n => String(Math.round(Number(n) || 0));
+const clean = s => String(s || '').replace(/\s+/g, ' ').trim();
+const LS = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : v; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+const AUTH_KEY = 'khayr-admin-auth';
+
+let sb = null;
+let products = [], settings = {...DEF_SET}, juice = {};
+let adminEmail = '';
+let recentAuth = 0;
+let filter = 'all', query = '', current = 'dashboard';
+let editing = null, imgState = {action:'keep', prepared:null};
+let panelOpen = false;
+
+/* ---------- helpers ---------- */
+let tt;
+function toast(t, err){ const el = $('toast'); el.textContent = t; el.classList.toggle('err', !!err); el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), err ? 5200 : 2400); }
+function friendly(e){
+  const m = String((e && e.message) || e || 'Something went wrong.');
+  if(/row-level security|permission denied|not allowed|jwt|aal/i.test(m)) return 'Your login is not fully verified. Please log out and log in again with your authenticator code.';
+  if(/column .*number|42703/i.test(m)) return 'The database needs the latest setup. Run the new supabase-setup.sql in Supabase, then reload.';
+  if(/duplicate key|unique/i.test(m)) return 'That value already exists (duplicate). ' + m;
+  if(/failed to fetch|network/i.test(m)) return 'No internet connection. Please try again.';
+  return m;
+}
+function status(kind, txt){ const s = $('status'); s.className = 'status' + (kind === 'busy' ? ' busy' : kind === 'bad' ? ' bad' : ''); $('statusTxt').textContent = txt; }
+async function busy(btn, label, fn){
+  if(btn.disabled) return;
+  const old = btn.textContent; btn.disabled = true; btn.textContent = label;
+  try { return await fn(); } finally { btn.disabled = false; btn.textContent = old; }
+}
+let pending = 0;
+async function run(label, q){
+  pending++; status('busy', 'Saving…');
+  let error = null;
+  try { ({error} = await q); } catch(e){ error = e; }
+  pending--;
+  if(error){ status('bad', 'Not saved'); toast(`${label} failed. ${friendly(error)}`, true); return false; }
+  if(!pending) status('ok', 'Saved ✓');
+  return true;
+}
+const fails = {n:0, until:0};
+function locked(){ if(Date.now() < fails.until){ toast(`Too many attempts. Wait ${Math.ceil((fails.until - Date.now()) / 1000)} seconds.`, true); return true; } return false; }
+function failed(){ if(++fails.n >= 5){ fails.until = Date.now() + 30000; fails.n = 0; } }
+const imgUrl = path => path ? `${SBC.url.replace(/\/$/, '')}/storage/v1/object/public/${BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}` : '';
+
+/* =====================================================================
+   AUTH: username + password, then Google Authenticator code
+   ===================================================================== */
+const configured = () => !!(SBC.url && SBC.anonKey && !/PASTE-|YOUR-/.test(SBC.url + SBC.anonKey) && window.supabase);
+function makeClient(remember){
+  return window.supabase.createClient(SBC.url, SBC.anonKey, {
+    auth: {persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: AUTH_KEY, storage: remember ? window.localStorage : window.sessionStorage}
+  });
+}
+function loginStep(step, msg, kind){
+  $('panel').classList.add('hidden'); $('loginView').classList.remove('hidden'); panelOpen = false;
+  $('loginForm').hidden = step !== 'credentials'; $('mfaForm').hidden = step !== 'code'; $('gateBox').hidden = step !== 'gate'; $('gateOut').hidden = step !== 'gate';
+  $('loginTitle').textContent = step === 'code' ? 'Two-step verification' : step === 'gate' ? 'Set up two-step verification' : 'Admin login';
+  $('loginMsg').innerHTML = msg ? `<div class="msg ${kind || 'err'}">${esc(msg)}</div>` : '';
+  if(step === 'credentials'){ $('lPass').value = ''; setTimeout(() => $('lUser').focus(), 50); }
+  if(step === 'code'){ $('mCode').value = ''; setTimeout(() => $('mCode').focus(), 50); }
+}
+$('showPw').onclick = () => { const i = $('lPass'); i.type = i.type === 'password' ? 'text' : 'password'; $('showPw').textContent = i.type === 'password' ? 'Show' : 'Hide'; };
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if(!configured()){ loginStep('credentials', window.supabase ? 'Supabase is not connected yet. Put your project URL and key in config.js, then reload.' : 'Could not load the login system. Check your internet and reload.', 'warn'); return; }
+  if(locked()) return;
+  const user = $('lUser').value.trim(), pass = $('lPass').value;
+  if(!user || !pass){ $('loginMsg').innerHTML = '<div class="msg err">Enter your username and password.</div>'; return; }
+  const email = user.includes('@') ? user.toLowerCase() : `${user.toLowerCase()}@${DOMAIN}`;
+  const remember = $('lRemember').checked;
+  LS.set('khayr_admin_remember', remember ? '1' : '0');
+  LS.del(AUTH_KEY); try { sessionStorage.removeItem(AUTH_KEY); } catch(_){}
+  if(remember) LS.set('khayr_admin_until', String(Date.now() + 30 * 864e5)); else LS.del('khayr_admin_until');
+  await busy($('lGo'), 'Logging in…', async () => {
+    sb = makeClient(remember);
+    const {error} = await sb.auth.signInWithPassword({email, password: pass});
+    if(error){
+      failed();
+      loginStep('credentials', /rate|too many/i.test(error.message) ? 'Too many attempts. Wait a few minutes and try again.' : 'Wrong username or password.');
+      return;
+    }
+    await afterPassword();
+  });
+});
+
+async function afterPassword(){
+  const {data: {session}} = await sb.auth.getSession();
+  adminEmail = (session && session.user && session.user.email || '').toLowerCase();
+  if(adminEmail !== `khayr96@${DOMAIN}`.toLowerCase()){ await sb.auth.signOut(); loginStep('credentials', 'This account is not allowed here.'); return; }
+  const {data, error} = await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+  if(error){ loginStep('credentials', friendly(error)); return; }
+  if(data.currentLevel === 'aal2') return openPanel();
+  if(data.nextLevel === 'aal2') return showCodeStep();
+  showGate();                                                    // no authenticator yet: set one up before anything else
+}
+
+async function showCodeStep(){
+  const {data} = await sb.auth.mfa.listFactors();
+  const list = (data && data.totp) || [];
+  if(!list.length){ showGate(); return; }
+  $('factorRow').hidden = list.length < 2;
+  $('mFactor').innerHTML = list.map(f => `<option value="${esc(f.id)}">${esc(f.friendly_name || 'Authenticator')}</option>`).join('');
+  loginStep('code');
+}
+$('mCode').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6); if(e.target.value.length === 6) $('mfaForm').requestSubmit(); });
+$('mfaForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const code = $('mCode').value.trim();
+  if(!/^\d{6}$/.test(code)){ $('loginMsg').innerHTML = '<div class="msg err">Enter the 6-digit code.</div>'; return; }
+  if(locked()) return;
+  await busy($('mGo'), 'Verifying…', async () => {
+    const {error} = await sb.auth.mfa.challengeAndVerify({factorId: $('mFactor').value, code});
+    if(error){ failed(); loginStep('code', 'That code is not correct or has expired. Wait for the next code and try again.'); return; }
+    recentAuth = Date.now();
+    await openPanel();
+  });
+});
+$('mCancel').onclick = async () => { await hardSignOut(); loginStep('credentials'); };
+
+async function hardSignOut(scope){
+  try { if(sb) await sb.auth.signOut(scope ? {scope} : undefined); } catch(_){}
+  LS.del(AUTH_KEY); LS.del('khayr_admin_until'); try { sessionStorage.removeItem(AUTH_KEY); } catch(_){}
+  products = []; juice = {}; recentAuth = 0;
+}
+async function logout(scope){
+  await hardSignOut(scope);
+  $('list').innerHTML = '';
+  loginStep('credentials', scope === 'global' ? 'You were logged out of every device.' : 'You are logged out.', 'ok');
+}
+$('logout').onclick = () => logout();
+
+/* ---------- authenticator setup (QR code) ---------- */
+async function enrollFlow(box, opts){
+  opts = opts || {};
+  box.innerHTML = '<p class="help">Preparing your QR code…</p>';
+  try{
+    const lf = await sb.auth.mfa.listFactors();
+    const all = (lf.data && lf.data.all) || [];
+    for(const f of all.filter(x => x.status === 'unverified')) await sb.auth.mfa.unenroll({factorId: f.id});
+    const hasVerified = ((lf.data && lf.data.totp) || []).length > 0;
+    const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const {data, error} = await sb.auth.mfa.enroll({factorType: 'totp', friendlyName: hasVerified ? `KHAYR Admin ${stamp}` : 'KHAYR Admin', issuer: 'KHAYR Admin'});
+    if(error) throw error;
+    box.innerHTML = `
+      <div id="enMsg"></div>
+      <ol class="help" style="padding-left:18px;margin-top:0">
+        <li>Open <b>Google Authenticator</b> on your phone.</li>
+        <li>Tap <b>+</b>, then <b>Scan a QR code</b>, and scan the picture below.</li>
+        <li>Type the 6-digit code it shows, then tap Verify.</li>
+      </ol>
+      <div class="qr"><img src="${esc(data.totp.qr_code)}" alt="QR code to scan with Google Authenticator" width="210" height="210"></div>
+      <details><summary>Using this same phone, or cannot scan?</summary>
+        <p class="help">On this phone, tap <a href="${esc(data.totp.uri)}">Open in authenticator app</a>. Or add it by typing this setup key:</p>
+        <div class="key">${esc(data.totp.secret)}</div>
+        <p class="help">Keep this key private. It is shown only now and is not saved anywhere.</p>
+      </details>
+      <label class="lf"><span>6-digit code from the app</span><input type="text" id="enCode" class="code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000"></label>
+      <button class="btn dark" type="button" id="enGo" style="width:100%">Verify and turn on</button>
+      ${opts.onCancel ? '<button class="link" type="button" id="enCancel">Cancel</button>' : ''}`;
+    const go = async () => {
+      const code = box.querySelector('#enCode').value.trim();
+      if(!/^\d{6}$/.test(code)){ box.querySelector('#enMsg').innerHTML = '<div class="msg err">Enter the 6-digit code.</div>'; return; }
+      if(locked()) return;
+      await busy(box.querySelector('#enGo'), 'Verifying…', async () => {
+        const {error: ve} = await sb.auth.mfa.challengeAndVerify({factorId: data.id, code});
+        if(ve){ failed(); box.querySelector('#enMsg').innerHTML = '<div class="msg err">That code is not correct. Wait for a new code in the app and try again.</div>'; return; }
+        recentAuth = Date.now();
+        await opts.onDone(data.id);
+      });
+    };
+    box.querySelector('#enGo').onclick = go;
+    box.querySelector('#enCode').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6); if(e.target.value.length === 6) go(); });
+    if(opts.onCancel) box.querySelector('#enCancel').onclick = async () => { try { await sb.auth.mfa.unenroll({factorId: data.id}); } catch(_){} opts.onCancel(); };
+    box.querySelector('#enCode').focus();
+  }catch(e){
+    box.innerHTML = `<div class="msg err">${esc(friendly(e))}</div><button class="btn" type="button" id="enRetry">Try again</button>`;
+    box.querySelector('#enRetry').onclick = () => enrollFlow(box, opts);
+  }
+}
+function showGate(){
+  loginStep('gate', 'Two-step verification is required for the admin. Set it up now. You only scan the QR code once.', 'warn');
+  enrollFlow($('gateBox'), {onDone: async () => { toast('Two-step verification is on ✓'); await openPanel(); }});
+}
+$('gateOut').onclick = async () => { await hardSignOut(); loginStep('credentials'); };
+
+/* ---------- recent verification for sensitive actions ---------- */
+function reauth(){
+  return new Promise(async resolve => {
+    if(Date.now() - recentAuth < 5 * 60 * 1000) return resolve(true);
+    const {data} = await sb.auth.mfa.listFactors();
+    const list = (data && data.totp) || [];
+    if(!list.length) return resolve(true);
+    $('reMsg').innerHTML = ''; $('reCode').value = '';
+    const dlg = $('reDlg'); let done = false;
+    const finish = ok => { if(done) return; done = true; if(dlg.open) dlg.close(); resolve(ok); };
+    const go = async () => {
+      const code = $('reCode').value.trim();
+      if(!/^\d{6}$/.test(code)){ $('reMsg').innerHTML = '<div class="msg err">Enter the 6-digit code.</div>'; return; }
+      if(locked()) return;
+      await busy($('reGo'), 'Verifying…', async () => {
+        for(const f of list){
+          const {error} = await sb.auth.mfa.challengeAndVerify({factorId: f.id, code});
+          if(!error){ recentAuth = Date.now(); finish(true); return; }
+        }
+        failed(); $('reMsg').innerHTML = '<div class="msg err">That code is not correct or has expired.</div>';
+      });
+    };
+    $('reGo').onclick = go; $('reCancel').onclick = () => finish(false); $('reClose').onclick = () => finish(false);
+    $('reCode').oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6); if(e.target.value.length === 6) go(); };
+    dlg.onclose = () => finish(false);
+    dlg.showModal(); $('reCode').focus();
+  });
+}
+
+/* =====================================================================
+   DATA
+   ===================================================================== */
+async function loadAll(){
+  const [pr, st, jl] = await Promise.all([
+    sb.from('products').select('*').order('number', {ascending: true}),
+    sb.from('settings').select('data').eq('id', 1),
+    sb.from('juice_levels').select('*')
+  ]);
+  const err = pr.error || st.error || jl.error;
+  if(err) throw err;
+  products = pr.data.map(p => ({...p, prices: p.prices || {}, sizes: p.sizes || {}}));
+  settings = {...DEF_SET, ...((st.data[0] && st.data[0].data) || {})};
+  settings.sizesEnabled = {...(settings.sizesEnabled || {})};
+  juice = {}; jl.data.forEach(j => juice[j.product_id] = j);
+}
+async function openPanel(){
+  try{
+    const until = Number(LS.get('khayr_admin_until', 0));
+    if(until && Date.now() > until){ await hardSignOut(); loginStep('credentials', 'Your saved login expired. Please log in again.', 'warn'); return; }
+    status('busy', 'Loading…');
+    await loadAll();
+  }catch(e){
+    const m = friendly(e);
+    if(/not fully verified/.test(m)){ await hardSignOut(); loginStep('credentials', m); }
+    else loginStep('credentials', 'Could not load data. ' + m);
+    return;
+  }
+  $('loginView').classList.add('hidden'); $('panel').classList.remove('hidden'); panelOpen = true; $('gateBox').innerHTML = '';
+  $('jstep').value = LS.get('khayr_jstep', '1');
+  status('ok', 'Saved ✓');
+  go(current === 'add' ? 'dashboard' : current);
+}
+
+/* helpers on products */
+const gOn = s => settings.sizesEnabled[s] !== false;
+const pOn = (p, s) => p.sizes[s] !== false;
+const pr = (p, s) => Number(p.prices[s]) || 0;
+const live = (p, s) => gOn(s) && pOn(p, s) && pr(p, s) > 0;
+const shown = p => p.visible !== false && SIZES.some(s => live(p, s));
+const hasJ = id => { const j = juice[id]; return j && j.ml !== null && j.ml !== undefined && j.ml !== ''; };
+const isLow = id => hasJ(id) && Number(juice[id].ml) <= Number(settings.lowJuiceMl);
+const hasImg = p => !!(p.thumb_path || p.image_path);
+const keyOf = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+const maxNumber = () => products.reduce((m, p) => Math.max(m, Number(p.number) || 0), 0);
+function uid(name, taken){
+  const b = String(name || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'perfume';
+  let id = b, n = 2; const t = taken || new Set();
+  while(products.some(p => p.id === id) || t.has(id)) id = `${b}-${n++}`;
+  return id;
+}
+
+/* =====================================================================
+   NAVIGATION
+   ===================================================================== */
+function go(view, opt){
+  if(view === 'add'){ go('perfumes'); openEdit(null); return; }
+  current = view;
+  ['dashboard', 'perfumes', 'sizes', 'import', 'security'].forEach(v => $('v-' + v).classList.toggle('hidden', v !== view));
+  document.querySelectorAll('#nav button').forEach(b => b.setAttribute('aria-current', b.dataset.go === view ? 'page' : 'false'));
+  if(opt && opt.filter) setFilter(opt.filter);
+  if(view === 'dashboard') renderDashboard();
+  if(view === 'perfumes') render();
+  if(view === 'sizes') renderSizes();
+  if(view === 'security') renderSecurity();
+  window.scrollTo(0, 0);
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if(b && panelOpen){ go(b.dataset.go, b.dataset.filter ? {filter: b.dataset.filter} : null); } });
+
+/* =====================================================================
+   DASHBOARD
+   ===================================================================== */
+function renderDashboard(){
+  const total = products.length, on = products.filter(shown).length;
+  const low = products.filter(p => isLow(p.id)).length, noImg = products.filter(p => !hasImg(p)).length;
+  const noPrice = products.filter(p => !SIZES.some(s => pr(p, s) > 0)).length;
+  $('dashCards').innerHTML = `
+    <button class="stat" data-go="perfumes" data-filter="all"><b>${total}</b><span>Total perfumes</span></button>
+    <button class="stat" data-go="perfumes" data-filter="all"><b>${on}</b><span>Showing on website</span></button>
+    <button class="stat ${low ? 'warn' : ''}" data-go="perfumes" data-filter="low"><b>${low}</b><span>Low juice (${esc(settings.lowJuiceMl)} ml or less)</span></button>
+    <button class="stat" data-go="perfumes" data-filter="noimg"><b>${noImg}</b><span>Without images</span></button>
+    ${noPrice ? `<button class="stat warn" data-go="perfumes" data-filter="hidden"><b>${noPrice}</b><span>With no prices (hidden)</span></button>` : ''}`;
+  $('dashSizes').innerHTML = SIZES.map(s => `<span class="pill ${gOn(s) ? '' : 'off'}">${s}ml ${gOn(s) ? 'ON' : 'OFF'}</span>`).join('');
+}
+
+/* =====================================================================
+   PERFUME LIST
+   ===================================================================== */
+const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+function filtered(){
+  const q = norm(query.replace(/^\s*#/, '')), words = q.split(' ').filter(Boolean);
+  return products.filter(p => {
+    if(words.length){
+      const hay = norm(`${p.name} ${p.brand}`);
+      const hit = (/^\d+$/.test(q) && Number(p.number) === Number(q)) || words.every(w => hay.includes(w)) || hay.replace(/ /g, '').includes(words.join(''));
+      if(!hit) return false;
+    }
+    if(filter === 'hidden') return !shown(p);
+    if(filter === 'low') return isLow(p.id);
+    if(filter === 'noimg') return !hasImg(p);
+    if(filter === 'sizeoff') return SIZES.some(s => !pOn(p, s) || !pr(p, s));
+    return true;
+  });
+}
+function rowHTML(p){
+  const vis = shown(p), j = juice[p.id] || {};
+  const chips = SIZES.map(s => {
+    if(!pr(p, s)) return `<button class="sz none ${gOn(s) ? '' : 'gl'}" data-edit="${esc(p.id)}" title="No price. Tap to add one">${s}ml<b>—</b></button>`;
+    return `<button class="sz ${pOn(p, s) ? '' : 'off'} ${gOn(s) ? '' : 'gl'}" data-toggle="${esc(p.id)}" data-size="${s}" aria-pressed="${pOn(p, s)}" title="${gOn(s) ? (pOn(p, s) ? 'Tap to hide this size for this perfume' : 'Tap to show') : s + 'ml is OFF for all perfumes'}">${s}ml<b>${price(pr(p, s))}</b></button>`;
+  }).join('');
+  const has = hasJ(p.id);
+  const pct = has && Number(j.bottle_ml) > 0 ? Math.max(0, Math.min(100, Number(j.ml) / Number(j.bottle_ml) * 100)) : null;
+  const th = p.thumb_path || p.image_path;
+  return `<div class="row ${vis ? '' : 'off'}" data-row="${esc(p.id)}">
+    <button class="thumb" data-edit="${esc(p.id)}" aria-label="Photo of ${esc(p.name)}. Tap to change">${th ? `<img src="${esc(imgUrl(th))}" alt="" loading="lazy" width="64" height="64">` : '<span>No image<br>Tap to add</span>'}</button>
+    <div><div class="nm"><span class="no">#${esc(p.number)}</span> ${esc(p.name)} ${vis ? '' : '<span class="pill">Hidden</span>'} ${isLow(p.id) ? '<span class="pill amber">Low juice</span>' : ''}</div>
+      <div class="sub">${esc(p.brand || '')}</div></div>
+    <div class="sizes">${chips}</div>
+    <div class="juice ${isLow(p.id) ? 'low' : ''}">
+      <div class="jctl"><button type="button" data-jstep="-1" data-id="${esc(p.id)}" aria-label="Less juice for ${esc(p.name)}">−</button><input type="number" min="0" step="0.5" inputmode="decimal" value="${has ? esc(j.ml) : ''}" placeholder="–" data-jin="${esc(p.id)}" aria-label="ml left for ${esc(p.name)}"><button type="button" data-jstep="1" data-id="${esc(p.id)}" aria-label="More juice for ${esc(p.name)}">+</button><span>ml</span></div>
+      ${pct !== null ? `<div class="jbar"><i style="width:${pct}%"></i></div>` : ''}
+      <div class="jl">${has ? `${esc(j.ml)} ml left${Number(j.bottle_ml) > 0 ? ` of ${esc(j.bottle_ml)}` : ''}${isLow(p.id) ? ' · low' : ''}` : 'Juice level not set'}</div>
+    </div>
+    <div class="ctrl">
+      <label><input type="checkbox" class="sw" data-vis="${esc(p.id)}" ${p.visible !== false ? 'checked' : ''}> Show</label>
+      <button class="btn sm" data-edit="${esc(p.id)}">Edit</button>
+    </div>
+  </div>`;
+}
+function render(){
+  const list = filtered(), total = products.length;
+  const low = products.filter(p => isLow(p.id)).length;
+  $('summary').textContent = `${total} perfumes, ${products.filter(shown).length} on the website` + (low ? `, ${low} low on juice` : '') + (list.length !== total ? `. Showing ${list.length}.` : '.');
+  $('list').innerHTML = list.length ? list.map(rowHTML).join('') : `<div class="empty">${total ? 'Nothing matches this search or filter.' : 'No perfumes yet. Use CSV Import or Add Perfume.'}</div>`;
+}
+function renderRow(id){
+  setTimeout(() => {
+    const el = document.querySelector(`[data-row="${CSS.escape(id)}"]`), p = products.find(x => x.id === id);
+    if(!el || !p) return;
+    const ae = document.activeElement;
+    const sel = ae && el.contains(ae) ? (ae.dataset.jstep ? `[data-jstep="${ae.dataset.jstep}"]` : ae.dataset.toggle ? `[data-toggle][data-size="${ae.dataset.size}"]` : null) : null;
+    const tpl = document.createElement('template'); tpl.innerHTML = rowHTML(p).trim();
+    el.replaceWith(tpl.content.firstElementChild);
+    if(sel){ const n = document.querySelector(`[data-row="${CSS.escape(id)}"] ${sel}`); if(n) n.focus(); }
+  }, 0);
+}
+function setFilter(f){ filter = f; [...$('filters').children].forEach(x => x.setAttribute('aria-pressed', x.dataset.f === f)); }
+$('q').addEventListener('input', e => { query = e.target.value; render(); });
+$('filters').addEventListener('click', e => { const b = e.target.closest('.chip'); if(!b) return; setFilter(b.dataset.f); render(); });
+$('jstep').addEventListener('change', e => LS.set('khayr_jstep', e.target.value));
+
+$('list').addEventListener('click', e => {
+  const t = e.target.closest('[data-toggle]');
+  if(t){
+    const p = products.find(x => x.id === t.dataset.toggle), s = t.dataset.size;
+    p.sizes = {...p.sizes, [s]: !pOn(p, s)}; renderRow(p.id);
+    run('Size change', sb.from('products').update({sizes: p.sizes}).eq('id', p.id));
+    return;
+  }
+  const st = e.target.closest('[data-jstep]');
+  if(st){ const cur = Number((juice[st.dataset.id] || {}).ml) || 0; setJuice(st.dataset.id, Math.max(0, +(cur + Number(st.dataset.jstep) * Number($('jstep').value)).toFixed(1))); return; }
+  const ed = e.target.closest('[data-edit]');
+  if(ed) openEdit(ed.dataset.edit);
+});
+$('list').addEventListener('change', e => {
+  if(e.target.dataset.vis){
+    const p = products.find(x => x.id === e.target.dataset.vis); p.visible = e.target.checked; renderRow(p.id);
+    run('Show/hide', sb.from('products').update({visible: p.visible}).eq('id', p.id));
+  }
+  if(e.target.dataset.jin !== undefined){ const v = e.target.value; setJuice(e.target.dataset.jin, v === '' ? null : Math.max(0, Number(v))); }
+});
+
+/* juice: screen updates at once, saved to the database after a short pause */
+const jTimers = {};
+function setJuice(id, ml){
+  juice[id] = {...(juice[id] || {product_id: id, note: ''}), product_id: id, ml};
+  renderRow(id); status('busy', 'Saving…');
+  clearTimeout(jTimers[id]);
+  jTimers[id] = setTimeout(() => { delete jTimers[id]; saveJuice(juice[id]); }, 500);
+}
+function saveJuice(j){
+  return run('Juice level', sb.from('juice_levels').upsert({product_id: j.product_id, ml: j.ml === '' ? null : j.ml, bottle_ml: j.bottle_ml === '' ? null : (j.bottle_ml ?? null), note: j.note || '', updated_at: new Date().toISOString()}));
+}
+function flushJuice(){ Object.keys(jTimers).forEach(id => { clearTimeout(jTimers[id]); delete jTimers[id]; saveJuice(juice[id]); }); }
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') flushJuice(); });
+window.addEventListener('beforeunload', e => { if(Object.keys(jTimers).length){ flushJuice(); e.preventDefault(); e.returnValue = ''; } });
+
+/* =====================================================================
+   ML SETTINGS
+   ===================================================================== */
+function renderSizes(){
+  $('gsizes').innerHTML = SIZES.map(s => `<label class="gs ${gOn(s) ? 'on' : ''}"><b>${s}ml</b><input type="checkbox" class="sw" data-g="${s}" ${gOn(s) ? 'checked' : ''} aria-label="${s}ml visible on website"><small>${gOn(s) ? 'ON' : 'OFF'}</small></label>`).join('');
+  $('sWa').value = '+' + String(settings.whatsapp).replace(/\D/g, ''); $('sNote').value = settings.orderNote || ''; $('sLow').value = settings.lowJuiceMl;
+}
+$('gsizes').addEventListener('change', async e => {
+  const s = e.target.dataset.g; if(!s) return;
+  settings.sizesEnabled[s] = e.target.checked; renderSizes();
+  if(await run('Size setting', sb.from('settings').upsert({id: 1, data: settings}))) toast(`${s}ml is now ${e.target.checked ? 'ON' : 'OFF'} on the website`);
+});
+$('saveSettings').onclick = () => busy($('saveSettings'), 'Saving…', async () => {
+  const wa = $('sWa').value.replace(/\D/g, '');
+  if(!/^8801\d{9}$/.test(wa)){ toast('WhatsApp number should look like +8801XXXXXXXXX', true); return; }
+  settings.whatsapp = wa; settings.orderNote = $('sNote').value.trim().slice(0, 200); settings.lowJuiceMl = Math.max(0, Number($('sLow').value) || 0);
+  if(await run('Settings', sb.from('settings').upsert({id: 1, data: settings}))) toast('Settings saved ✓');
+});
+
+/* =====================================================================
+   IMAGES  (made small and fast in the browser, stored in Supabase Storage)
+   ===================================================================== */
+async function readImage(file){
+  if(!/^image\/(webp|jpeg|png)$/.test(file.type)) throw new Error('Please choose a WebP, JPG or PNG image.');
+  if(file.size > 15 * 1024 * 1024) throw new Error('That image is over 15 MB. Please use a smaller file.');
+  const bmp = typeof createImageBitmap === 'function' ? await createImageBitmap(file).catch(() => null) : null;
+  if(bmp) return {src: bmp, w: bmp.width, h: bmp.height};
+  const url = URL.createObjectURL(file), img = new Image();
+  await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('Could not read that image.')); img.src = url; });
+  URL.revokeObjectURL(url);
+  return {src: img, w: img.naturalWidth, h: img.naturalHeight};
+}
+function squareCanvas(im, side){
+  const c = document.createElement('canvas'); c.width = c.height = side;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, side, side); x.imageSmoothingQuality = 'high';
+  const k = Math.min(side / im.w, side / im.h), dw = im.w * k, dh = im.h * k;
+  x.drawImage(im.src, (side - dw) / 2, (side - dh) / 2, dw, dh);
+  return c;
+}
+async function encode(canvas, maxKB){
+  const toBlob = (type, q) => new Promise(r => canvas.toBlob(r, type, q));
+  for(const q of [0.88, 0.8, 0.72, 0.64, 0.56]){
+    const b = await toBlob('image/webp', q);
+    if(b && b.type === 'image/webp'){ if(b.size <= maxKB * 1024 || q === 0.56) return {blob: b, ext: 'webp'}; continue; }
+    for(const jq of [0.86, 0.78, 0.7, 0.6]){                     // this browser cannot save WebP: use JPG
+      const j = await toBlob('image/jpeg', jq);
+      if(j.size <= maxKB * 1024 || jq === 0.6) return {blob: j, ext: 'jpg'};
+    }
+  }
+}
+async function prepareImage(file){
+  const im = await readImage(file), big = Math.max(im.w, im.h);
+  const full = await encode(squareCanvas(im, Math.min(1200, big)), 300);
+  const thumb = await encode(squareCanvas(im, Math.min(400, big)), 40);
+  return {full, thumb, padded: Math.abs(im.w - im.h) / big > 0.02, w: im.w, h: im.h};
+}
+async function uploadImages(id, prep){
+  const stamp = Date.now().toString(36), bucket = sb.storage.from(BUCKET);
+  const fp = `${id}/${stamp}-full.${prep.full.ext}`, tp = `${id}/${stamp}-thumb.${prep.thumb.ext}`;
+  let r = await bucket.upload(fp, prep.full.blob, {contentType: prep.full.blob.type, cacheControl: '31536000', upsert: false});
+  if(r.error) throw r.error;
+  r = await bucket.upload(tp, prep.thumb.blob, {contentType: prep.thumb.blob.type, cacheControl: '31536000', upsert: false});
+  if(r.error){ await bucket.remove([fp]); throw r.error; }
+  return {image_path: fp, thumb_path: tp};
+}
+const dropFiles = async paths => { const list = paths.filter(Boolean); if(list.length){ try { await sb.storage.from(BUCKET).remove(list); } catch(_){} } };
+
+/* =====================================================================
+   ADD / EDIT / DELETE PERFUME
+   ===================================================================== */
+function setPreview(){
+  const box = $('ePrev'); let src = '';
+  if(imgState.action === 'replace' && imgState.prepared) src = imgState.prepared.url;
+  else if(imgState.action === 'keep' && editing && hasImg(editing)) src = imgUrl(editing.thumb_path || editing.image_path);
+  box.innerHTML = src ? `<img src="${esc(src)}" alt="Perfume photo preview">` : 'No image';
+  const has = !!src;
+  $('eUpload').textContent = has ? 'Replace image' : 'Upload image';
+  $('eRemoveImg').hidden = !has;
+}
+function openEdit(id){
+  editing = id ? products.find(p => p.id === id) : null;
+  const p = editing || {name: '', brand: '', prices: {}, sizes: {}, visible: true};
+  const j = (id && juice[id]) || {};
+  imgState = {action: 'keep', prepared: null};
+  $('eMsg').innerHTML = '';
+  $('editTitle').textContent = editing ? 'Edit perfume' : 'Add perfume';
+  $('editNo').textContent = editing ? `Perfume number ${p.number}. The number never changes when you edit.` : `Number ${maxNumber() + 1} will be given automatically.`;
+  $('eName').value = p.name; $('eBrand').value = p.brand || '';
+  $('eVisible').checked = p.visible !== false;
+  $('ePrices').innerHTML = SIZES.map(s => `<tr><td>${s}ml${gOn(s) ? '' : '<div class="help" style="margin:0">OFF for all</div>'}</td>
+    <td><input type="number" min="0" step="1" inputmode="numeric" data-p="${s}" value="${esc(p.prices[s] ?? '')}" placeholder="No price" aria-label="${s}ml price"></td>
+    <td><input type="checkbox" class="sw" data-s="${s}" ${p.sizes[s] !== false ? 'checked' : ''} aria-label="Show ${s}ml"></td></tr>`).join('');
+  $('eLeft').value = j.ml ?? ''; $('eBottle').value = j.bottle_ml ?? ''; $('eNote').value = j.note ?? '';
+  $('eDelete').classList.toggle('hidden', !editing);
+  $('eImgInfo').textContent = 'Best: square (1:1) WebP, about 1600 × 1600. The site makes a small fast copy for you automatically.';
+  setPreview();
+  $('editDlg').showModal();
+  if(!editing) $('eName').focus();
+}
+$('eClose').onclick = $('eCancel').onclick = () => { if(imgState.prepared) URL.revokeObjectURL(imgState.prepared.url); $('editDlg').close(); };
+$('editDlg').addEventListener('click', e => {
+  const b = e.target.closest('[data-jd]'); if(!b) return;
+  $('eLeft').value = Math.max(0, (Number($('eLeft').value) || 0) + Number(b.dataset.jd) * Number($('jstep').value));
+});
+$('eUpload').onclick = () => $('eFile').click();
+$('eFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  $('eImgInfo').textContent = 'Preparing image…'; $('eUpload').disabled = true;
+  try{
+    const prep = await prepareImage(f);
+    prep.url = URL.createObjectURL(prep.thumb.blob);
+    if(imgState.prepared) URL.revokeObjectURL(imgState.prepared.url);
+    imgState = {action: 'replace', prepared: prep};
+    $('eImgInfo').textContent = `Ready ✓ Full ${Math.round(prep.full.blob.size / 1024)} KB, small copy ${Math.round(prep.thumb.blob.size / 1024)} KB.` + (prep.padded ? ' The image was not square, so white space was added to keep it from being stretched.' : '');
+  }catch(err){ $('eImgInfo').textContent = err.message || 'Could not use that image.'; toast(err.message || 'Could not use that image.', true); }
+  $('eUpload').disabled = false; setPreview();
+});
+$('eRemoveImg').onclick = () => {
+  if(imgState.prepared) URL.revokeObjectURL(imgState.prepared.url);
+  imgState = {action: editing && hasImg(editing) ? 'remove' : 'keep', prepared: null};
+  $('eImgInfo').textContent = imgState.action === 'remove' ? 'The image will be removed when you press Save.' : 'No image.';
+  setPreview();
+};
+$('eSave').onclick = () => busy($('eSave'), 'Saving…', async () => {
+  const name = clean($('eName').value);
+  const fail = m => { $('eMsg').innerHTML = `<div class="msg err">${esc(m)}</div>`; $('editDlg').querySelector('.db').scrollTop = 0; };
+  $('eMsg').innerHTML = '';
+  if(!name) return fail('Please enter the perfume name.');
+  const dup = products.find(p => keyOf(p.name) === keyOf(name) && p !== editing);
+  if(dup) return fail(`A perfume with this name already exists (#${dup.number}).`);
+  const prices = {}, sizes = {};
+  for(const i of $('ePrices').querySelectorAll('[data-p]')){
+    const v = i.value.trim(); if(v === '') continue;
+    const n = Number(v); if(!Number.isFinite(n) || n <= 0 || n > 200000) return fail(`Invalid ${i.dataset.p}ml price.`);
+    prices[i.dataset.p] = Math.round(n);
+  }
+  $('ePrices').querySelectorAll('[data-s]').forEach(i => sizes[i.dataset.s] = i.checked);
+  const left = $('eLeft').value, bottle = $('eBottle').value;
+  if(left !== '' && !(Number(left) >= 0)) return fail('Juice level must be 0 or more.');
+  const row = {name, brand: clean($('eBrand').value), prices, sizes, visible: $('eVisible').checked};
+  let id, number;
+  if(editing){
+    id = editing.id; number = editing.number;
+    if(!await run('Save', sb.from('products').update(row).eq('id', id))) return;
+    Object.assign(editing, row);
+  } else {
+    const latest = await sb.from('products').select('number').order('number', {ascending: false}).limit(1);   // always the freshest number
+    number = Math.max(maxNumber(), (latest.data && latest.data[0] && Number(latest.data[0].number)) || 0) + 1;
+    id = uid(name);
+    const full = {id, number, ...row, category: '', sort_order: number};
+    if(!await run('Add perfume', sb.from('products').insert(full))) return;
+    products.push(full); products.sort((a, b) => a.number - b.number);
+  }
+  if(left !== '' || bottle !== '' || $('eNote').value.trim() || juice[id]){
+    juice[id] = {product_id: id, ml: left === '' ? null : Number(left), bottle_ml: bottle === '' ? null : Number(bottle), note: $('eNote').value.trim()};
+    await saveJuice(juice[id]);
+  }
+  const p = products.find(x => x.id === id);
+  if(imgState.action === 'replace' && imgState.prepared){
+    $('eSave').textContent = 'Uploading…';
+    try{
+      const old = [p.image_path, p.thumb_path];
+      const paths = await uploadImages(id, imgState.prepared);
+      if(await run('Save image', sb.from('products').update(paths).eq('id', id))){ Object.assign(p, paths); await dropFiles(old); toast('Image uploaded ✓'); }
+      else await dropFiles([paths.image_path, paths.thumb_path]);
+    }catch(err){ toast('Image upload failed. ' + friendly(err), true); }
+  } else if(imgState.action === 'remove'){
+    const old = [p.image_path, p.thumb_path];
+    if(await run('Remove image', sb.from('products').update({image_path: null, thumb_path: null}).eq('id', id))){ p.image_path = null; p.thumb_path = null; await dropFiles(old); }
+  }
+  if(imgState.prepared) URL.revokeObjectURL(imgState.prepared.url);
+  $('editDlg').close(); render(); if(current === 'dashboard') renderDashboard();
+  toast(editing ? 'Perfume saved ✓' : `Perfume added as number ${number} ✓`);
+});
+$('eDelete').onclick = () => busy($('eDelete'), 'Deleting…', async () => {
+  if(!editing || !confirm(`Delete #${editing.number} "${editing.name}"? It disappears from the website right away. This cannot be undone.`)) return;
+  const id = editing.id, old = [editing.image_path, editing.thumb_path];
+  if(await run('Delete', sb.from('products').delete().eq('id', id))){
+    products = products.filter(p => p.id !== id); delete juice[id]; await dropFiles(old);
+    $('editDlg').close(); render(); toast('Perfume deleted');
+  }
+});
+
+/* =====================================================================
+   CSV IMPORT
+   ===================================================================== */
+function parseCSV(text){
+  text = text.replace(/^\uFEFF/, '');
+  const first = text.split(/\r?\n/)[0] || '';
+  const delim = [',', ';', '\t'].map(d => [d, first.split(d).length]).sort((a, b) => b[1] - a[1])[0][0];
+  const rows = []; let row = [], cell = '', q = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(q){ if(c === '"'){ if(text[i + 1] === '"'){ cell += '"'; i++; } else q = false; } else cell += c; }
+    else if(c === '"') q = true;
+    else if(c === delim){ row.push(cell); cell = ''; }
+    else if(c === '\n' || c === '\r'){ if(c === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if(cell !== '' || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+function parsePrice(v){
+  const t = String(v ?? '').trim(); if(t === '') return {blank: true};
+  const s = t.replace(/[,\s৳]|taka|tk/gi, '');
+  if(!/^\d+(\.\d+)?$/.test(s)) return {bad: true};
+  const n = Math.round(Number(s)); if(n <= 0 || n > 200000) return {bad: true};
+  return {v: n};
+}
+function analyse(text){
+  const out = {errors: [], warnings: [], items: [], hasNum: false, ignored: []};
+  const rows = parseCSV(text);
+  if(!rows.length || !rows[0].some(c => c.trim())){ out.errors.push('The CSV is empty.'); return out; }
+  if(rows.length > 1001){ out.errors.push('The CSV has more than 1000 rows.'); return out; }
+  const head = rows[0].map(h => h.toLowerCase().replace(/\s+/g, ' ').trim());
+  const col = {num: -1, name: -1, brand: -1, juice: -1, bottle: -1, off: -1, vis: -1, sizes: {}};
+  head.forEach((h, i) => {
+    const m = h.match(/^(?:price\s*)?(\d+)\s*ml(?:\s*price)?$/);
+    if(m && SIZES.includes(Number(m[1]))){ col.sizes[Number(m[1])] = i; return; }
+    if(col.num < 0 && /^(sl|sl\.?|sl no\.?|serial|serial no\.?|no|no\.|number|#|perfume no\.?|perfume number)$/.test(h)) col.num = i;
+    else if(col.name < 0 && /^(perfume name|name|perfume|product|product name|title)$/.test(h)) col.name = i;
+    else if(col.brand < 0 && /^(brand|brand name|house)$/.test(h)) col.brand = i;
+    else if(col.bottle < 0 && /bottle/.test(h)) col.bottle = i;
+    else if(col.juice < 0 && /^(juice|juice level|juice ml|juice_ml_left|ml left|remaining)$/.test(h)) col.juice = i;
+    else if(col.off < 0 && /^off_sizes$/.test(h)) col.off = i;
+    else if(col.vis < 0 && /^(visible|show|active)$/.test(h)) col.vis = i;
+    else if(h) out.ignored.push(rows[0][i].trim());
+  });
+  if(col.name < 0) out.errors.push('The CSV needs a "Perfume Name" column in the first row.');
+  if(!Object.keys(col.sizes).length) out.errors.push('The CSV needs at least one size column, like 3ml, 6ml, 10ml, 15ml or 30ml.');
+  if(out.errors.length) return out;
+  out.hasNum = col.num >= 0;
+  const seenName = new Map(), seenNum = new Map();
+  for(let r = 1; r < rows.length; r++){
+    const cells = rows[r], rowNo = r + 1;
+    if(!cells.some(c => c.trim())) continue;
+    const it = {row: rowNo, name: clean(cells[col.name]), prices: {}, brand: null, number: null, juice: null, bottle: null, sizes: null, visible: null};
+    const bad = m => out.errors.push(`Row ${rowNo}: ${m}`);
+    if(!it.name){ bad('Perfume name is missing.'); continue; }
+    if(it.name.length > 120) bad('Perfume name is too long (over 120 characters).');
+    const k = keyOf(it.name);
+    if(seenName.has(k)) bad(`"${it.name}" appears twice (also row ${seenName.get(k)}).`); else seenName.set(k, rowNo);
+    for(const [s, i] of Object.entries(col.sizes)){
+      const p = parsePrice(cells[i]);
+      if(p.bad) bad(`Invalid ${s}ml price (found "${clean(cells[i])}").`); else if(!p.blank) it.prices[s] = p.v;
+    }
+    if(col.num >= 0 && clean(cells[col.num]) !== ''){
+      const n = Number(clean(cells[col.num]));
+      if(!Number.isInteger(n) || n < 1 || n > 100000) bad(`Invalid number "${clean(cells[col.num])}" in the SL / number column.`);
+      else { it.number = n; if(seenNum.has(n)) bad(`Number ${n} is used twice (also row ${seenNum.get(n)}).`); else seenNum.set(n, rowNo); }
+    }
+    if(col.brand >= 0 && clean(cells[col.brand]) !== '') it.brand = clean(cells[col.brand]).slice(0, 80);
+    if(col.juice >= 0 && clean(cells[col.juice]) !== ''){ const j = Number(clean(cells[col.juice])); if(!(j >= 0) || !Number.isFinite(j)) bad('Invalid juice level.'); else it.juice = j; }
+    if(col.bottle >= 0 && clean(cells[col.bottle]) !== ''){ const b = Number(clean(cells[col.bottle])); if(!(b >= 0) || !Number.isFinite(b)) bad('Invalid bottle size.'); else it.bottle = b; }
+    if(col.off >= 0){ const off = String(cells[col.off] || '').split(/[|/ ,]+/).map(Number).filter(Boolean); it.sizes = {}; SIZES.forEach(s => it.sizes[s] = !off.includes(s)); }
+    if(col.vis >= 0 && clean(cells[col.vis]) !== '') it.visible = !/^(no|false|0|hidden|hide|off)$/i.test(clean(cells[col.vis]));
+    if(!Object.keys(it.prices).length) out.warnings.push(`Row ${rowNo}: "${it.name}" has no prices, so it will stay hidden on the website until you add prices.`);
+    it.key = k; it.errored = out.errors.some(m => m.startsWith(`Row ${rowNo}:`));
+    out.items.push(it);
+  }
+  if(!out.items.length) out.errors.push('No perfumes found under the header row.');
+  return out;
+}
+let imp = null;
+function plan(opts){
+  const items = imp.items.filter(i => !(opts.skipBad && i.errored));
+  const byKey = new Map(products.map(p => [keyOf(p.name), p]));
+  const matchedIds = new Set(), res = {updates: [], inserts: [], juice: [], problems: [], news: [], same: 0, priceChanges: 0, renumbered: 0};
+  items.forEach(i => { const p = byKey.get(i.key); i.match = p || null; if(p) matchedIds.add(p.id); });
+  const reserved = new Map();                                     // numbers held by perfumes that are NOT in this CSV
+  products.forEach(p => { if(!matchedIds.has(p.id)) reserved.set(Number(p.number), p.name); });
+  const useNum = opts.useNum && imp.hasNum;
+  const final = new Map(); let top = Math.max(0, ...[...reserved.keys()]);
+  items.forEach(i => {
+    if(useNum && i.number) final.set(i, i.number);
+    else if(i.match) final.set(i, Number(i.match.number));
+  });
+  [...final.values()].forEach(n => { top = Math.max(top, n); });
+  items.forEach(i => { if(!final.has(i)) final.set(i, ++top); });
+  const holder = new Map([...reserved].map(([n, name]) => [n, {name, outside: true}]));
+  items.forEach(i => {
+    const n = final.get(i), h = holder.get(n);
+    if(h && h.outside) res.problems.push(`Row ${i.row}: number ${n} is already used by "${h.name}", which is not in this CSV. Untick "Use the SL numbers" or change that perfume first.`);
+    else if(h) res.problems.push(`Row ${i.row}: number ${n} would be used twice ("${i.name}" and "${h.name}").`);
+    else holder.set(n, {name: i.name});
+  });
+  const used = new Set(products.map(p => p.id)), taken = new Set();
+  items.forEach(i => {
+    const n = final.get(i);
+    if(i.match){
+      const p = i.match, prices = {...p.prices}; let pc = 0;
+      Object.entries(i.prices).forEach(([s, v]) => { if(prices[s] !== v){ prices[s] = v; pc++; } });
+      const next = {id: p.id, number: n, name: p.name, brand: i.brand !== null ? i.brand : (p.brand || ''), category: p.category || '', prices,
+        sizes: i.sizes || p.sizes, visible: i.visible !== null ? i.visible : p.visible !== false, sort_order: n};
+      const changed = pc || n !== Number(p.number) || next.brand !== (p.brand || '') || next.visible !== (p.visible !== false) || (i.sizes && JSON.stringify(i.sizes) !== JSON.stringify(p.sizes));
+      if(n !== Number(p.number)) res.renumbered++;
+      res.priceChanges += pc;
+      if(changed) res.updates.push(next); else res.same++;
+    } else {
+      const id = uid(i.name, taken); taken.add(id);
+      res.inserts.push({id, number: n, name: i.name, brand: i.brand || '', category: '', prices: i.prices, sizes: i.sizes || Object.fromEntries(SIZES.map(s => [s, true])), visible: i.visible !== false, sort_order: n});
+      res.news.push(i.name);
+    }
+    if(i.juice !== null || i.bottle !== null){
+      const id = i.match ? i.match.id : res.inserts[res.inserts.length - 1].id, old = juice[id] || {};
+      res.juice.push({product_id: id, ml: i.juice !== null ? i.juice : (old.ml ?? null), bottle_ml: i.bottle !== null ? i.bottle : (old.bottle_ml ?? null), note: old.note || '', updated_at: new Date().toISOString()});
+    }
+  });
+  return res;
+}
+function showImport(){
+  const out = $('impOut');
+  if(!imp){ out.innerHTML = ''; return; }
+  if(imp.errors.length && !imp.items.length){ out.innerHTML = `<div class="msg err"><b>This CSV cannot be imported.</b><ul class="errlist">${imp.errors.slice(0, 30).map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>`; return; }
+  const hasErr = imp.errors.length > 0;
+  const opts = {useNum: out.querySelector('#oNum') ? out.querySelector('#oNum').checked : true, skipBad: out.querySelector('#oSkip') ? out.querySelector('#oSkip').checked : false};
+  const errBox = `<div class="msg err"><b>${imp.errors.length} problem${imp.errors.length === 1 ? '' : 's'} found. ${opts.skipBad ? 'These rows will be skipped.' : 'Fix them in your CSV and upload again.'}</b><ul class="errlist">${imp.errors.slice(0, 30).map(e => `<li>${esc(e)}</li>`).join('')}${imp.errors.length > 30 ? `<li>…and ${imp.errors.length - 30} more</li>` : ''}</ul></div>`;
+  const skipBox = hasErr ? `<label class="radio"><input type="checkbox" id="oSkip" ${opts.skipBad ? 'checked' : ''}><span>Skip the rows with problems and import the rest</span></label>` : '';
+  if(hasErr && !opts.skipBad){ out.innerHTML = errBox + skipBox; if($('oSkip')) $('oSkip').onchange = () => showImport(); return; }
+  const pl = plan(opts), blocked = pl.problems.length > 0;
+  out.innerHTML = `
+    ${hasErr ? errBox : ''}
+    ${pl.problems.length ? `<div class="msg err"><ul class="errlist">${pl.problems.slice(0, 20).map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
+    ${imp.warnings.length ? `<div class="msg warn"><b>Heads up</b><ul class="errlist">${imp.warnings.slice(0, 10).map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
+    <div class="panel"><h3>What will happen</h3>
+      <p style="margin:8px 0 0"><b>${pl.inserts.length}</b> new perfumes added · <b>${pl.updates.length}</b> updated (${pl.priceChanges} price changes) · <b>${pl.same}</b> unchanged${imp.hasNum && opts.useNum ? ` · <b>${pl.renumbered}</b> change number` : ''}</p>
+      ${pl.news.length ? `<p class="help">New: ${esc(pl.news.slice(0, 12).join(', '))}${pl.news.length > 12 ? ` and ${pl.news.length - 12} more` : ''}. If one of these is an old perfume with a changed name, cancel and rename the old one first so it is not duplicated.</p>` : ''}
+      <p class="help">Blank price cells are left as they are. Photos, juice levels and perfume names of existing perfumes are never changed.${imp.ignored.length ? ` Ignored columns: ${esc(imp.ignored.join(', '))}.` : ''}</p>
+      ${imp.hasNum ? `<label class="radio"><input type="checkbox" id="oNum" ${opts.useNum ? 'checked' : ''}><span>Use the <b>SL / number</b> column from the CSV as the perfume numbers</span></label>` : ''}
+      ${skipBox}
+      <button class="btn dark" id="impGo" type="button" ${blocked || (!pl.inserts.length && !pl.updates.length) ? 'disabled' : ''}>Import</button>
+    </div>`;
+  const re = () => showImport();
+  if($('oNum')) $('oNum').onchange = re;
+  if($('oSkip')) $('oSkip').onchange = re;
+  $('impGo').onclick = () => busy($('impGo'), 'Importing…', () => doImport(pl));
+}
+async function doImport(pl){
+  status('busy', 'Importing…');
+  const rows = [...pl.updates, ...pl.inserts];
+  const ok = await run('Import', sb.from('products').upsert(rows));       // one request = all or nothing
+  if(!ok) return;
+  if(pl.juice.length && !await run('Juice import', sb.from('juice_levels').upsert(pl.juice))) return;
+  try{ await loadAll(); }catch(e){ toast('Imported, but could not refresh the list. Reload the page.', true); }
+  $('impOut').innerHTML = `<div class="msg ok"><b>CSV imported successfully ✓</b><br>${pl.inserts.length} added, ${pl.updates.length} updated. The website now shows the new list.</div>`;
+  imp = null; $('impText').value = '';
+  toast('CSV imported successfully ✓');
+}
+function checkCSV(text){ imp = text.trim() ? analyse(text) : null; showImport(); }
+$('impFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; if(!f) return;
+  if(f.size > 1024 * 1024){ $('impOut').innerHTML = '<div class="msg err">That file is over 1 MB, so it is probably not the right CSV.</div>'; return; }
+  const t = await f.text(); $('impText').value = t; checkCSV(t);
+});
+let it; $('impText').addEventListener('input', e => { clearTimeout(it); it = setTimeout(() => checkCSV(e.target.value), 300); });
+
+$('exportBtn').onclick = () => {
+  const q = v => { v = String(v ?? ''); return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; };
+  const head = ['SL', 'Perfume Name', 'Brand', ...SIZES.map(s => s + 'ml'), 'Juice', 'Bottle'];
+  const lines = products.map(p => { const j = juice[p.id] || {}; return [p.number, p.name, p.brand, ...SIZES.map(s => p.prices[s] || ''), j.ml ?? '', j.bottle_ml ?? ''].map(q).join(','); });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF' + [head.join(','), ...lines].join('\n')], {type: 'text/csv'}));
+  a.download = `khayr-perfumes-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+};
+
+/* =====================================================================
+   SECURITY TAB
+   ===================================================================== */
+async function renderSecurity(){
+  const box = $('secPanel');
+  box.innerHTML = '<p class="help">Loading…</p>';
+  const {data} = await sb.auth.mfa.listFactors();
+  const list = (data && data.totp) || [];
+  box.innerHTML = `
+    <h3>Two-factor authentication</h3>
+    <p style="margin:6px 0"><span class="pill ${list.length ? '' : 'amber'}">${list.length ? 'ON ✓' : 'OFF'}</span> Signed in as <b>${esc(adminEmail)}</b></p>
+    <div class="flist">${list.map(f => `<div class="factor"><span><b>${esc(f.friendly_name || 'Authenticator')}</b><br><span class="help" style="margin:0">Added ${esc(String(f.created_at || '').slice(0, 10))}</span></span>${list.length > 1 ? `<button class="btn sm danger" data-rmf="${esc(f.id)}">Remove</button>` : ''}</div>`).join('')}</div>
+    <div class="actions">
+      <button class="btn" id="secBackup">Add backup authenticator</button>
+      <button class="btn" id="secRe">Re-enrol (new QR code)</button>
+      <button class="btn danger" id="secOff">Disable 2FA</button>
+    </div>
+    <div id="secEnroll" style="margin-top:14px"></div>
+    <div class="sect">If you lose your authenticator phone</div>
+    <p class="help">Supabase does not offer one-time recovery codes, so recovery works like this:</p>
+    <ol class="help" style="padding-left:20px">
+      <li><b>Best:</b> add a <b>backup authenticator</b> above on a second phone, or in a password manager that supports 2FA codes (Authy, 1Password, Microsoft Authenticator). Any of them can log you in.</li>
+      <li><b>If everything is lost:</b> sign in to <b>supabase.com</b> with your GitHub account (the project owner), open <b>Authentication, Users</b>, find <b>${esc(adminEmail)}</b> and remove its MFA factors. Then log in here with your password and set up a new authenticator.</li>
+    </ol>
+    <div class="sect">Sessions</div>
+    <p class="help">Remember me keeps you logged in on this device for up to 30 days. Logging out ends it.</p>
+    <button class="btn" id="secAll">Log out of all devices</button>`;
+  $('secBackup').onclick = async () => { if(!await reauth()) return; enrollFlow($('secEnroll'), {onDone: async () => { toast('Backup authenticator added ✓'); renderSecurity(); }, onCancel: () => { $('secEnroll').innerHTML = ''; }}); };
+  $('secRe').onclick = async () => {
+    if(!await reauth()) return;
+    const old = list.map(f => f.id);
+    enrollFlow($('secEnroll'), {
+      onDone: async newId => { for(const id of old) await sb.auth.mfa.unenroll({factorId: id}); toast('New authenticator is active. The old one was removed ✓'); renderSecurity(); },
+      onCancel: () => { $('secEnroll').innerHTML = ''; }
+    });
+  };
+  $('secOff').onclick = async () => {
+    if(!await reauth()) return;
+    if(!confirm('Turn off two-factor authentication?\n\nUntil you set it up again, anyone who knows your password could add THEIR OWN authenticator. Only continue if you are about to set it up again right now.')) return;
+    for(const f of list){ const {error} = await sb.auth.mfa.unenroll({factorId: f.id}); if(error){ toast(friendly(error), true); return; } }
+    toast('2FA is off. Set it up again now.', true);
+    showGate();
+  };
+  box.querySelectorAll('[data-rmf]').forEach(b => b.onclick = async () => {
+    if(!await reauth() || !confirm('Remove this authenticator?')) return;
+    const {error} = await sb.auth.mfa.unenroll({factorId: b.dataset.rmf});
+    if(error) toast(friendly(error), true); else { toast('Authenticator removed'); renderSecurity(); }
+  });
+  $('secAll').onclick = async () => { if(confirm('Log out of every device, including this one?')) await logout('global'); };
+}
+
+/* =====================================================================
+   START
+   ===================================================================== */
+(async () => {
+  if(!configured()){
+    loginStep('credentials', window.supabase ? 'Supabase is not connected yet. Put your project URL and publishable key in config.js, then reload this page.' : 'Could not load the login system. Check your internet and reload.', 'warn');
+    return;
+  }
+  const remember = LS.get('khayr_admin_remember', '0') === '1';
+  $('lRemember').checked = remember || LS.get('khayr_admin_remember', null) === null;
+  sb = makeClient(remember);
+  sb.auth.onAuthStateChange(ev => { if(ev === 'SIGNED_OUT' && panelOpen){ loginStep('credentials', 'You were logged out.', 'warn'); } });
+  const until = Number(LS.get('khayr_admin_until', 0));
+  const {data: {session}} = await sb.auth.getSession();
+  if(session && remember && until && Date.now() > until){ await hardSignOut(); loginStep('credentials', 'Your saved login expired. Please log in again.', 'warn'); return; }
+  if(session) await afterPassword(); else loginStep('credentials');
+})();
+})();
+</script>
+</body>
+</html>
