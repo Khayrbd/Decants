@@ -64,6 +64,12 @@ details summary{cursor:pointer;color:var(--graphite);font-size:.9rem;margin:8px 
 .status{font-size:.85rem;color:var(--graphite);display:flex;align-items:center;gap:6px;white-space:nowrap}
 .status i{width:8px;height:8px;border-radius:50%;background:var(--green)}
 .status.busy i{background:var(--amber)} .status.bad{color:var(--red)} .status.bad i{background:var(--red)}
+.folders{background:var(--soft);border-bottom:1px solid var(--line)}
+.folders .wrap{display:flex;align-items:center;gap:10px;padding-top:8px;padding-bottom:8px}
+.folders .lbl{font-size:.82rem;color:var(--graphite);font-weight:600}
+.seg{display:inline-flex;background:var(--paper);border:1px solid var(--box);border-radius:12px;padding:3px;gap:3px}
+.seg button{border:0;background:none;height:38px;padding:0 18px;border-radius:9px;font-weight:700;letter-spacing:.04em;color:var(--graphite)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
 .nav{border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:58px;z-index:19}
 .nav .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 .nav .wrap::-webkit-scrollbar{display:none}
@@ -168,6 +174,50 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .toast.err{background:var(--red)}
 
+/* v4: categories, orders, connection */
+.catsel{width:auto;height:36px;font-size:.85rem;padding:0 8px;margin-top:6px;max-width:100%}
+.catsel.none{border-color:var(--amber);color:#6B4A0F}
+.row .tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:6px 0 4px}
+.copt{display:flex;align-items:center;gap:10px;border:1px solid var(--box);border-radius:10px;padding:10px 12px;cursor:pointer}
+.copt input{accent-color:var(--ink);width:18px;height:18px;margin:0}
+.copt:has(input:checked){border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.dgrid{display:grid;grid-template-columns:1fr;gap:14px;margin:14px 0}
+.tbox{border:1px solid var(--line);border-radius:14px;padding:14px}
+.tbox h3{margin:0 0 8px;font-size:.95rem;letter-spacing:.06em}
+.tbox .cards{margin:8px 0}
+.conn{display:grid;gap:6px;margin:12px 0}
+.conn div{display:flex;gap:8px;align-items:baseline;font-size:.92rem}
+.conn i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--box);display:inline-block}
+.conn .ok i{background:var(--green)} .conn .bad i{background:var(--red)} .conn .warn i{background:var(--amber)}
+.ocards{display:grid;gap:12px}
+.ocard{border:1px solid var(--line);border-radius:14px;padding:14px}
+.ocard.st-new{border-left:4px solid var(--ink)}
+.ocard.st-awaiting_advance{border-left:4px solid var(--amber)}
+.ocard.st-confirmed{border-left:4px solid var(--green)}
+.ocard.st-cancelled{opacity:.7}
+.ohead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.oid{font-weight:700;font-variant-numeric:tabular-nums}
+.odate{font-size:.85rem;color:var(--graphite)}
+.ost{font-size:.78rem;font-weight:700;letter-spacing:.04em;border-radius:999px;padding:3px 10px;border:1px solid var(--ink);white-space:nowrap}
+.ost.awaiting_advance{border-color:var(--amber);color:var(--amber)}
+.ost.confirmed{border-color:var(--green);color:var(--green)}
+.ost.cancelled{border-color:var(--box);color:var(--graphite)}
+.ogrid{display:grid;grid-template-columns:1fr;gap:10px 18px;margin:10px 0}
+.ocust{font-size:.92rem;line-height:1.5}
+.oitems{font-size:.92rem}
+.oitems .g{font-size:.74rem;letter-spacing:.08em;font-weight:700;color:var(--graphite);margin-top:6px}
+.oitems .i{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding:3px 0}
+.otot{display:flex;justify-content:space-between;font-weight:700;padding-top:6px}
+.ometa{display:flex;flex-wrap:wrap;gap:6px;font-size:.8rem;margin:6px 0 10px}
+.ometa span{border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--graphite)}
+.ometa .bad{border-color:#E7B4BD;color:var(--red)} .ometa .good{border-color:#BFDCC9;color:var(--green)}
+.typebox{display:flex;gap:8px;margin-bottom:12px}
+.typebox label{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border:1px solid var(--box);border-radius:10px;font-weight:700;letter-spacing:.04em;cursor:pointer}
+.typebox label:has(input:checked){background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.typebox input{position:absolute;opacity:0;pointer-events:none}
+@media (min-width:900px){ .dgrid{grid-template-columns:1fr 1fr} .ogrid{grid-template-columns:1fr 1.2fr} }
+
 @media (max-width:980px){
   .row{grid-template-columns:64px 1fr auto}
   .row .sizes{grid-column:1/-1}
@@ -220,14 +270,22 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <div class="wrap">
       <span class="logo">KHAYR</span><span class="tag">Admin</span>
       <span class="status" id="status"><i></i><span id="statusTxt">Saved</span></span>
-      <a class="btn sm" href="./" target="_blank" rel="noopener">View shop</a>
+      <a class="btn sm" id="viewShop" href="./" target="_blank" rel="noopener">View shop</a>
       <button class="btn sm" id="logout" type="button">Logout</button>
     </div>
   </header>
+  <div class="folders"><div class="wrap">
+    <span class="lbl">Product type</span>
+    <div class="seg" id="folderSeg" role="group" aria-label="Choose product type">
+      <button type="button" data-store="perfume" aria-pressed="true">PERFUME</button>
+      <button type="button" data-store="attar" aria-pressed="false">ATTAR</button>
+    </div>
+  </div></div>
   <nav class="nav" aria-label="Admin sections"><div class="wrap" id="nav">
     <button data-go="dashboard">Dashboard</button>
-    <button data-go="perfumes">Perfumes</button>
-    <button data-go="add">Add Perfume</button>
+    <button data-go="orders">Orders <span id="navNew"></span></button>
+    <button data-go="perfumes" data-w="Many">Perfumes</button>
+    <button data-go="add">Add Product</button>
     <button data-go="sizes">ML Settings</button>
     <button data-go="import">CSV Import</button>
     <button data-go="security">Security</button>
@@ -237,27 +295,43 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <!-- Dashboard -->
     <section class="view" id="v-dashboard">
       <h2>Dashboard</h2>
-      <div class="cards" id="dashCards"></div>
-      <div class="panel"><h3>Sizes customers can see</h3><div class="pills" id="dashSizes"></div></div>
+      <div class="cards" id="dashOrders"></div>
+      <div class="dgrid" id="dashTypes"></div>
+      <div class="panel"><h3>Connections</h3><div class="conn" id="dashConn"><div><i></i>Checking…</div></div></div>
       <div class="actions" style="margin-top:14px">
-        <button class="btn dark" data-go="add">+ Add perfume</button>
+        <button class="btn dark" data-go="add">+ Add product</button>
         <button class="btn" data-go="import">Import CSV</button>
-        <button class="btn" id="exportBtn">Export CSV</button>
+        <button class="btn" id="exportBtn">Export <span data-w="FOLDER">PERFUME</span> CSV</button>
+        <button class="btn" id="backupBtn">Download backup (JSON)</button>
       </div>
     </section>
 
-    <!-- Perfumes -->
-    <section class="view hidden" id="v-perfumes">
-      <h2>Perfumes</h2>
+    <!-- Orders -->
+    <section class="view hidden" id="v-orders">
+      <h2>Orders</h2>
+      <p class="help">Orders from the website (perfume and attar together). Confirm an order only after the advance is paid: that is when it is reported to Meta as a Purchase.</p>
       <div class="findbar">
-        <input type="search" id="q" placeholder="Search name, brand or number" aria-label="Search perfumes">
-        <div class="chips" id="filters" role="group" aria-label="Filter">
-          <button class="chip" data-f="all" aria-pressed="true">All</button>
-          <button class="chip" data-f="low" aria-pressed="false">Low juice</button>
-          <button class="chip" data-f="noimg" aria-pressed="false">No image</button>
-          <button class="chip" data-f="hidden" aria-pressed="false">Hidden</button>
-          <button class="chip" data-f="sizeoff" aria-pressed="false">Sizes off</button>
+        <input type="search" id="oq" placeholder="Search order ID, name or phone" aria-label="Search orders">
+        <div class="chips" id="ofilters" role="group" aria-label="Order status">
+          <button class="chip" data-of="open" aria-pressed="true">To do</button>
+          <button class="chip" data-of="new" aria-pressed="false">New</button>
+          <button class="chip" data-of="awaiting_advance" aria-pressed="false">Awaiting Advance</button>
+          <button class="chip" data-of="confirmed" aria-pressed="false">Confirmed</button>
+          <button class="chip" data-of="cancelled" aria-pressed="false">Cancelled</button>
+          <button class="chip" data-of="all" aria-pressed="false">All</button>
         </div>
+        <button class="btn sm" id="oReload" type="button">Refresh</button>
+      </div>
+      <p class="summary" id="osummary"></p>
+      <div class="ocards" id="olist"></div>
+    </section>
+
+    <!-- Products -->
+    <section class="view hidden" id="v-perfumes">
+      <h2 data-w="Many">Perfumes</h2>
+      <div class="findbar">
+        <input type="search" id="q" placeholder="Search name, brand or number" aria-label="Search products">
+        <div class="chips" id="filters" role="group" aria-label="Filter"></div>
         <label class="stepbox">Juice step <select id="jstep"><option>1</option><option>3</option><option>5</option><option>6</option><option>10</option></select> ml</label>
       </div>
       <p class="summary" id="summary"></p>
@@ -267,15 +341,17 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <!-- ML settings -->
     <section class="view hidden" id="v-sizes">
       <h2>ML Settings</h2>
-      <p class="help">Turn a size OFF to hide it everywhere customers look: cards, filters and cart.</p>
-      <div class="gsizes" id="gsizes"></div>
+      <p class="help">Perfume and Attar sizes are separate. Turning a size OFF hides it from customers (cards, filters and cart). Prices are never deleted: turn it ON again and the old prices come back.</p>
+      <div class="panel"><h3>PERFUME sizes</h3><div class="gsizes" id="gsizes-perfume"></div>
+        <label class="fl" style="margin:12px 0 0;max-width:320px"><span>Low juice alert for perfumes (ml left or less)</span><input type="number" id="sLow-perfume" min="0" inputmode="numeric"></label></div>
+      <div class="panel"><h3>ATTAR sizes</h3><div class="gsizes" id="gsizes-attar" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div>
+        <label class="fl" style="margin:12px 0 0;max-width:320px"><span>Low juice alert for attars (ml left or less)</span><input type="number" id="sLow-attar" min="0" inputmode="numeric"></label></div>
       <div class="panel">
         <h3>Shop settings</h3>
         <div class="g2" style="margin-top:10px">
           <label class="fl"><span>WhatsApp number for orders</span><input type="text" id="sWa" inputmode="tel" placeholder="+8801XXXXXXXXX"></label>
-          <label class="fl"><span>Low juice alert at (ml left or less)</span><input type="number" id="sLow" min="0" inputmode="numeric"></label>
         </div>
-        <label class="fl"><span>Note shown when customers review their order (optional)</span><input type="text" id="sNote"></label>
+        <label class="fl"><span>Note shown in the customer's cart (optional)</span><input type="text" id="sNote"></label>
         <button class="btn dark" id="saveSettings" type="button">Save settings</button>
       </div>
     </section>
@@ -283,7 +359,13 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <!-- CSV import -->
     <section class="view hidden" id="v-import">
       <h2>Import / Update CSV</h2>
-      <p class="help">Needs a <code>Perfume Name</code> column and size columns like <code>3ml, 6ml, 10ml, 15ml, 30ml</code>. Optional: <code>SL</code> (perfume number), <code>Brand</code>, <code>Juice</code>. Other columns are ignored. Matching perfumes are updated, new ones are added, nothing is deleted, and photos are kept.</p>
+      <div class="folders" style="background:none;border:0;margin:10px 0"><span class="lbl">Import into&nbsp;</span>
+        <div class="seg" id="impSeg" role="group" aria-label="Import into">
+          <button type="button" data-store="perfume" aria-pressed="true">PERFUME</button>
+          <button type="button" data-store="attar" aria-pressed="false">ATTAR</button>
+        </div></div>
+      <p class="help">Importing into <b data-w="FOLDER">PERFUME</b>. Needs a name column (<code>Perfume Name</code>, <code>Attar Name</code> or <code>Name</code>) and size columns like <code id="impSizes">3ml, 6ml, 10ml, 15ml, 30ml</code>. Optional: <code>SL</code> (number), <code>Brand</code>, <code>Category</code> (<span id="impCats"></span>), <code>Juice</code>. Matching products are updated, new ones are added, nothing is deleted, and photos are kept. Blank cells change nothing.</p>
+      <label class="radio" style="margin:4px 0 14px"><input type="checkbox" id="impJuice"><span><b>Allow CSV to Update Juice Levels</b><br><span class="help" style="margin:0">Leave this OFF to keep your current juice levels, even if the CSV has a Juice column.</span></span></label>
       <label class="fl"><span>Choose a CSV file</span><input type="file" id="impFile" accept=".csv,text/csv,text/plain"></label>
       <label class="fl"><span>Or paste CSV text</span><textarea id="impText" rows="4"></textarea></label>
       <div id="impOut" aria-live="polite"></div>
@@ -302,9 +384,20 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
   <div class="dh"><h3 id="editTitle">Add perfume</h3><button class="x" type="button" id="eClose" aria-label="Close">✕</button></div>
   <div class="db">
     <div id="eMsg"></div>
+    <div id="eTypeBox">
+      <div class="fl" style="margin-bottom:4px"><span style="font-weight:500;font-size:.88rem">Product type (choose first)</span></div>
+      <div class="typebox" role="radiogroup" aria-label="Product type">
+        <label><input type="radio" name="eType" value="perfume">PERFUME</label>
+        <label><input type="radio" name="eType" value="attar">ATTAR</label>
+      </div>
+    </div>
     <p class="help" id="editNo" style="margin-top:0"></p>
-    <label class="fl"><span>Perfume Name</span><input type="text" id="eName" autocomplete="off" maxlength="120"></label>
+    <label class="fl"><span id="eNameLbl">Perfume Name</span><input type="text" id="eName" autocomplete="off" maxlength="120"></label>
     <label class="fl"><span>Brand Name</span><input type="text" id="eBrand" autocomplete="off" maxlength="80" placeholder="Optional"></label>
+    <div class="fl"><span style="font-weight:500;font-size:.88rem">Category</span>
+      <div class="cats" id="eCats" role="radiogroup" aria-label="Category"></div>
+      <p class="help" id="eLegacy" hidden></p>
+    </div>
     <div class="sect">Prices</div>
     <p class="help" style="margin-top:0">Leave a price empty, or turn Show off, to hide that size for this perfume only.</p>
     <table class="ptab"><thead><tr><th>Size</th><th>Price</th><th>Show</th></tr></thead><tbody id="ePrices"></tbody></table>
@@ -332,8 +425,21 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
   <div class="df">
     <button class="btn danger" type="button" id="eDelete" style="margin-right:auto">Delete</button>
     <button class="btn" type="button" id="eCancel">Cancel</button>
-    <button class="btn dark" type="button" id="eSave">Save perfume</button>
+    <button class="btn dark" type="button" id="eSave">Save</button>
   </div>
+</dialog>
+
+<!-- ================= CONFIRM PURCHASE ================= -->
+<dialog id="cfDlg" aria-labelledby="cfTitle">
+  <div class="dh"><h3 id="cfTitle">Confirm purchase</h3><button class="x" type="button" id="cfClose" aria-label="Close">✕</button></div>
+  <div class="db">
+    <div id="cfMsg"></div>
+    <p style="margin-top:0">Order <b id="cfId"></b> · <span id="cfWho"></span></p>
+    <p class="help">Confirm only after the customer paid the advance. A confirmed order cannot be changed back, and it is sent to Meta once as a <b>Purchase</b>.</p>
+    <label class="fl"><span>Sale value (taka)</span><input type="number" id="cfValue" min="1" step="1" inputmode="numeric"></label>
+    <label class="fl"><span>Note (optional, only you see it)</span><input type="text" id="cfNote" maxlength="200" placeholder="e.g. bKash TrxID, delivery changes"></label>
+  </div>
+  <div class="df"><button class="btn" type="button" id="cfCancel">Cancel</button><button class="btn dark" type="button" id="cfGo">Confirm Purchase</button></div>
 </dialog>
 
 <!-- ================= RE-VERIFY ================= -->
@@ -354,14 +460,26 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 'use strict';
 const CFG = window.SHOP_CONFIG || {};
 const SBC = CFG.supabase || {};
-const SIZES = CFG.sizes || [3,6,10,15,30];
+/* One products table with two product types. They share login, photos bucket and security.
+   Sizes and categories are separate per type. */
+const STORES = {
+  perfume: {key: 'perfume', label: 'PERFUME', one: 'perfume', One: 'Perfume', table: 'products', juice: 'juice_levels', settingsId: 1, sizes: [3,6,10,15,30], idPrefix: '',       shop: 'perfumes.html', lowJuice: 15,
+            cats: [['niche','Niche'],['designer','Designer'],['middle_eastern','Middle Eastern']]},
+  attar:   {key: 'attar',   label: 'ATTAR',   one: 'attar',   One: 'Attar',   table: 'products', juice: 'juice_levels', settingsId: 2, sizes: [1,3,6,12],      idPrefix: 'attar-', shop: 'attar.html',    lowJuice: 10,
+            cats: [['natural','Natural'],['semi_natural','Semi-Natural'],['synthetic','Synthetic']]}
+};
+let F = STORES[(new URLSearchParams(location.search).get('store') || localStorage.getItem('khayr_admin_store') || 'perfume') === 'attar' ? 'attar' : 'perfume'];
+let SIZES = F.sizes;
 const BUCKET = SBC.imageBucket || 'perfume-images';
 const DOMAIN = CFG.adminEmailDomain || 'khayr.shop';
 const DEF_SET = {whatsapp:'8801673080800', sizesEnabled:{}, orderNote:'', lowJuiceMl:15};
+const SB_URL = String(SBC.url || '').replace(/\/$/, '');
+const FN_URL = SB_URL + '/functions/v1/khayr-api';
+const catLabel = (type, c) => (STORES[type].cats.find(x => x[0] === c) || [])[1] || '';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const price = n => String(Math.round(Number(n) || 0));
-const clean = s => String(s || '').replace(/\s+/g, ' ').trim();
+const clean = s => String(s || '').replace(/[\u200B-\u200D\u2060\uFEFF]/g, '').replace(/\s+/g, ' ').trim();
 const LS = {
   get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : v; } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem(k, v); } catch(e){} },
@@ -371,6 +489,9 @@ const AUTH_KEY = 'khayr-admin-auth';
 
 let sb = null;
 let products = [], settings = {...DEF_SET}, juice = {};
+let allProducts = [];                          // both types (products = the chosen type only)
+let setRows = {1: {}, 2: {}};                  // raw settings rows, saved back with only the changed keys
+let orders = [], ordersLoaded = false, ofilter = 'open', oquery = '';
 let adminEmail = '';
 let recentAuth = 0;
 let filter = 'all', query = '', current = 'dashboard';
@@ -383,7 +504,8 @@ function toast(t, err){ const el = $('toast'); el.textContent = t; el.classList.
 function friendly(e){
   const m = String((e && e.message) || e || 'Something went wrong.');
   if(/row-level security|permission denied|not allowed|jwt|aal/i.test(m)) return 'Your login is not fully verified. Please log out and log in again with your authenticator code.';
-  if(/column .*number|42703/i.test(m)) return 'The database needs the latest setup. Run the new supabase-setup.sql in Supabase, then reload.';
+  if(/product_type|public\.orders|relation .* does not exist|could not find the .*(table|function)|42703|42P01|PGRST20[0-9]/i.test(m)) return 'The database needs the version 4 upgrade. Run 01-khayr-upgrade.sql in the Supabase SQL Editor, then reload this page.';
+  if(/products_category_check/i.test(m)) return 'That category is not allowed for this product type.';
   if(/duplicate key|unique/i.test(m)) return 'That value already exists (duplicate). ' + m;
   if(/failed to fetch|network/i.test(m)) return 'No internet connection. Please try again.';
   return m;
@@ -586,15 +708,34 @@ function reauth(){
 async function loadAll(){
   const [pr, st, jl] = await Promise.all([
     sb.from('products').select('*').order('number', {ascending: true}),
-    sb.from('settings').select('data').eq('id', 1),
+    sb.from('settings').select('id,data').in('id', [1, 2]),
     sb.from('juice_levels').select('*')
   ]);
   const err = pr.error || st.error || jl.error;
   if(err) throw err;
-  products = pr.data.map(p => ({...p, prices: p.prices || {}, sizes: p.sizes || {}}));
-  settings = {...DEF_SET, ...((st.data[0] && st.data[0].data) || {})};
-  settings.sizesEnabled = {...(settings.sizesEnabled || {})};
+  if(pr.data.length && !('product_type' in pr.data[0])) throw new Error('column products.product_type does not exist');
+  allProducts = pr.data.map(p => ({...p, prices: p.prices || {}, sizes: p.sizes || {}, category: p.category || ''}));
+  setRows = {1: {}, 2: {}};
+  st.data.forEach(r => { setRows[r.id] = r.data || {}; });
   juice = {}; jl.data.forEach(j => juice[j.product_id] = j);
+  useType();
+}
+/* settings of one type, with safe defaults (never saved back as a whole) */
+function settingsOf(type){
+  const T = STORES[type], raw = setRows[T.settingsId] || {};
+  return {...DEF_SET, ...setRows[1], lowJuiceMl: T.lowJuice, ...raw, sizesEnabled: {...(raw.sizesEnabled || {})}};
+}
+function useType(){
+  products = allProducts.filter(p => p.product_type === F.key);
+  settings = settingsOf(F.key);
+  SIZES = F.sizes;
+}
+async function saveSettingsRow(type, changes){
+  const id = STORES[type].settingsId;
+  const next = {...(setRows[id] || {}), ...changes};
+  const ok = await run('Settings', sb.from('settings').upsert({id, data: next}));
+  if(ok){ setRows[id] = next; useType(); }
+  return ok;
 }
 async function openPanel(){
   try{
@@ -610,8 +751,10 @@ async function openPanel(){
   }
   $('loginView').classList.add('hidden'); $('panel').classList.remove('hidden'); panelOpen = true; $('gateBox').innerHTML = '';
   $('jstep').value = LS.get('khayr_jstep', '1');
+  relabel();
   status('ok', 'Saved ✓');
   go(current === 'add' ? 'dashboard' : current);
+  loadOrders(true);
 }
 
 /* helpers on products */
@@ -625,12 +768,39 @@ const isLow = id => hasJ(id) && Number(juice[id].ml) <= Number(settings.lowJuice
 const hasImg = p => !!(p.thumb_path || p.image_path);
 const keyOf = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 const maxNumber = () => products.reduce((m, p) => Math.max(m, Number(p.number) || 0), 0);
-function uid(name, taken){
-  const b = String(name || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'perfume';
+function uid(name, taken, T){
+  T = T || F;
+  const b = T.idPrefix + (String(name || '').normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || T.one);
   let id = b, n = 2; const t = taken || new Set();
-  while(products.some(p => p.id === id) || t.has(id)) id = `${b}-${n++}`;
+  while(allProducts.some(p => p.id === id) || t.has(id)) id = `${b}-${n++}`;   // ids are unique across perfume AND attar
   return id;
 }
+
+/* =====================================================================
+   FOLDERS: PERFUME / ATTAR
+   ===================================================================== */
+function relabel(){
+  const W = {Many: `${F.One}s`, FOLDER: F.label};
+  document.querySelectorAll('[data-w]').forEach(el => { if(W[el.dataset.w]) el.textContent = W[el.dataset.w]; });
+  document.querySelectorAll('#folderSeg button, #impSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.store === F.key));
+  $('viewShop').href = F.shop;
+  $('q').placeholder = `Search ${F.one} name, brand or number`;
+  $('impSizes').textContent = SIZES.map(z => z + 'ml').join(', ');
+  $('impCats').textContent = F.cats.map(c => c[1]).join(', ');
+  buildFilters();
+  document.title = `KHAYR Admin · ${F.label}`;
+}
+function switchFolder(key){
+  if(!STORES[key] || key === F.key) return;
+  flushJuice();
+  F = STORES[key]; LS.set('khayr_admin_store', key);
+  query = ''; $('q').value = ''; filter = 'all'; imp = null; $('impText').value = ''; $('impOut').innerHTML = ''; $('impFile').value = '';
+  useType(); relabel();
+  go(current === 'add' ? 'perfumes' : current);
+  toast(`${F.label} selected`);
+}
+$('folderSeg').addEventListener('click', e => { const b = e.target.closest('[data-store]'); if(b && panelOpen) switchFolder(b.dataset.store); });
+$('impSeg').addEventListener('click', e => { const b = e.target.closest('[data-store]'); if(b && panelOpen) switchFolder(b.dataset.store); });
 
 /* =====================================================================
    NAVIGATION
@@ -638,37 +808,106 @@ function uid(name, taken){
 function go(view, opt){
   if(view === 'add'){ go('perfumes'); openEdit(null); return; }
   current = view;
-  ['dashboard', 'perfumes', 'sizes', 'import', 'security'].forEach(v => $('v-' + v).classList.toggle('hidden', v !== view));
+  ['dashboard', 'orders', 'perfumes', 'sizes', 'import', 'security'].forEach(v => $('v-' + v).classList.toggle('hidden', v !== view));
   document.querySelectorAll('#nav button').forEach(b => b.setAttribute('aria-current', b.dataset.go === view ? 'page' : 'false'));
+  if(opt && opt.type && opt.type !== F.key) switchFolder(opt.type);
   if(opt && opt.filter) setFilter(opt.filter);
+  if(opt && opt.ofilter) setOFilter(opt.ofilter);
   if(view === 'dashboard') renderDashboard();
+  if(view === 'orders') loadOrders();
   if(view === 'perfumes') render();
   if(view === 'sizes') renderSizes();
   if(view === 'security') renderSecurity();
   window.scrollTo(0, 0);
 }
-document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if(b && panelOpen){ go(b.dataset.go, b.dataset.filter ? {filter: b.dataset.filter} : null); } });
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if(b && panelOpen){ go(b.dataset.go, {filter: b.dataset.filter, type: b.dataset.type, ofilter: b.dataset.ofilter}); } });
 
 /* =====================================================================
    DASHBOARD
    ===================================================================== */
-function renderDashboard(){
-  const total = products.length, on = products.filter(shown).length;
-  const low = products.filter(p => isLow(p.id)).length, noImg = products.filter(p => !hasImg(p)).length;
-  const noPrice = products.filter(p => !SIZES.some(s => pr(p, s) > 0)).length;
-  $('dashCards').innerHTML = `
-    <button class="stat" data-go="perfumes" data-filter="all"><b>${total}</b><span>Total perfumes</span></button>
-    <button class="stat" data-go="perfumes" data-filter="all"><b>${on}</b><span>Showing on website</span></button>
-    <button class="stat ${low ? 'warn' : ''}" data-go="perfumes" data-filter="low"><b>${low}</b><span>Low juice (${esc(settings.lowJuiceMl)} ml or less)</span></button>
-    <button class="stat" data-go="perfumes" data-filter="noimg"><b>${noImg}</b><span>Without images</span></button>
-    ${noPrice ? `<button class="stat warn" data-go="perfumes" data-filter="hidden"><b>${noPrice}</b><span>With no prices (hidden)</span></button>` : ''}`;
-  $('dashSizes').innerHTML = SIZES.map(s => `<span class="pill ${gOn(s) ? '' : 'off'}">${s}ml ${gOn(s) ? 'ON' : 'OFF'}</span>`).join('');
+function typeStats(type){
+  const T = STORES[type], st = settingsOf(type), list = allProducts.filter(p => p.product_type === type);
+  const on = s => st.sizesEnabled[s] !== false;
+  const showing = list.filter(p => p.visible !== false && T.sizes.some(s => on(s) && p.sizes[s] !== false && pr(p, s) > 0)).length;
+  const low = list.filter(p => hasJ(p.id) && Number(juice[p.id].ml) <= Number(st.lowJuiceMl)).length;
+  return {T, st, on, total: list.length, showing, low, noImg: list.filter(p => !hasImg(p)).length, uncat: list.filter(p => !p.category).length};
 }
+function renderDashboard(){
+  $('dashTypes').innerHTML = ['perfume', 'attar'].map(type => {
+    const x = typeStats(type);
+    return `<div class="tbox"><h3>${x.T.label}</h3>
+      <div class="cards">
+        <button class="stat" data-go="perfumes" data-type="${type}" data-filter="all"><b>${x.total}</b><span>Total</span></button>
+        <button class="stat ${x.total && !x.showing ? 'warn' : ''}" data-go="perfumes" data-type="${type}" data-filter="all"><b>${x.showing}</b><span>On the website</span></button>
+        <button class="stat ${x.low ? 'warn' : ''}" data-go="perfumes" data-type="${type}" data-filter="low"><b>${x.low}</b><span>Low juice (${esc(x.st.lowJuiceMl)} ml or less)</span></button>
+        <button class="stat" data-go="perfumes" data-type="${type}" data-filter="noimg"><b>${x.noImg}</b><span>No image</span></button>
+        <button class="stat ${x.uncat ? 'warn' : ''}" data-go="perfumes" data-type="${type}" data-filter="uncat"><b>${x.uncat}</b><span>Uncategorised</span></button>
+      </div>
+      <div class="pills">${x.T.sizes.map(s => `<span class="pill ${x.on(s) ? '' : 'off'}">${s}ml ${x.on(s) ? 'ON' : 'OFF'}</span>`).join('')}</div>
+      ${x.total && !x.showing ? `<p class="help" style="margin:8px 0 0">Nothing shows on the website yet. Turn sizes ON in <a href="#" data-go="sizes">ML Settings</a>.</p>` : ''}
+    </div>`;
+  }).join('');
+  renderOrderStats();
+  checkConnections();
+}
+function renderOrderStats(){
+  if(!ordersLoaded){ $('dashOrders').innerHTML = ''; loadOrders(true); return; }
+  const n = s => orders.filter(o => o.status === s).length;
+  const today = dhakaDay(new Date()), todayN = orders.filter(o => dhakaDay(new Date(o.created_at)) === today).length;
+  $('dashOrders').innerHTML = `
+    <button class="stat ${n('new') ? 'warn' : ''}" data-go="orders" data-ofilter="new"><b>${n('new')}</b><span>New orders</span></button>
+    <button class="stat" data-go="orders" data-ofilter="awaiting_advance"><b>${n('awaiting_advance')}</b><span>Awaiting advance</span></button>
+    <button class="stat" data-go="orders" data-ofilter="confirmed"><b>${n('confirmed')}</b><span>Confirmed</span></button>
+    <button class="stat" data-go="orders" data-ofilter="all"><b>${todayN}</b><span>Orders today</span></button>`;
+}
+/* Is the Edge Function there, with JWT check OFF, and are Google Sheet + Meta connected? */
+let connCache = null;
+async function checkConnections(){
+  const box = $('dashConn');
+  const line = (kind, text) => `<div class="${kind}"><i></i><span>${text}</span></div>`;
+  if(connCache && Date.now() - connCache.at < 60000){ box.innerHTML = connCache.html; return; }
+  let html = '';
+  try{
+    const r = await fetch(FN_URL, {headers: {apikey: SBC.anonKey}, cache: 'no-store'});
+    if(r.status === 404) html = line('bad', 'Order system (Edge Function <code>khayr-api</code>) is not deployed yet. Customers can still send orders on WhatsApp, but they are not saved here.');
+    else if(r.status === 401) html = line('bad', 'Edge Function <code>khayr-api</code> has <b>Verify JWT</b> turned ON. Turn it OFF in Supabase, or customers cannot place orders.');
+    else if(!r.ok) html = line('bad', `Edge Function answered ${r.status}. Check it in Supabase.`);
+    else {
+      html = line('ok', 'Order system (Edge Function) is working.');
+      const st = await callFn({action: 'admin_status'});
+      if(st && st.ok){
+        html += st.sheets ? line('ok', 'Google Sheet connected.') : line('warn', 'Google Sheet not connected (add SHEETS_WEBHOOK_URL and SHEETS_SHARED_SECRET in Supabase secrets).');
+        html += st.meta ? line(st.metaTestMode ? 'warn' : 'ok', `Meta Conversions API connected (${esc(st.metaApiVersion)})${st.metaTestMode ? '. <b>Test mode is ON</b>: remove META_TEST_EVENT_CODE when testing is finished.' : '.'}`) : line('warn', 'Meta Conversions API not connected (add META_PIXEL_ID and META_CAPI_ACCESS_TOKEN in Supabase secrets).');
+      } else html += line('bad', esc((st && st.error) || 'Could not read the connection status.'));
+    }
+  }catch(e){ html = line('bad', 'Could not reach the order system. Check your internet.'); }
+  connCache = {at: Date.now(), html};
+  box.innerHTML = html;
+}
+async function callFn(body){
+  try{
+    const {data: {session}} = await sb.auth.getSession();
+    if(!session) return {ok: false, error: 'Please log in again.'};
+    const r = await fetch(FN_URL, {method: 'POST', headers: {'Content-Type': 'application/json', apikey: SBC.anonKey, Authorization: 'Bearer ' + session.access_token}, body: JSON.stringify(body)});
+    if(r.status === 404) return {ok: false, error: 'The Edge Function khayr-api is not deployed yet.'};
+    const j = await r.json().catch(() => null);
+    return j || {ok: false, error: `The order system answered ${r.status}.`};
+  }catch(e){ return {ok: false, error: 'Could not reach the order system. Check your internet.'}; }
+}
+$('backupBtn').onclick = () => busy($('backupBtn'), 'Preparing…', async () => {
+  const o = await sb.from('orders').select('*').order('created_at', {ascending: false}).limit(5000);
+  const data = {made: new Date().toISOString(), products: allProducts, juice_levels: Object.values(juice), settings: setRows, orders: o.error ? [] : o.data};
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], {type: 'application/json'}));
+  a.download = `khayr-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  toast(`Backup downloaded ✓ (${allProducts.length} products${o.error ? '' : `, ${o.data.length} orders`})`);
+});
 
 /* =====================================================================
    PERFUME LIST
    ===================================================================== */
-const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const norm = s => String(s || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();   // Rosé = Rose
 function filtered(){
   const q = norm(query.replace(/^\s*#/, '')), words = q.split(' ').filter(Boolean);
   return products.filter(p => {
@@ -678,6 +917,8 @@ function filtered(){
       if(!hit) return false;
     }
     if(filter === 'hidden') return !shown(p);
+    if(filter === 'uncat') return !p.category;
+    if(filter.startsWith('cat:')) return p.category === filter.slice(4);
     if(filter === 'low') return isLow(p.id);
     if(filter === 'noimg') return !hasImg(p);
     if(filter === 'sizeoff') return SIZES.some(s => !pOn(p, s) || !pr(p, s));
@@ -696,8 +937,15 @@ function rowHTML(p){
   return `<div class="row ${vis ? '' : 'off'}" data-row="${esc(p.id)}">
     <button class="thumb" data-edit="${esc(p.id)}" aria-label="Photo of ${esc(p.name)}. Tap to change">${th ? `<img src="${esc(imgUrl(th))}" alt="" loading="lazy" width="64" height="64">` : '<span>No image<br>Tap to add</span>'}</button>
     <div><div class="nm"><span class="no">#${esc(p.number)}</span> ${esc(p.name)} ${vis ? '' : '<span class="pill">Hidden</span>'} ${isLow(p.id) ? '<span class="pill amber">Low juice</span>' : ''}</div>
-      <div class="sub">${esc(p.brand || '')}</div></div>
-    <div class="sizes">${chips}</div>
+      <div class="sub">${esc(p.brand || '')}${p.legacy_category ? ` · old category: ${esc(p.legacy_category)}` : ''}</div>
+      <div class="tools">
+        <select class="catsel ${p.category ? '' : 'none'}" data-cat="${esc(p.id)}" aria-label="Category of ${esc(p.name)}">
+          <option value="" ${p.category ? '' : 'selected'}>Uncategorised</option>
+          ${F.cats.map(([c, l]) => `<option value="${c}" ${p.category === c ? 'selected' : ''}>${esc(l)}</option>`).join('')}
+        </select>
+        <button class="btn sm" type="button" data-adlink="${esc(p.id)}" title="Copy a link that opens this product on the website">Copy ad link</button>
+      </div></div>
+    <div class="sizes" style="grid-template-columns:repeat(${SIZES.length},minmax(0,1fr))">${chips}</div>
     <div class="juice ${isLow(p.id) ? 'low' : ''}">
       <div class="jctl"><button type="button" data-jstep="-1" data-id="${esc(p.id)}" aria-label="Less juice for ${esc(p.name)}">−</button><input type="number" min="0" step="0.5" inputmode="decimal" value="${has ? esc(j.ml) : ''}" placeholder="–" data-jin="${esc(p.id)}" aria-label="ml left for ${esc(p.name)}"><button type="button" data-jstep="1" data-id="${esc(p.id)}" aria-label="More juice for ${esc(p.name)}">+</button><span>ml</span></div>
       ${pct !== null ? `<div class="jbar"><i style="width:${pct}%"></i></div>` : ''}
@@ -712,8 +960,8 @@ function rowHTML(p){
 function render(){
   const list = filtered(), total = products.length;
   const low = products.filter(p => isLow(p.id)).length;
-  $('summary').textContent = `${total} perfumes, ${products.filter(shown).length} on the website` + (low ? `, ${low} low on juice` : '') + (list.length !== total ? `. Showing ${list.length}.` : '.');
-  $('list').innerHTML = list.length ? list.map(rowHTML).join('') : `<div class="empty">${total ? 'Nothing matches this search or filter.' : 'No perfumes yet. Use CSV Import or Add Perfume.'}</div>`;
+  $('summary').textContent = `${total} ${F.one}s, ${products.filter(shown).length} on the website` + (low ? `, ${low} low on juice` : '') + (list.length !== total ? `. Showing ${list.length}.` : '.');
+  $('list').innerHTML = list.length ? list.map(rowHTML).join('') : `<div class="empty">${total ? 'Nothing matches this search or filter.' : `No ${F.one}s yet. Use CSV Import or Add ${F.One}.`}</div>`;
 }
 function renderRow(id){
   setTimeout(() => {
@@ -726,7 +974,12 @@ function renderRow(id){
     if(sel){ const n = document.querySelector(`[data-row="${CSS.escape(id)}"] ${sel}`); if(n) n.focus(); }
   }, 0);
 }
-function setFilter(f){ filter = f; [...$('filters').children].forEach(x => x.setAttribute('aria-pressed', x.dataset.f === f)); }
+function buildFilters(){
+  const list = [['all', 'All'], ['uncat', 'Uncategorised'], ...F.cats.map(([c, l]) => ['cat:' + c, l]), ['low', 'Low juice'], ['noimg', 'No image'], ['hidden', 'Hidden'], ['sizeoff', 'Sizes off']];
+  if(!list.some(x => x[0] === filter)) filter = 'all';
+  $('filters').innerHTML = list.map(([f, l]) => `<button class="chip" data-f="${f}" aria-pressed="${f === filter}">${esc(l)}</button>`).join('');
+}
+function setFilter(f){ filter = f; buildFilters(); }
 $('q').addEventListener('input', e => { query = e.target.value; render(); });
 $('filters').addEventListener('click', e => { const b = e.target.closest('.chip'); if(!b) return; setFilter(b.dataset.f); render(); });
 $('jstep').addEventListener('change', e => LS.set('khayr_jstep', e.target.value));
@@ -736,18 +989,37 @@ $('list').addEventListener('click', e => {
   if(t){
     const p = products.find(x => x.id === t.dataset.toggle), s = t.dataset.size;
     p.sizes = {...p.sizes, [s]: !pOn(p, s)}; renderRow(p.id);
-    run('Size change', sb.from('products').update({sizes: p.sizes}).eq('id', p.id));
+    run('Size change', sb.from(F.table).update({sizes: p.sizes}).eq('id', p.id));
     return;
   }
   const st = e.target.closest('[data-jstep]');
   if(st){ const cur = Number((juice[st.dataset.id] || {}).ml) || 0; setJuice(st.dataset.id, Math.max(0, +(cur + Number(st.dataset.jstep) * Number($('jstep').value)).toFixed(1))); return; }
+  const al = e.target.closest('[data-adlink]');
+  if(al){ copyAdLink(al.dataset.adlink); return; }
   const ed = e.target.closest('[data-edit]');
   if(ed) openEdit(ed.dataset.edit);
 });
+function adLink(p){ return new URL(STORES[p.product_type].shop + '?product=' + encodeURIComponent(p.id), location.href).href; }
+async function copyAdLink(id){
+  const p = products.find(x => x.id === id), url = adLink(p);
+  let ok = false;
+  try { await navigator.clipboard.writeText(url); ok = true; } catch(e){ ok = window.prompt('Copy this link:', url) !== null; }
+  if(ok) toast('Ad link copied ✓');
+  if(!shown(p)) toast('Link copied, but this product is not showing on the website right now.', true);
+}
 $('list').addEventListener('change', e => {
+  if(e.target.dataset.cat !== undefined){
+    const p = products.find(x => x.id === e.target.dataset.cat), cat = e.target.value, before = p.category;
+    if(cat !== '' && !F.cats.some(c => c[0] === cat)) return;
+    p.category = cat; renderRow(p.id);
+    run('Category', sb.from('products').update({category: cat}).eq('id', p.id)).then(ok => {
+      if(ok) toast('Category updated ✓'); else { p.category = before; renderRow(p.id); }
+    });
+    return;
+  }
   if(e.target.dataset.vis){
     const p = products.find(x => x.id === e.target.dataset.vis); p.visible = e.target.checked; renderRow(p.id);
-    run('Show/hide', sb.from('products').update({visible: p.visible}).eq('id', p.id));
+    run('Show/hide', sb.from(F.table).update({visible: p.visible}).eq('id', p.id));
   }
   if(e.target.dataset.jin !== undefined){ const v = e.target.value; setJuice(e.target.dataset.jin, v === '' ? null : Math.max(0, Number(v))); }
 });
@@ -761,7 +1033,7 @@ function setJuice(id, ml){
   jTimers[id] = setTimeout(() => { delete jTimers[id]; saveJuice(juice[id]); }, 500);
 }
 function saveJuice(j){
-  return run('Juice level', sb.from('juice_levels').upsert({product_id: j.product_id, ml: j.ml === '' ? null : j.ml, bottle_ml: j.bottle_ml === '' ? null : (j.bottle_ml ?? null), note: j.note || '', updated_at: new Date().toISOString()}));
+  return run('Juice level', sb.from(F.juice).upsert({product_id: j.product_id, ml: j.ml === '' ? null : j.ml, bottle_ml: j.bottle_ml === '' ? null : (j.bottle_ml ?? null), note: j.note || '', updated_at: new Date().toISOString()}));
 }
 function flushJuice(){ Object.keys(jTimers).forEach(id => { clearTimeout(jTimers[id]); delete jTimers[id]; saveJuice(juice[id]); }); }
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') flushJuice(); });
@@ -771,19 +1043,32 @@ window.addEventListener('beforeunload', e => { if(Object.keys(jTimers).length){ 
    ML SETTINGS
    ===================================================================== */
 function renderSizes(){
-  $('gsizes').innerHTML = SIZES.map(s => `<label class="gs ${gOn(s) ? 'on' : ''}"><b>${s}ml</b><input type="checkbox" class="sw" data-g="${s}" ${gOn(s) ? 'checked' : ''} aria-label="${s}ml visible on website"><small>${gOn(s) ? 'ON' : 'OFF'}</small></label>`).join('');
-  $('sWa').value = '+' + String(settings.whatsapp).replace(/\D/g, ''); $('sNote').value = settings.orderNote || ''; $('sLow').value = settings.lowJuiceMl;
+  ['perfume', 'attar'].forEach(type => {
+    const st = settingsOf(type), on = s => st.sizesEnabled[s] !== false;
+    $('gsizes-' + type).innerHTML = STORES[type].sizes.map(s => `<label class="gs ${on(s) ? 'on' : ''}"><b>${s}ml</b><input type="checkbox" class="sw" data-type="${type}" data-g="${s}" ${on(s) ? 'checked' : ''} aria-label="${STORES[type].label} ${s}ml visible on website"><small>${on(s) ? 'ON' : 'OFF'}</small></label>`).join('');
+    $('sLow-' + type).value = st.lowJuiceMl;
+  });
+  const s1 = settingsOf('perfume');
+  $('sWa').value = '+' + String(s1.whatsapp).replace(/\D/g, ''); $('sNote').value = s1.orderNote || '';
 }
-$('gsizes').addEventListener('change', async e => {
-  const s = e.target.dataset.g; if(!s) return;
-  settings.sizesEnabled[s] = e.target.checked; renderSizes();
-  if(await run('Size setting', sb.from('settings').upsert({id: 1, data: settings}))) toast(`${s}ml is now ${e.target.checked ? 'ON' : 'OFF'} on the website`);
+['perfume', 'attar'].forEach(type => {
+  $('gsizes-' + type).addEventListener('change', async e => {
+    const s = e.target.dataset.g; if(!s) return;
+    const on = e.target.checked;
+    const sizesEnabled = {...Object.fromEntries(STORES[type].sizes.map(z => [z, settingsOf(type).sizesEnabled[z] !== false])), [s]: on};
+    e.target.closest('.gs').classList.toggle('on', on); e.target.nextElementSibling.textContent = on ? 'ON' : 'OFF';
+    if(await saveSettingsRow(type, {sizesEnabled})) toast(`ML settings updated ✓ ${STORES[type].label} ${s}ml is now ${on ? 'ON' : 'OFF'}`);
+    renderSizes();
+  });
+  $('sLow-' + type).addEventListener('change', async e => {
+    const v = Math.max(0, Number(e.target.value) || 0);
+    if(await saveSettingsRow(type, {lowJuiceMl: v})) toast(`${STORES[type].label} low juice alert: ${v} ml ✓`);
+  });
 });
 $('saveSettings').onclick = () => busy($('saveSettings'), 'Saving…', async () => {
   const wa = $('sWa').value.replace(/\D/g, '');
   if(!/^8801\d{9}$/.test(wa)){ toast('WhatsApp number should look like +8801XXXXXXXXX', true); return; }
-  settings.whatsapp = wa; settings.orderNote = $('sNote').value.trim().slice(0, 200); settings.lowJuiceMl = Math.max(0, Number($('sLow').value) || 0);
-  if(await run('Settings', sb.from('settings').upsert({id: 1, data: settings}))) toast('Settings saved ✓');
+  if(await saveSettingsRow('perfume', {whatsapp: wa, orderNote: $('sNote').value.trim().slice(0, 200)})) toast('Settings saved ✓');
 });
 
 /* =====================================================================
@@ -841,24 +1126,40 @@ function setPreview(){
   const box = $('ePrev'); let src = '';
   if(imgState.action === 'replace' && imgState.prepared) src = imgState.prepared.url;
   else if(imgState.action === 'keep' && editing && hasImg(editing)) src = imgUrl(editing.thumb_path || editing.image_path);
-  box.innerHTML = src ? `<img src="${esc(src)}" alt="Perfume photo preview">` : 'No image';
+  box.innerHTML = src ? `<img src="${esc(src)}" alt="Photo preview">` : 'No image';
   const has = !!src;
   $('eUpload').textContent = has ? 'Replace image' : 'Upload image';
   $('eRemoveImg').hidden = !has;
 }
+let dlgT = F;
+function dlgTypeHTML(keepPrices){
+  const T = dlgT, st = settingsOf(T.key), on = s => st.sizesEnabled[s] !== false;
+  const p = editing || {prices: {}, sizes: {}, category: ''};
+  $('eNameLbl').textContent = `${T.One} Name`;
+  $('editTitle').textContent = editing ? `Edit ${T.one}` : `Add ${T.one}`;
+  const nextNo = allProducts.filter(x => x.product_type === T.key).reduce((m, x) => Math.max(m, Number(x.number) || 0), 0) + 1;
+  $('editNo').textContent = editing ? `${T.One} number ${p.number}. The number never changes when you edit.` : `${T.One} number ${nextNo} will be given automatically.`;
+  $('ePrices').innerHTML = T.sizes.map(s => `<tr><td>${s}ml${on(s) ? '' : '<div class="help" style="margin:0">OFF for all</div>'}</td>
+    <td><input type="number" min="0" step="1" inputmode="numeric" data-p="${s}" value="${esc((keepPrices || p.prices)[s] ?? '')}" placeholder="No price" aria-label="${s}ml price"></td>
+    <td><input type="checkbox" class="sw" data-s="${s}" ${p.sizes[s] !== false ? 'checked' : ''} aria-label="Show ${s}ml"></td></tr>`).join('');
+  const cur = editing ? (editing.category || '') : '';
+  $('eCats').innerHTML = [['', 'Uncategorised'], ...T.cats].map(([c, l]) =>
+    `<label class="copt"><input type="radio" name="eCat" value="${c}" ${c === cur ? 'checked' : ''}>${esc(l)}</label>`).join('');
+  $('eLegacy').hidden = !(editing && editing.legacy_category);
+  $('eLegacy').textContent = editing && editing.legacy_category ? `Old category text "${editing.legacy_category}" did not match a category, so it is not used. Choose one above.` : '';
+}
 function openEdit(id){
-  editing = id ? products.find(p => p.id === id) : null;
+  editing = id ? allProducts.find(p => p.id === id) : null;
+  dlgT = editing ? STORES[editing.product_type] : F;
   const p = editing || {name: '', brand: '', prices: {}, sizes: {}, visible: true};
   const j = (id && juice[id]) || {};
   imgState = {action: 'keep', prepared: null};
   $('eMsg').innerHTML = '';
-  $('editTitle').textContent = editing ? 'Edit perfume' : 'Add perfume';
-  $('editNo').textContent = editing ? `Perfume number ${p.number}. The number never changes when you edit.` : `Number ${maxNumber() + 1} will be given automatically.`;
+  $('eTypeBox').hidden = !!editing;
+  document.querySelectorAll('[name="eType"]').forEach(r => r.checked = r.value === dlgT.key);
   $('eName').value = p.name; $('eBrand').value = p.brand || '';
   $('eVisible').checked = p.visible !== false;
-  $('ePrices').innerHTML = SIZES.map(s => `<tr><td>${s}ml${gOn(s) ? '' : '<div class="help" style="margin:0">OFF for all</div>'}</td>
-    <td><input type="number" min="0" step="1" inputmode="numeric" data-p="${s}" value="${esc(p.prices[s] ?? '')}" placeholder="No price" aria-label="${s}ml price"></td>
-    <td><input type="checkbox" class="sw" data-s="${s}" ${p.sizes[s] !== false ? 'checked' : ''} aria-label="Show ${s}ml"></td></tr>`).join('');
+  dlgTypeHTML();
   $('eLeft').value = j.ml ?? ''; $('eBottle').value = j.bottle_ml ?? ''; $('eNote').value = j.note ?? '';
   $('eDelete').classList.toggle('hidden', !editing);
   $('eImgInfo').textContent = 'Best: square (1:1) WebP, about 1600 × 1600. The site makes a small fast copy for you automatically.';
@@ -866,6 +1167,11 @@ function openEdit(id){
   $('editDlg').showModal();
   if(!editing) $('eName').focus();
 }
+$('eTypeBox').addEventListener('change', e => {
+  if(e.target.name !== 'eType' || editing) return;
+  dlgT = STORES[e.target.value];
+  dlgTypeHTML({});
+});
 $('eClose').onclick = $('eCancel').onclick = () => { if(imgState.prepared) URL.revokeObjectURL(imgState.prepared.url); $('editDlg').close(); };
 $('editDlg').addEventListener('click', e => {
   const b = e.target.closest('[data-jd]'); if(!b) return;
@@ -891,40 +1197,50 @@ $('eRemoveImg').onclick = () => {
   setPreview();
 };
 $('eSave').onclick = () => busy($('eSave'), 'Saving…', async () => {
-  const name = clean($('eName').value);
+  const T = dlgT, name = clean($('eName').value);
   const fail = m => { $('eMsg').innerHTML = `<div class="msg err">${esc(m)}</div>`; $('editDlg').querySelector('.db').scrollTop = 0; };
   $('eMsg').innerHTML = '';
-  if(!name) return fail('Please enter the perfume name.');
-  const dup = products.find(p => keyOf(p.name) === keyOf(name) && p !== editing);
-  if(dup) return fail(`A perfume with this name already exists (#${dup.number}).`);
-  const prices = {}, sizes = {};
+  if(!name) return fail(`Please enter the ${T.one} name.`);
+  const dup = allProducts.find(p => p.product_type === T.key && keyOf(p.name) === keyOf(name) && p !== editing);
+  if(dup) return fail(`${T.One} with this name already exists (#${dup.number}).`);
+  // keep any price this form does not show (never delete data the owner cannot see)
+  const prices = editing ? Object.fromEntries(Object.entries(editing.prices).filter(([s]) => !T.sizes.includes(Number(s)))) : {};
+  const sizes = editing ? Object.fromEntries(Object.entries(editing.sizes).filter(([s]) => !T.sizes.includes(Number(s)))) : {};
   for(const i of $('ePrices').querySelectorAll('[data-p]')){
     const v = i.value.trim(); if(v === '') continue;
     const n = Number(v); if(!Number.isFinite(n) || n <= 0 || n > 200000) return fail(`Invalid ${i.dataset.p}ml price.`);
     prices[i.dataset.p] = Math.round(n);
   }
   $('ePrices').querySelectorAll('[data-s]').forEach(i => sizes[i.dataset.s] = i.checked);
+  const catIn = document.querySelector('[name="eCat"]:checked'), category = catIn ? catIn.value : '';
+  if(category && !T.cats.some(c => c[0] === category)) return fail('Please choose a category from the list.');
   const left = $('eLeft').value, bottle = $('eBottle').value;
   if(left !== '' && !(Number(left) >= 0)) return fail('Juice level must be 0 or more.');
-  const row = {name, brand: clean($('eBrand').value), prices, sizes, visible: $('eVisible').checked};
+  const row = {name, brand: clean($('eBrand').value), category, prices, sizes, visible: $('eVisible').checked};
   let id, number;
   if(editing){
     id = editing.id; number = editing.number;
-    if(!await run('Save', sb.from('products').update(row).eq('id', id))) return;
-    Object.assign(editing, row);
+    const diff = {};                                                        // send only what changed
+    Object.keys(row).forEach(k => { if(JSON.stringify(row[k]) !== JSON.stringify(k === 'category' ? (editing[k] || '') : editing[k])) diff[k] = row[k]; });
+    if(Object.keys(diff).length){
+      if(!await run('Save', sb.from('products').update(diff).eq('id', id))) return;
+      Object.assign(editing, diff);
+    }
   } else {
-    const latest = await sb.from('products').select('number').order('number', {ascending: false}).limit(1);   // always the freshest number
-    number = Math.max(maxNumber(), (latest.data && latest.data[0] && Number(latest.data[0].number)) || 0) + 1;
-    id = uid(name);
-    const full = {id, number, ...row, category: '', sort_order: number};
-    if(!await run('Add perfume', sb.from('products').insert(full))) return;
-    products.push(full); products.sort((a, b) => a.number - b.number);
+    const latest = await sb.from('products').select('number').eq('product_type', T.key).order('number', {ascending: false}).limit(1);   // always the freshest number
+    const localMax = allProducts.filter(x => x.product_type === T.key).reduce((m, x) => Math.max(m, Number(x.number) || 0), 0);
+    number = Math.max(localMax, (latest.data && latest.data[0] && Number(latest.data[0].number)) || 0) + 1;
+    id = uid(name, null, T);
+    const full = {id, product_type: T.key, number, ...row, sort_order: number};
+    if(!await run(`Add ${T.one}`, sb.from('products').insert(full))) return;
+    allProducts.push(full); allProducts.sort((a, b) => a.number - b.number); useType();
   }
-  if(left !== '' || bottle !== '' || $('eNote').value.trim() || juice[id]){
-    juice[id] = {product_id: id, ml: left === '' ? null : Number(left), bottle_ml: bottle === '' ? null : Number(bottle), note: $('eNote').value.trim()};
-    await saveJuice(juice[id]);
+  const oldJ = juice[id] || {};
+  const nj = {product_id: id, ml: left === '' ? null : Number(left), bottle_ml: bottle === '' ? null : Number(bottle), note: $('eNote').value.trim()};
+  if((left !== '' || bottle !== '' || nj.note || juice[id]) && (nj.ml !== (oldJ.ml ?? null) || nj.bottle_ml !== (oldJ.bottle_ml ?? null) || nj.note !== (oldJ.note || ''))){
+    juice[id] = nj; await saveJuice(juice[id]);
   }
-  const p = products.find(x => x.id === id);
+  const p = allProducts.find(x => x.id === id);
   if(imgState.action === 'replace' && imgState.prepared){
     $('eSave').textContent = 'Uploading…';
     try{
@@ -938,15 +1254,18 @@ $('eSave').onclick = () => busy($('eSave'), 'Saving…', async () => {
     if(await run('Remove image', sb.from('products').update({image_path: null, thumb_path: null}).eq('id', id))){ p.image_path = null; p.thumb_path = null; await dropFiles(old); }
   }
   if(imgState.prepared) URL.revokeObjectURL(imgState.prepared.url);
-  $('editDlg').close(); render(); if(current === 'dashboard') renderDashboard();
-  toast(editing ? 'Perfume saved ✓' : `Perfume added as number ${number} ✓`);
+  const wasNew = !editing;
+  $('editDlg').close();
+  if(wasNew && T.key !== F.key) switchFolder(T.key);
+  render(); if(current === 'dashboard') renderDashboard();
+  toast(!wasNew ? `${T.One} saved ✓` : `${T.One} added as number ${number} ✓`);
 });
 $('eDelete').onclick = () => busy($('eDelete'), 'Deleting…', async () => {
   if(!editing || !confirm(`Delete #${editing.number} "${editing.name}"? It disappears from the website right away. This cannot be undone.`)) return;
   const id = editing.id, old = [editing.image_path, editing.thumb_path];
   if(await run('Delete', sb.from('products').delete().eq('id', id))){
-    products = products.filter(p => p.id !== id); delete juice[id]; await dropFiles(old);
-    $('editDlg').close(); render(); toast('Perfume deleted');
+    allProducts = allProducts.filter(p => p.id !== id); useType(); delete juice[id]; await dropFiles(old);
+    $('editDlg').close(); render(); toast(`${STORES[editing.product_type].One} deleted`);
   }
 });
 
@@ -982,31 +1301,34 @@ function analyse(text){
   if(!rows.length || !rows[0].some(c => c.trim())){ out.errors.push('The CSV is empty.'); return out; }
   if(rows.length > 1001){ out.errors.push('The CSV has more than 1000 rows.'); return out; }
   const head = rows[0].map(h => h.toLowerCase().replace(/\s+/g, ' ').trim());
-  const col = {num: -1, name: -1, brand: -1, juice: -1, bottle: -1, off: -1, vis: -1, sizes: {}};
+  const col = {num: -1, name: -1, brand: -1, cat: -1, juice: -1, bottle: -1, off: -1, vis: -1, sizes: {}};
   head.forEach((h, i) => {
     const m = h.match(/^(?:price\s*)?(\d+)\s*ml(?:\s*price)?$/);
     if(m && SIZES.includes(Number(m[1]))){ col.sizes[Number(m[1])] = i; return; }
-    if(col.num < 0 && /^(sl|sl\.?|sl no\.?|serial|serial no\.?|no|no\.|number|#|perfume no\.?|perfume number)$/.test(h)) col.num = i;
-    else if(col.name < 0 && /^(perfume name|name|perfume|product|product name|title)$/.test(h)) col.name = i;
+    if(col.num < 0 && /^(sl|sl\.?|sl no\.?|serial|serial no\.?|no|no\.|number|#|perfume no\.?|perfume number|attar no\.?|attar number)$/.test(h)) col.num = i;
+    else if(col.name < 0 && /^(perfume name|attar name|name|perfume|attar|product|product name|title)$/.test(h)) col.name = i;
     else if(col.brand < 0 && /^(brand|brand name|house)$/.test(h)) col.brand = i;
+    else if(col.cat < 0 && /^(category|categories|collection)$/.test(h)) col.cat = i;
     else if(col.bottle < 0 && /bottle/.test(h)) col.bottle = i;
     else if(col.juice < 0 && /^(juice|juice level|juice ml|juice_ml_left|ml left|remaining)$/.test(h)) col.juice = i;
     else if(col.off < 0 && /^off_sizes$/.test(h)) col.off = i;
     else if(col.vis < 0 && /^(visible|show|active)$/.test(h)) col.vis = i;
     else if(h) out.ignored.push(rows[0][i].trim());
   });
-  if(col.name < 0) out.errors.push('The CSV needs a "Perfume Name" column in the first row.');
-  if(!Object.keys(col.sizes).length) out.errors.push('The CSV needs at least one size column, like 3ml, 6ml, 10ml, 15ml or 30ml.');
+  if(col.name < 0) out.errors.push(`The CSV needs a "${F.One} Name" column in the first row.`);
+  if(!Object.keys(col.sizes).length && col.juice < 0 && col.bottle < 0 && col.cat < 0 && col.brand < 0) out.errors.push(`The CSV needs at least one size column for the ${F.label} folder: ${SIZES.map(z => z + 'ml').join(', ')}.`);
   if(out.errors.length) return out;
   out.hasNum = col.num >= 0;
+  out.hasJuice = col.juice >= 0 || col.bottle >= 0;
+  out.hasCat = col.cat >= 0;
   const seenName = new Map(), seenNum = new Map();
   for(let r = 1; r < rows.length; r++){
     const cells = rows[r], rowNo = r + 1;
     if(!cells.some(c => c.trim())) continue;
-    const it = {row: rowNo, name: clean(cells[col.name]), prices: {}, brand: null, number: null, juice: null, bottle: null, sizes: null, visible: null};
+    const it = {row: rowNo, name: clean(cells[col.name]), prices: {}, brand: null, category: null, number: null, juice: null, bottle: null, sizes: null, visible: null};
     const bad = m => out.errors.push(`Row ${rowNo}: ${m}`);
-    if(!it.name){ bad('Perfume name is missing.'); continue; }
-    if(it.name.length > 120) bad('Perfume name is too long (over 120 characters).');
+    if(!it.name){ bad('Name is missing.'); continue; }
+    if(it.name.length > 120) bad('Name is too long (over 120 characters).');
     const k = keyOf(it.name);
     if(seenName.has(k)) bad(`"${it.name}" appears twice (also row ${seenName.get(k)}).`); else seenName.set(k, rowNo);
     for(const [s, i] of Object.entries(col.sizes)){
@@ -1019,15 +1341,22 @@ function analyse(text){
       else { it.number = n; if(seenNum.has(n)) bad(`Number ${n} is used twice (also row ${seenNum.get(n)}).`); else seenNum.set(n, rowNo); }
     }
     if(col.brand >= 0 && clean(cells[col.brand]) !== '') it.brand = clean(cells[col.brand]).slice(0, 80);
+    if(col.cat >= 0 && clean(cells[col.cat]) !== ''){
+      const raw = clean(cells[col.cat]), k = raw.toLowerCase().replace(/[\s_-]+/g, '_');
+      const hit = F.cats.find(([c, l]) => c === k || l.toLowerCase().replace(/[\s_-]+/g, '_') === k);
+      if(hit) it.category = hit[0];
+      else if(/^(uncategori[sz]ed|none)$/.test(k)) it.category = '';
+      else bad(`Unknown category "${raw}". For ${F.label} use: ${F.cats.map(c => c[1]).join(', ')} (or leave it empty).`);
+    }
     if(col.juice >= 0 && clean(cells[col.juice]) !== ''){ const j = Number(clean(cells[col.juice])); if(!(j >= 0) || !Number.isFinite(j)) bad('Invalid juice level.'); else it.juice = j; }
     if(col.bottle >= 0 && clean(cells[col.bottle]) !== ''){ const b = Number(clean(cells[col.bottle])); if(!(b >= 0) || !Number.isFinite(b)) bad('Invalid bottle size.'); else it.bottle = b; }
     if(col.off >= 0){ const off = String(cells[col.off] || '').split(/[|/ ,]+/).map(Number).filter(Boolean); it.sizes = {}; SIZES.forEach(s => it.sizes[s] = !off.includes(s)); }
     if(col.vis >= 0 && clean(cells[col.vis]) !== '') it.visible = !/^(no|false|0|hidden|hide|off)$/i.test(clean(cells[col.vis]));
-    if(!Object.keys(it.prices).length) out.warnings.push(`Row ${rowNo}: "${it.name}" has no prices, so it will stay hidden on the website until you add prices.`);
+    if(Object.keys(col.sizes).length && !Object.keys(it.prices).length) out.warnings.push(`Row ${rowNo}: "${it.name}" has no prices in this CSV. Existing prices are kept; a NEW product with no prices stays hidden until you add prices.`);
     it.key = k; it.errored = out.errors.some(m => m.startsWith(`Row ${rowNo}:`));
     out.items.push(it);
   }
-  if(!out.items.length) out.errors.push('No perfumes found under the header row.');
+  if(!out.items.length) out.errors.push(`No ${F.one}s found under the header row.`);
   return out;
 }
 let imp = null;
@@ -1059,18 +1388,18 @@ function plan(opts){
     if(i.match){
       const p = i.match, prices = {...p.prices}; let pc = 0;
       Object.entries(i.prices).forEach(([s, v]) => { if(prices[s] !== v){ prices[s] = v; pc++; } });
-      const next = {id: p.id, number: n, name: p.name, brand: i.brand !== null ? i.brand : (p.brand || ''), category: p.category || '', prices,
+      const next = {id: p.id, product_type: F.key, number: n, name: p.name, brand: i.brand !== null ? i.brand : (p.brand || ''), category: i.category !== null ? i.category : (p.category || ''), prices,
         sizes: i.sizes || p.sizes, visible: i.visible !== null ? i.visible : p.visible !== false, sort_order: n};
-      const changed = pc || n !== Number(p.number) || next.brand !== (p.brand || '') || next.visible !== (p.visible !== false) || (i.sizes && JSON.stringify(i.sizes) !== JSON.stringify(p.sizes));
+      const changed = pc || n !== Number(p.number) || next.brand !== (p.brand || '') || next.category !== (p.category || '') || next.visible !== (p.visible !== false) || (i.sizes && JSON.stringify(i.sizes) !== JSON.stringify(p.sizes));
       if(n !== Number(p.number)) res.renumbered++;
       res.priceChanges += pc;
       if(changed) res.updates.push(next); else res.same++;
     } else {
       const id = uid(i.name, taken); taken.add(id);
-      res.inserts.push({id, number: n, name: i.name, brand: i.brand || '', category: '', prices: i.prices, sizes: i.sizes || Object.fromEntries(SIZES.map(s => [s, true])), visible: i.visible !== false, sort_order: n});
+      res.inserts.push({id, product_type: F.key, number: n, name: i.name, brand: i.brand || '', category: i.category || '', prices: i.prices, sizes: i.sizes || Object.fromEntries(SIZES.map(s => [s, true])), visible: i.visible !== false, sort_order: n});
       res.news.push(i.name);
     }
-    if(i.juice !== null || i.bottle !== null){
+    if(opts.allowJuice && (i.juice !== null || i.bottle !== null)){            // only when the owner ticked the box
       const id = i.match ? i.match.id : res.inserts[res.inserts.length - 1].id, old = juice[id] || {};
       res.juice.push({product_id: id, ml: i.juice !== null ? i.juice : (old.ml ?? null), bottle_ml: i.bottle !== null ? i.bottle : (old.bottle_ml ?? null), note: old.note || '', updated_at: new Date().toISOString()});
     }
@@ -1082,7 +1411,7 @@ function showImport(){
   if(!imp){ out.innerHTML = ''; return; }
   if(imp.errors.length && !imp.items.length){ out.innerHTML = `<div class="msg err"><b>This CSV cannot be imported.</b><ul class="errlist">${imp.errors.slice(0, 30).map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>`; return; }
   const hasErr = imp.errors.length > 0;
-  const opts = {useNum: out.querySelector('#oNum') ? out.querySelector('#oNum').checked : true, skipBad: out.querySelector('#oSkip') ? out.querySelector('#oSkip').checked : false};
+  const opts = {useNum: out.querySelector('#oNum') ? out.querySelector('#oNum').checked : true, skipBad: out.querySelector('#oSkip') ? out.querySelector('#oSkip').checked : false, allowJuice: $('impJuice').checked};
   const errBox = `<div class="msg err"><b>${imp.errors.length} problem${imp.errors.length === 1 ? '' : 's'} found. ${opts.skipBad ? 'These rows will be skipped.' : 'Fix them in your CSV and upload again.'}</b><ul class="errlist">${imp.errors.slice(0, 30).map(e => `<li>${esc(e)}</li>`).join('')}${imp.errors.length > 30 ? `<li>…and ${imp.errors.length - 30} more</li>` : ''}</ul></div>`;
   const skipBox = hasErr ? `<label class="radio"><input type="checkbox" id="oSkip" ${opts.skipBad ? 'checked' : ''}><span>Skip the rows with problems and import the rest</span></label>` : '';
   if(hasErr && !opts.skipBad){ out.innerHTML = errBox + skipBox; if($('oSkip')) $('oSkip').onchange = () => showImport(); return; }
@@ -1092,12 +1421,14 @@ function showImport(){
     ${pl.problems.length ? `<div class="msg err"><ul class="errlist">${pl.problems.slice(0, 20).map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
     ${imp.warnings.length ? `<div class="msg warn"><b>Heads up</b><ul class="errlist">${imp.warnings.slice(0, 10).map(e => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
     <div class="panel"><h3>What will happen</h3>
-      <p style="margin:8px 0 0"><b>${pl.inserts.length}</b> new perfumes added · <b>${pl.updates.length}</b> updated (${pl.priceChanges} price changes) · <b>${pl.same}</b> unchanged${imp.hasNum && opts.useNum ? ` · <b>${pl.renumbered}</b> change number` : ''}</p>
+      <p style="margin:8px 0 0"><b>${pl.inserts.length}</b> new ${F.one}s added to <b>${F.label}</b> · <b>${pl.updates.length}</b> updated (${pl.priceChanges} price changes) · <b>${pl.same}</b> unchanged (skipped)${opts.skipBad && hasErr ? ` · <b>${imp.items.filter(i => i.errored).length}</b> invalid rows skipped` : ''}${imp.hasNum && opts.useNum ? ` · <b>${pl.renumbered}</b> change number` : ''}</p>
+      ${imp.hasJuice ? (opts.allowJuice ? `<p class="msg warn" style="margin:8px 0"><b>${pl.juice.length}</b> juice levels will be replaced with the numbers in the CSV.</p>` : `<p class="help">The CSV has a Juice column, but juice levels will <b>not</b> change ("Allow CSV to Update Juice Levels" is off).</p>`) : ''}
+      ${pl.updates.length ? `<details><summary>Show the ${pl.updates.length} updates</summary><ul class="errlist">${pl.updates.slice(0, 200).map(u => { const p = products.find(x => x.id === u.id); const ch = SIZES.filter(z => (p.prices[z] ?? null) !== (u.prices[z] ?? null)).map(z => `${z}ml ${p.prices[z] ?? '—'} → ${u.prices[z]}`); if(u.number !== Number(p.number)) ch.push(`number ${p.number} → ${u.number}`); if(u.category !== (p.category || '')) ch.push(`category → ${catLabel(F.key, u.category) || 'Uncategorised'}`); if(u.brand !== (p.brand || '')) ch.push(`brand → ${u.brand || '(empty)'}`); if(u.visible !== (p.visible !== false)) ch.push(u.visible ? 'shown' : 'hidden'); return `<li>#${esc(p.number)} ${esc(p.name)}: ${esc(ch.join(', ') || 'size switches')}</li>`; }).join('')}</ul></details>` : ''}
       ${pl.news.length ? `<p class="help">New: ${esc(pl.news.slice(0, 12).join(', '))}${pl.news.length > 12 ? ` and ${pl.news.length - 12} more` : ''}. If one of these is an old perfume with a changed name, cancel and rename the old one first so it is not duplicated.</p>` : ''}
-      <p class="help">Blank price cells are left as they are. Photos, juice levels and perfume names of existing perfumes are never changed.${imp.ignored.length ? ` Ignored columns: ${esc(imp.ignored.join(', '))}.` : ''}</p>
+      <p class="help">Blank cells are left as they are. Photos and names of existing items are never changed.${imp.ignored.length ? ` Ignored columns: ${esc(imp.ignored.join(', '))}.` : ''}</p>
       ${imp.hasNum ? `<label class="radio"><input type="checkbox" id="oNum" ${opts.useNum ? 'checked' : ''}><span>Use the <b>SL / number</b> column from the CSV as the perfume numbers</span></label>` : ''}
       ${skipBox}
-      <button class="btn dark" id="impGo" type="button" ${blocked || (!pl.inserts.length && !pl.updates.length) ? 'disabled' : ''}>Import</button>
+      <button class="btn dark" id="impGo" type="button" ${blocked || (!pl.inserts.length && !pl.updates.length && !pl.juice.length) ? 'disabled' : ''}>Confirm import into ${F.label}</button>
     </div>`;
   const re = () => showImport();
   if($('oNum')) $('oNum').onchange = re;
@@ -1107,15 +1438,15 @@ function showImport(){
 async function doImport(pl){
   status('busy', 'Importing…');
   const rows = [...pl.updates, ...pl.inserts];
-  const ok = await run('Import', sb.from('products').upsert(rows));       // one request = all or nothing
-  if(!ok) return;
-  if(pl.juice.length && !await run('Juice import', sb.from('juice_levels').upsert(pl.juice))) return;
+  if(rows.length && !await run('Import', sb.from('products').upsert(rows))) return;       // one request = all or nothing
+  if(pl.juice.length && !await run('Juice import', sb.from(F.juice).upsert(pl.juice))) return;
   try{ await loadAll(); }catch(e){ toast('Imported, but could not refresh the list. Reload the page.', true); }
-  $('impOut').innerHTML = `<div class="msg ok"><b>CSV imported successfully ✓</b><br>${pl.inserts.length} added, ${pl.updates.length} updated. The website now shows the new list.</div>`;
+  $('impOut').innerHTML = `<div class="msg ok"><b>CSV imported successfully ✓</b><br>${F.label}: ${pl.inserts.length} added, ${pl.updates.length} updated${pl.juice.length ? `, ${pl.juice.length} juice levels updated` : ', juice levels unchanged'}. The website now shows the new list.</div>`;
   imp = null; $('impText').value = '';
   toast('CSV imported successfully ✓');
 }
 function checkCSV(text){ imp = text.trim() ? analyse(text) : null; showImport(); }
+$('impJuice').addEventListener('change', () => showImport());
 $('impFile').addEventListener('change', async e => {
   const f = e.target.files[0]; if(!f) return;
   if(f.size > 1024 * 1024){ $('impOut').innerHTML = '<div class="msg err">That file is over 1 MB, so it is probably not the right CSV.</div>'; return; }
@@ -1125,13 +1456,164 @@ let it; $('impText').addEventListener('input', e => { clearTimeout(it); it = set
 
 $('exportBtn').onclick = () => {
   const q = v => { v = String(v ?? ''); return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; };
-  const head = ['SL', 'Perfume Name', 'Brand', ...SIZES.map(s => s + 'ml'), 'Juice', 'Bottle'];
-  const lines = products.map(p => { const j = juice[p.id] || {}; return [p.number, p.name, p.brand, ...SIZES.map(s => p.prices[s] || ''), j.ml ?? '', j.bottle_ml ?? ''].map(q).join(','); });
+  const head = ['SL', `${F.One} Name`, 'Brand', 'Category', ...SIZES.map(s => s + 'ml'), 'Juice', 'Bottle'];
+  const lines = products.map(p => { const j = juice[p.id] || {}; return [p.number, p.name, p.brand, catLabel(F.key, p.category), ...SIZES.map(s => p.prices[s] || ''), j.ml ?? '', j.bottle_ml ?? ''].map(q).join(','); });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\uFEFF' + [head.join(','), ...lines].join('\n')], {type: 'text/csv'}));
-  a.download = `khayr-perfumes-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `khayr-${F.one}s-${new Date().toISOString().slice(0, 10)}.csv`;
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 };
+
+/* =====================================================================
+   ORDERS  (saved by the website through the Edge Function)
+   ===================================================================== */
+const ST_LABEL = {new: 'New', awaiting_advance: 'Awaiting Advance', confirmed: 'Confirmed', cancelled: 'Cancelled'};
+const dhakaDay = d => new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Dhaka', year: 'numeric', month: '2-digit', day: '2-digit'}).format(d);
+const dhakaTime = s => new Intl.DateTimeFormat('en-GB', {timeZone: 'Asia/Dhaka', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date(s));
+const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({1: 'st', 2: 'nd', 3: 'rd'}[n % 10] || 'th'));
+let oLoading = null;
+async function loadOrders(quiet){
+  if(oLoading) return oLoading;
+  oLoading = (async () => {
+    if(!quiet) $('osummary').textContent = 'Loading orders…';
+    const {data, error} = await sb.from('orders').select('*').order('created_at', {ascending: false}).limit(500);
+    oLoading = null;
+    if(error){ if(!quiet){ $('olist').innerHTML = `<div class="msg err">${esc(friendly(error))}</div>`; $('osummary').textContent = ''; } return; }
+    orders = data; ordersLoaded = true;
+    const n = orders.filter(o => o.status === 'new').length;
+    $('navNew').textContent = n ? `(${n})` : '';
+    if(current === 'orders') renderOrders();
+    if(current === 'dashboard') renderOrderStats();
+  })();
+  return oLoading;
+}
+function setOFilter(f){ ofilter = f; [...$('ofilters').children].forEach(x => x.setAttribute('aria-pressed', x.dataset.of === f)); if(ordersLoaded) renderOrders(); }
+$('ofilters').addEventListener('click', e => { const b = e.target.closest('.chip'); if(b) setOFilter(b.dataset.of); });
+$('oq').addEventListener('input', e => { oquery = e.target.value; renderOrders(); });
+$('oReload').onclick = () => busy($('oReload'), 'Loading…', () => loadOrders());
+function sourceOf(o){
+  const a = o.attribution || {};
+  const parts = [];
+  if(a.utm_source) parts.push(a.utm_source + (a.utm_medium ? ' / ' + a.utm_medium : ''));
+  if(a.utm_campaign) parts.push('campaign: ' + a.utm_campaign);
+  if(a.utm_content) parts.push('ad: ' + a.utm_content);
+  if(!parts.length && (a.fbclid || o.fbc)) parts.push('Facebook / Instagram ad');
+  if(!parts.length && a.referrer){ try { parts.push('from ' + new URL(a.referrer).host); } catch(e){} }
+  return parts.join(' · ') || 'Direct / unknown';
+}
+function orderCard(o){
+  const groups = ['perfume', 'attar'].map(t => ({t, items: (o.items || []).filter(i => (i.type || 'perfume') === t)})).filter(g => g.items.length);
+  const sheet = o.sheet_status === 'synced' ? '<span class="good">Sheet ✓</span>' : o.sheet_status === 'failed' ? `<span class="bad" title="${esc(o.sheet_last_error || '')}">Sheet failed</span>` : '<span>Sheet pending</span>';
+  const lead = {sent: '<span class="good">Meta Lead ✓</span>', failed: '<span class="bad">Meta Lead failed</span>', skipped: '<span>Meta Lead skipped</span>', pending: '<span>Meta Lead pending</span>'}[o.lead_status] || '';
+  const purchase = o.status !== 'confirmed' ? '' : ({sent: '<span class="good">Meta Purchase ✓</span>', failed: `<span class="bad" title="${esc(o.purchase_last_error || '')}">Meta Purchase failed</span>`, pending: '<span class="bad">Meta Purchase not sent yet</span>', skipped: '<span>Meta Purchase skipped (customer turned off ads measurement)</span>'}[o.purchase_status] || '');
+  const open = o.status === 'new' || o.status === 'awaiting_advance';
+  const wa = '880' + String(o.phone_norm || o.phone || '').replace(/\D/g, '').replace(/^0/, '');
+  return `<div class="ocard st-${esc(o.status)}" data-oid="${esc(o.order_id)}">
+    <div class="ohead">
+      <div><div class="oid">${esc(o.order_id)}</div><div class="odate">${esc(dhakaTime(o.created_at))} · ${esc((o.checkout_methods || []).join(' + '))}</div></div>
+      <span class="ost ${esc(o.status)}">${esc(ST_LABEL[o.status] || o.status)}</span>
+    </div>
+    <div class="ogrid">
+      <div class="ocust">
+        <b>${esc(o.customer_name)}</b> <span class="pill">${ordinal(Number(o.customer_order_number) || 1)} order</span><br>
+        <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a> · <a href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a><br>
+        ${o.email ? esc(o.email) + '<br>' : ''}${esc(o.address)}<br>
+        <span class="help" style="margin:0">${esc(o.delivery_area)}</span>
+        ${o.admin_note ? `<div class="help" style="margin:6px 0 0">Note: ${esc(o.admin_note)}</div>` : ''}
+      </div>
+      <div class="oitems">
+        ${groups.map(g => `<div class="g">${g.t === 'attar' ? 'ATTAR' : 'PERFUME DECANTS'}</div>` + g.items.map(i => `<div class="i"><span>#${esc(i.number)} ${esc(i.name)} · ${esc(i.size)}ml</span><span>${price(i.price)}</span></div>`).join('')).join('')}
+        <div class="otot"><span>Total</span><span>${price(o.total)}${o.status === 'confirmed' && o.confirmed_value && o.confirmed_value !== o.total ? ` (sold for ${price(o.confirmed_value)})` : ''}</span></div>
+      </div>
+    </div>
+    <div class="ometa">${sheet}${lead}${purchase}<span title="Where the customer came from">${esc(sourceOf(o))}</span></div>
+    <div class="actions">
+      ${open ? `<button class="btn sm dark" data-oact="confirm">Confirm Purchase</button>` : ''}
+      ${o.status === 'new' ? `<button class="btn sm" data-oact="awaiting_advance">Mark Awaiting Advance</button>` : ''}
+      ${o.status === 'awaiting_advance' ? `<button class="btn sm" data-oact="new">Back to New</button>` : ''}
+      ${open ? `<button class="btn sm danger" data-oact="cancel">Cancel order</button>` : ''}
+      ${o.status === 'cancelled' ? `<button class="btn sm" data-oact="new">Reopen</button>` : ''}
+      ${o.sheet_status !== 'synced' ? `<button class="btn sm" data-oact="sheet">Retry Sheet sync</button>` : ''}
+      ${o.status === 'confirmed' && (o.purchase_status === 'failed' || o.purchase_status === 'pending') ? `<button class="btn sm" data-oact="meta">Retry Meta</button>` : ''}
+      <button class="btn sm" data-oact="copy">Copy</button>
+    </div>
+  </div>`;
+}
+function renderOrders(){
+  const q = oquery.trim().toLowerCase(), qd = q.replace(/\D/g, '');
+  const list = orders.filter(o => {
+    if(ofilter === 'open' && !(o.status === 'new' || o.status === 'awaiting_advance')) return false;
+    if(!['open', 'all'].includes(ofilter) && o.status !== ofilter) return false;
+    if(!q) return true;
+    return o.order_id.toLowerCase().includes(q) || String(o.customer_name).toLowerCase().includes(q) || (qd.length >= 4 && String(o.phone_norm || o.phone).includes(qd.replace(/^880/, '0')));
+  });
+  const n = s => orders.filter(o => o.status === s).length;
+  $('osummary').textContent = `${orders.length} orders loaded · ${n('new')} new · ${n('awaiting_advance')} awaiting advance · ${n('confirmed')} confirmed. Showing ${list.length}.`;
+  $('olist').innerHTML = list.length ? list.map(orderCard).join('') : `<div class="empty">${orders.length ? 'No orders match this filter.' : 'No orders yet. Orders placed on the website appear here.'}</div>`;
+}
+function orderPlain(o){
+  const groups = ['perfume', 'attar'].map(t => ({t, items: (o.items || []).filter(i => (i.type || 'perfume') === t)})).filter(g => g.items.length);
+  return [`Order ID: ${o.order_id}`, `Name: ${o.customer_name}`, `Phone: ${o.phone}`, o.email ? `Email: ${o.email}` : null, `Address: ${o.address}`, `Delivery Area: ${o.delivery_area}`, '',
+    groups.map(g => (g.t === 'attar' ? 'ATTAR' : 'PERFUME DECANTS') + '\n' + g.items.map(i => `#${i.number} ${i.name}\n${i.size}ml — ${price(i.price)}`).join('\n\n')).join('\n\n'), '', `Total: ${price(o.total)}`].filter(x => x !== null).join('\n');
+}
+async function setStatus(o, st, value, note){
+  const {data, error} = await sb.rpc('admin_set_order_status', {p_order_id: o.order_id, p_status: st, p_value: value ?? null, p_note: note ?? null});
+  if(error){ toast(friendly(error), true); return null; }
+  const fresh = data && data.order;
+  if(fresh) Object.assign(o, fresh);
+  return data;
+}
+async function sendPurchase(o){
+  const r = await callFn({action: 'admin_send_purchase', orderId: o.order_id});
+  await loadOrders(true);
+  if(r.ok && r.sent) toast(`Purchase sent to Meta ✓${r.testMode ? ' (test mode)' : ''}`);
+  else if(r.ok && r.already) toast('Purchase was already sent to Meta ✓');
+  else if(r.ok && r.skipped) toast('Confirmed ✓ (not sent to Meta: the customer turned off ads measurement)');
+  else toast('Confirmed ✓ but Meta Purchase was not sent: ' + (r.error || 'unknown error') + ' Use Retry Meta later.', true);
+}
+$('olist').addEventListener('click', async e => {
+  const b = e.target.closest('[data-oact]'); if(!b) return;
+  const o = orders.find(x => x.order_id === b.closest('[data-oid]').dataset.oid); if(!o) return;
+  const act = b.dataset.oact;
+  if(act === 'copy'){ try { await navigator.clipboard.writeText(orderPlain(o)); toast('Order copied ✓'); } catch(_){ toast('Copy failed', true); } return; }
+  if(act === 'confirm'){ openConfirm(o); return; }
+  await busy(b, 'Working…', async () => {
+    if(act === 'awaiting_advance' || act === 'new'){
+      if(await setStatus(o, act)){ toast(act === 'new' ? 'Moved back to New' : 'Marked Awaiting Advance ✓'); }
+    } else if(act === 'cancel'){
+      if(!confirm(`Cancel order ${o.order_id} (${o.customer_name})?`)) return;
+      if(await setStatus(o, 'cancelled')) toast('Order cancelled');
+    } else if(act === 'sheet'){
+      const r = await callFn({action: 'admin_retry_sheet', orderId: o.order_id});
+      if(!r.ok) toast(r.error || 'Could not retry.', true);
+      else if(r.connected === false) toast('Google Sheet is not connected yet (Supabase secrets).', true);
+      else toast(r.failed ? 'Sheet sync failed again. Check the Apps Script deployment.' : 'Sheet synced ✓', !!r.failed);
+      await loadOrders(true);
+    } else if(act === 'meta'){
+      await sendPurchase(o);
+    }
+  });
+  renderOrders(); renderOrderStats();
+});
+let cfOrder = null;
+function openConfirm(o){
+  cfOrder = o;
+  $('cfMsg').innerHTML = ''; $('cfId').textContent = o.order_id; $('cfWho').textContent = `${o.customer_name} · total ${price(o.total)}`;
+  $('cfValue').value = o.total; $('cfNote').value = o.admin_note || '';
+  $('cfDlg').showModal(); $('cfValue').focus();
+}
+$('cfClose').onclick = $('cfCancel').onclick = () => $('cfDlg').close();
+$('cfGo').onclick = () => busy($('cfGo'), 'Confirming…', async () => {
+  const o = cfOrder, v = Math.round(Number($('cfValue').value));
+  if(!(v >= 1 && v <= 10000000)){ $('cfMsg').innerHTML = '<div class="msg err">Enter the sale value in taka.</div>'; return; }
+  const res = await setStatus(o, 'confirmed', v, $('cfNote').value.trim().slice(0, 200) || null);
+  if(!res) return;
+  $('cfDlg').close();
+  toast('Order confirmed ✓');
+  await sendPurchase(o);
+  renderOrders(); renderOrderStats();
+});
+setInterval(() => { if(panelOpen && document.visibilityState === 'visible' && (current === 'orders' || current === 'dashboard')) loadOrders(true); }, 60000);
 
 /* =====================================================================
    SECURITY TAB
@@ -1192,6 +1674,7 @@ async function renderSecurity(){
     loginStep('credentials', window.supabase ? 'Supabase is not connected yet. Put your project URL and publishable key in config.js, then reload this page.' : 'Could not load the login system. Check your internet and reload.', 'warn');
     return;
   }
+  LS.set('khayr_admin_store', F.key);
   const remember = LS.get('khayr_admin_remember', '0') === '1';
   $('lRemember').checked = remember || LS.get('khayr_admin_remember', null) === null;
   sb = makeClient(remember);
