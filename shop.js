@@ -135,6 +135,23 @@ async function fetchData(){
   return j;
 }
 
+/* Bottle Photos (table gallery_photos). Empty list if not set up yet. */
+let galleryCache = null;
+async function fetchGallery(){
+  if(galleryCache) return galleryCache;
+  galleryCache = (async () => {
+    if(!sbReady()) return [];
+    try{
+      const r = await fetch(SB_URL + '/rest/v1/gallery_photos?select=id,kind,image_path,thumb_path,caption,sort_order&visible=eq.true&order=sort_order.asc,created_at.asc',
+        {headers: {apikey: SB.anonKey, Authorization: 'Bearer ' + SB.anonKey}, cache: 'no-store'});
+      if(!r.ok) return [];
+      const list = await r.json();
+      return Array.isArray(list) ? list.filter(g => g && g.image_path && (g.kind === 'decant' || g.kind === 'attar')) : [];
+    }catch(e){ return []; }
+  })();
+  return galleryCache;
+}
+
 /* ---------- start ---------- */
 const params = new URLSearchParams(location.search);
 async function load(){
@@ -157,6 +174,7 @@ async function load(){
   loadCart();
   if(PAGE === 'home') initHome();
   else if(PT) initShop();
+  else if(PAGE === 'bottles') initBottles();
   updateCartUI();
   restoreLastAction();
 }
@@ -191,7 +209,83 @@ function initHome(){
   if(links.length){ $('catLinks').innerHTML = links.join(''); $('catSection').hidden = false; }
   initHomeSearch();
   if(location.hash === '#search') setTimeout(() => $('q').focus(), 100);
+  const pics = list => list.map(p => imgUrl(p.thumb_path || p.image_path)).filter(Boolean);
+  const shuffle = a => { a = a.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  setArt('perfume', shuffle(pics(ofType('perfume').filter(p => p.thumb_path || p.image_path))));
+  const attarProducts = shuffle(pics(ofType('attar').filter(p => p.thumb_path || p.image_path)));
+  setArt('attar', attarProducts);
+  fetchGallery().then(g => {
+    const att = g.filter(x => x.kind === 'attar').map(x => imgUrl(x.thumb_path || x.image_path)).filter(Boolean);
+    if(att.length) setArt('attar', shuffle(att).concat(attarProducts));
+    const strip = g.slice(0, 4);
+    if(strip.length){
+      $('bstrip').innerHTML = strip.map(x => `<a href="bottles.html?type=${x.kind}" aria-label="${x.kind === 'attar' ? 'Attar' : 'Decant'} bottle photo"><img src="${esc(imgUrl(x.thumb_path || x.image_path))}" alt="${esc(x.caption || (x.kind === 'attar' ? 'Attar bottle' : 'Decant bottle'))}" loading="lazy" width="400" height="400"></a>`).join('');
+      $('bstrip').hidden = false;
+    }
+  });
 }
+/* Collection cards: up to 3 real photos fanned out; the drawing stays if there are none */
+function setArt(type, urls){
+  const box = $('art-' + type); if(!box || !urls.length) return;
+  const use = urls.slice(0, 3);
+  const img = new Image();
+  img.onload = () => {
+    box.innerHTML = `<div class="fan n${use.length}">${use.map(u => `<img src="${esc(u)}" alt="" width="400" height="400" decoding="async">`).join('')}</div>`;
+    box.querySelectorAll('img').forEach(i => i.addEventListener('error', () => i.remove()));
+  };
+  img.src = use[0];                                   // only swap in photos once the first one really loads
+}
+
+/* ================= BOTTLE PHOTOS ================= */
+let gList = [], gKind = 'decant', gAt = 0;
+async function initBottles(){
+  gKind = params.get('type') === 'attar' ? 'attar' : 'decant';
+  const all = await fetchGallery();
+  const draw = () => {
+    document.querySelectorAll('.tabs [data-kind]').forEach(b => b.setAttribute('aria-selected', b.dataset.kind === gKind));
+    $('gallery').setAttribute('aria-labelledby', 'tab-' + gKind);
+    gList = all.filter(x => x.kind === gKind);
+    $('gallery').innerHTML = gList.length
+      ? gList.map((x, i) => `<button type="button" class="gitem" data-gi="${i}" aria-label="Open photo${x.caption ? ': ' + esc(x.caption) : ''}"><span class="ph2"><img src="${esc(imgUrl(x.thumb_path || x.image_path))}" alt="${esc(x.caption || (gKind === 'attar' ? 'Attar bottle' : 'Decant bottle'))}" loading="lazy" width="400" height="400"></span>${x.caption ? `<span class="cap">${esc(x.caption)}</span>` : ''}</button>`).join('')
+      : `<div class="empty"><strong>Photos coming soon.</strong><p>${gKind === 'attar' ? 'Attar bottle' : 'Decant bottle'} photos will appear here.</p><a class="btn" href="${gKind === 'attar' ? 'attar.html' : 'perfumes.html'}">${gKind === 'attar' ? 'Explore Attar Collection' : 'Explore Perfume Decants'}</a></div>`;
+  };
+  draw();
+  document.querySelector('.tabs').addEventListener('click', e => {
+    const b = e.target.closest('[data-kind]'); if(!b || b.dataset.kind === gKind) return;
+    gKind = b.dataset.kind; draw();
+    try { const u = new URLSearchParams(location.search); u.set('type', gKind); history.replaceState(null, '', location.pathname + '?' + u); } catch(_){}
+  });
+  document.querySelector('.tabs').addEventListener('keydown', e => {
+    if(e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const other = document.querySelector(`.tabs [data-kind="${gKind === 'decant' ? 'attar' : 'decant'}"]`); other.click(); other.focus();
+  });
+  $('gallery').addEventListener('click', e => { const b = e.target.closest('[data-gi]'); if(b) openG(+b.dataset.gi); });
+  $('glbClose').onclick = closeG;
+  $('glbPrev').onclick = () => openG(gAt - 1);
+  $('glbNext').onclick = () => openG(gAt + 1);
+  $('glb').addEventListener('click', e => { if(e.target === $('glb')) closeG(); });
+  let sx = null;
+  $('glb').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, {passive: true});
+  $('glb').addEventListener('touchend', e => { if(sx === null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if(Math.abs(dx) > 45) openG(gAt + (dx < 0 ? 1 : -1)); });
+  document.addEventListener('keydown', e => {
+    if(!$('glb').classList.contains('show')) return;
+    if(e.key === 'Escape') closeG(); else if(e.key === 'ArrowRight') openG(gAt + 1); else if(e.key === 'ArrowLeft') openG(gAt - 1);
+  });
+}
+let gReturn = null;
+function openG(i){
+  if(!gList.length) return;
+  gAt = (i + gList.length) % gList.length;
+  const x = gList[gAt];
+  if(!$('glb').classList.contains('show')) gReturn = document.activeElement;
+  $('glbImg').src = imgUrl(x.image_path || x.thumb_path); $('glbImg').alt = x.caption || 'Bottle photo';
+  $('glbCap').textContent = x.caption || '';
+  $('glbCount').textContent = `${gAt + 1} / ${gList.length}`;
+  $('glbPrev').hidden = $('glbNext').hidden = gList.length < 2;
+  $('glb').classList.add('show'); document.body.classList.add('lock');
+  $('glbClose').focus();
+}
+function closeG(){ $('glb').classList.remove('show'); document.body.classList.remove('lock'); $('glbImg').removeAttribute('src'); if(gReturn) gReturn.focus(); }
 function searchList(list, raw){
   const q = norm(String(raw).replace(/^\s*#/, '')), words = q.split(' ').filter(Boolean), isNum = /^\d+$/.test(q);
   if(!words.length) return list;

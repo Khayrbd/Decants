@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shop.css?v=4.0.0">
+<link rel="stylesheet" href="shop.css?v=4.1.0">
 <script src="config.js"></script>
-<script src="site-config.js?v=4.0.0"></script>
+<script src="site-config.js?v=4.1.0"></script>
 <script>
   /* start the database connection early */
   try { var u = (window.SHOP_CONFIG.supabase || {}).url; if (u) { var l = document.createElement('link'); l.rel = 'preconnect'; l.href = u; l.crossOrigin = ''; document.head.appendChild(l); } } catch (e) {}
@@ -42,6 +42,7 @@
       <a href="./">Home</a>
       <a href="perfumes.html">Perfume Decants</a>
       <a href="attar.html">Attar</a>
+      <a href="bottles.html">Bottle Photos</a>
     </nav>
     <div class="hbtns">
       <button class="icon-btn" id="findBtn" type="button" aria-label="Search"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
@@ -60,6 +61,7 @@
   <a class="ml" href="./">Home<small></small></a>
   <a class="ml" href="perfumes.html">Perfume Decants<small>Niche • Designer • Middle Eastern</small></a>
   <a class="ml" href="attar.html">Attar<small>Natural • Semi-Natural • Synthetic</small></a>
+  <a class="ml" href="bottles.html">Bottle Photos<small>Decants Bottle • Attar Bottle</small></a>
   <a class="ml" href="./#search">Search<small></small></a>
   <div class="mfoot"><p>Orders and questions on WhatsApp: <a data-wa href="https://wa.me/8801673080800" target="_blank" rel="noopener">+8801673080800</a></p></div>
 </div>
@@ -117,7 +119,7 @@
     <span class="logo" aria-hidden="true">KHAYR</span>
     <p>Premium perfume decants and attar.</p>
     <nav class="flinks" aria-label="Footer">
-      <a href="./">Home</a><a href="perfumes.html">Perfume Decants</a><a href="attar.html">Attar</a><a href="privacy.html">Privacy Policy</a>
+      <a href="./">Home</a><a href="perfumes.html">Perfume Decants</a><a href="attar.html">Attar</a><a href="bottles.html">Bottle Photos</a><a href="privacy.html">Privacy Policy</a>
     </nav>
     <p>Orders and questions on WhatsApp: <a data-wa href="https://wa.me/8801673080800" target="_blank" rel="noopener">+8801673080800</a></p>
   </div>
@@ -141,6 +143,6 @@
 </aside>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="shop.js?v=4.0.0"></script>
+<script src="shop.js?v=4.1.0"></script>
 </body>
 </html>

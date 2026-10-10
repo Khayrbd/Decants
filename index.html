@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shop.css?v=4.0.0">
+<link rel="stylesheet" href="shop.css?v=4.1.0">
 <script src="config.js"></script>
-<script src="site-config.js?v=4.0.0"></script>
+<script src="site-config.js?v=4.1.0"></script>
 <script>
   /* start the database connection early */
   try { var u = (window.SHOP_CONFIG.supabase || {}).url; if (u) { var l = document.createElement('link'); l.rel = 'preconnect'; l.href = u; l.crossOrigin = ''; document.head.appendChild(l); } } catch (e) {}
@@ -42,6 +42,7 @@
       <a href="./" aria-current="page">Home</a>
       <a href="perfumes.html">Perfume Decants</a>
       <a href="attar.html">Attar</a>
+      <a href="bottles.html">Bottle Photos</a>
     </nav>
     <div class="hbtns">
       <button class="icon-btn" id="findBtn" type="button" aria-label="Search"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
@@ -60,6 +61,7 @@
   <a class="ml" href="./" aria-current="page">Home<small></small></a>
   <a class="ml" href="perfumes.html">Perfume Decants<small>Niche • Designer • Middle Eastern</small></a>
   <a class="ml" href="attar.html">Attar<small>Natural • Semi-Natural • Synthetic</small></a>
+  <a class="ml" href="bottles.html">Bottle Photos<small>Decants Bottle • Attar Bottle</small></a>
   <a class="ml" href="./#search">Search<small></small></a>
   <div class="mfoot"><p>Orders and questions on WhatsApp: <a data-wa href="https://wa.me/8801673080800" target="_blank" rel="noopener">+8801673080800</a></p></div>
 </div>
@@ -86,31 +88,46 @@
     </div>
 
     <div class="collections" id="collections">
-      <a class="coll" href="perfumes.html">
-        <div>
-          <div class="eyebrow">Niche • Designer • Middle Eastern</div>
+      <a class="coll dark" href="perfumes.html" aria-label="Explore Perfume Decants">
+        <div class="art" id="art-perfume"><svg viewBox="0 0 160 220" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+  <g opacity=".55" stroke-width="1.2"><circle cx="118" cy="30" r="1.6"/><circle cx="128" cy="22" r="1.2"/><circle cx="126" cy="38" r="1.2"/><circle cx="138" cy="30" r="1"/><circle cx="136" cy="16" r=".9"/></g>
+  <rect x="60" y="14" width="40" height="34" rx="5"/><path d="M66 22h28M66 40h28" opacity=".45"/>
+  <rect x="70" y="48" width="20" height="14" rx="2"/><path d="M64 62h32"/>
+  <rect x="30" y="68" width="100" height="136" rx="22"/><rect x="42" y="80" width="76" height="112" rx="14" opacity=".45"/>
+  <path d="M58 118h44M58 156h44" opacity=".7"/>
+  <text x="80" y="142" text-anchor="middle" font-family="Bodoni Moda, Didot, serif" font-size="13" letter-spacing="5" fill="currentColor" stroke="none">KHAYR</text></svg></div>
+        <div class="body">
+          <div class="eyebrow">Collection 01</div>
           <h2>Perfume Decants</h2>
-          <p class="count" id="count-perfume">&nbsp;</p>
-          <span class="go">Explore Perfume Decants <span aria-hidden="true">→</span></span>
+          <p class="tags">Niche · Designer · Middle Eastern</p>
+          <div class="foot"><p class="count" id="count-perfume">&nbsp;</p><span class="go">Explore Perfume Decants <i aria-hidden="true">→</i></span></div>
         </div>
-        <svg class="art" viewBox="0 0 120 150" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true">
-  <rect x="44" y="12" width="32" height="18" rx="3"/><rect x="52" y="30" width="16" height="14" rx="2"/>
-  <rect x="22" y="44" width="76" height="94" rx="14"/><path d="M36 70h48M36 112h48" stroke-width="1.2"/>
-  <text x="60" y="96" text-anchor="middle" font-family="Bodoni Moda, serif" font-size="13" letter-spacing="3" fill="currentColor" stroke="none">KHAYR</text></svg>
       </a>
-      <a class="coll" href="attar.html">
-        <div>
-          <div class="eyebrow">Natural • Semi-Natural • Synthetic</div>
+      <a class="coll light" href="attar.html" aria-label="Explore Attar Collection">
+        <div class="art" id="art-attar"><svg viewBox="0 0 160 220" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+  <circle cx="80" cy="16" r="8"/><path d="M80 24v44"/><path d="M76 40l4-6 4 6M76 52l4-6 4 6" opacity=".5"/>
+  <path d="M66 68h28l-4 14H70z"/><path d="M72 82h16v10H72z"/>
+  <path d="M80 92c-30 8-50 34-50 62 0 30 22 52 50 52s50-22 50-52c0-28-20-54-50-62Z"/>
+  <path d="M80 92c-14 14-20 36-20 62s8 44 20 52M80 92c14 14 20 36 20 62s-8 44-20 52" opacity=".45"/>
+  <path d="M34 150h92" opacity=".45"/><path d="M48 186c18 8 46 8 64 0" opacity=".7"/></svg></div>
+        <div class="body">
+          <div class="eyebrow">Collection 02</div>
           <h2>Attar Collection</h2>
-          <p class="count" id="count-attar">&nbsp;</p>
-          <span class="go">Explore Attar Collection <span aria-hidden="true">→</span></span>
+          <p class="tags">Natural · Semi-Natural · Synthetic</p>
+          <div class="foot"><p class="count" id="count-attar">&nbsp;</p><span class="go">Explore Attar Collection <i aria-hidden="true">→</i></span></div>
         </div>
-        <svg class="art" viewBox="0 0 120 150" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true">
-  <path d="M60 6c7 10 11 19 11 27a11 11 0 0 1-22 0c0-8 4-17 11-27Z"/><rect x="52" y="44" width="16" height="16" rx="3"/>
-  <path d="M30 88c0-16 14-28 30-28s30 12 30 28v38a12 12 0 0 1-12 12H42a12 12 0 0 1-12-12Z"/><path d="M40 98h40" stroke-width="1.2"/>
-  <text x="60" y="120" text-anchor="middle" font-family="Bodoni Moda, serif" font-size="12" letter-spacing="3" fill="currentColor" stroke="none">ATTAR</text></svg>
       </a>
     </div>
+
+    <section class="bteaser" aria-labelledby="btTitle">
+      <div>
+        <div class="eyebrow">Bottle Photos</div>
+        <h2 id="btTitle">See the bottles your order arrives in.</h2>
+        <p>Real photos of our decant and attar bottles.</p>
+        <div class="btns"><a href="bottles.html?type=decant">Decants Bottle</a><a href="bottles.html?type=attar">Attar Bottle</a></div>
+      </div>
+      <div class="bstrip" id="bstrip" hidden></div>
+    </section>
 
     <section id="catSection" hidden>
       <h2 class="section-title">Shop by category</h2>
@@ -131,7 +148,7 @@
     <span class="logo" aria-hidden="true">KHAYR</span>
     <p>Premium perfume decants and attar.</p>
     <nav class="flinks" aria-label="Footer">
-      <a href="./">Home</a><a href="perfumes.html">Perfume Decants</a><a href="attar.html">Attar</a><a href="privacy.html">Privacy Policy</a>
+      <a href="./">Home</a><a href="perfumes.html">Perfume Decants</a><a href="attar.html">Attar</a><a href="bottles.html">Bottle Photos</a><a href="privacy.html">Privacy Policy</a>
     </nav>
     <p>Orders and questions on WhatsApp: <a data-wa href="https://wa.me/8801673080800" target="_blank" rel="noopener">+8801673080800</a></p>
   </div>
@@ -155,6 +172,6 @@
 </aside>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="shop.js?v=4.0.0"></script>
+<script src="shop.js?v=4.1.0"></script>
 </body>
 </html>
