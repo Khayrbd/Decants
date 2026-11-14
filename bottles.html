@@ -4,29 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bottle Photos | KHAYR</title>
-<meta name="description" content="Real photos of KHAYR decant bottles and attar bottles, so you know exactly what your order arrives in.">
+<meta name="description" content="Real photos of KHAYR decant bottles, so you know exactly what your order arrives in.">
 <link rel="canonical" href="https://khayrbd.github.io/Decants/bottles.html">
 <meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KHAYR">
 <meta property="og:title" content="Bottle Photos | KHAYR">
-<meta property="og:description" content="Real photos of KHAYR decant bottles and attar bottles, so you know exactly what your order arrives in.">
+<meta property="og:description" content="Real photos of KHAYR decant bottles, so you know exactly what your order arrives in.">
 <meta property="og:url" content="https://khayrbd.github.io/Decants/bottles.html">
 <meta property="og:image" content="https://khayrbd.github.io/Decants/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="KHAYR, premium perfume decants and attar">
+<meta property="og:image:alt" content="KHAYR, premium perfume decants">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bottle Photos | KHAYR">
-<meta name="twitter:description" content="Real photos of KHAYR decant bottles and attar bottles, so you know exactly what your order arrives in.">
+<meta name="twitter:description" content="Real photos of KHAYR decant bottles, so you know exactly what your order arrives in.">
 <meta name="twitter:image" content="https://khayrbd.github.io/Decants/og-image.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shop.css?v=4.1.0">
+<link rel="stylesheet" href="shop.css?v=5.0.0">
 <script src="config.js"></script>
-<script src="site-config.js?v=4.1.0"></script>
+<script src="site-config.js?v=5.0.0"></script>
 <script>
   /* start the database connection early */
   try { var u = (window.SHOP_CONFIG.supabase || {}).url; if (u) { var l = document.createElement('link'); l.rel = 'preconnect'; l.href = u; l.crossOrigin = ''; document.head.appendChild(l); } } catch (e) {}
@@ -39,9 +39,7 @@
   <div class="wrap">
     <a class="logo" href="./" aria-label="KHAYR home">KHAYR</a>
     <nav class="nav" aria-label="Main">
-      <a href="./">Home</a>
-      <a href="perfumes.html">Perfume Decants</a>
-      <a href="attar.html">Attar</a>
+      <a href="./">Perfume Decants</a>
       <a href="bottles.html" aria-current="page">Bottle Photos</a>
     </nav>
     <div class="hbtns">
@@ -58,10 +56,8 @@
 </header>
 <div class="mnav" id="mnav" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <div class="mtop"><span class="logo" aria-hidden="true">KHAYR</span><button class="x" id="closeMenu" type="button" aria-label="Close menu">✕</button></div>
-  <a class="ml" href="./">Home<small></small></a>
-  <a class="ml" href="perfumes.html">Perfume Decants<small>Niche • Designer • Middle Eastern</small></a>
-  <a class="ml" href="attar.html">Attar<small>Natural • Semi-Natural • Synthetic</small></a>
-  <a class="ml" href="bottles.html" aria-current="page">Bottle Photos<small>Decants Bottle • Attar Bottle</small></a>
+  <a class="ml" href="./">Perfume Decants<small>Niche • Designer • Middle Eastern</small></a>
+  <a class="ml" href="bottles.html" aria-current="page">Bottle Photos<small>See the bottles we send</small></a>
   <a class="ml" href="./#search">Search<small></small></a>
   <div class="mfoot"><p>Orders and questions on WhatsApp: <a data-wa href="https://wa.me/8801673080800" target="_blank" rel="noopener">+8801673080800</a></p></div>
 </div>
@@ -69,16 +65,12 @@
 <main id="main">
   <section class="hero">
     <div class="wrap">
-      <h1>Bottle Photos</h1>
+      <h1>Decants Bottle</h1>
       <p class="sub">See the bottles your order arrives in.</p>
     </div>
   </section>
   <div class="wrap">
-    <div class="tabwrap"><div class="tabs" role="tablist" aria-label="Bottle type">
-      <button type="button" role="tab" id="tab-decant" data-kind="decant" aria-selected="true" aria-controls="gallery">Decants Bottle</button>
-      <button type="button" role="tab" id="tab-attar" data-kind="attar" aria-selected="false" aria-controls="gallery">Attar Bottle</button>
-    </div></div>
-    <div class="gallery" id="gallery" role="tabpanel" aria-labelledby="tab-decant"><div class="loading">Loading photos…</div></div>
+    <div class="gallery" id="gallery"><div class="loading">Loading photos…</div></div>
   </div>
 </main>
 <div class="glb" id="glb" role="dialog" aria-modal="true" aria-label="Bottle photo">
@@ -92,9 +84,9 @@
 <footer>
   <div class="wrap">
     <span class="logo" aria-hidden="true">KHAYR</span>
-    <p>Premium perfume decants and attar.</p>
+    <p>Premium perfume decants. 100% authentic.</p>
     <nav class="flinks" aria-label="Footer">
-      <a href="./">Home</a><a href="perfumes.html">Perfume Decants</a><a href="attar.html">Attar</a><a href="bottles.html">Bottle Photos</a><a href="privacy.html">Privacy Policy</a>
+      <a href="./">Perfume Decants</a><a href="bottles.html">Bottle Photos</a><a href="privacy.html">Privacy Policy</a>
     </nav>
     <p>Orders and questions on WhatsApp: <a data-wa href="https://wa.me/8801673080800" target="_blank" rel="noopener">+8801673080800</a></p>
   </div>
@@ -107,6 +99,17 @@
 
 <div class="lb" id="lb" role="dialog" aria-label="Product photo"><button type="button" aria-label="Close photo">✕</button><img id="lbImg" alt=""></div>
 
+<div class="qrv" id="qrv" role="dialog" aria-modal="true" aria-labelledby="qrvLabel">
+  <div class="qrbox">
+    <button type="button" class="x" id="qrvClose" aria-label="Close">✕</button>
+    <b id="qrvLabel">Payment</b>
+    <img id="qrvImg" alt="">
+    <p id="qrvDetails"></p>
+    <a id="qrvOpen" href="#" target="_blank" rel="noopener">Open image to save it</a>
+    <p class="note">Scan this QR in your bKash or bank app, or save the image and open it there.</p>
+  </div>
+</div>
+
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true">
   <div class="dhead">
@@ -118,6 +121,6 @@
 </aside>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="shop.js?v=4.1.0"></script>
+<script src="shop.js?v=5.0.0"></script>
 </body>
 </html>
