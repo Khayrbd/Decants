@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shop.css?v=6.0.0">
+<link rel="stylesheet" href="shop.css?v=6.1.0">
 <script src="config.js"></script>
-<script src="site-config.js?v=6.0.0"></script>
+<script src="site-config.js?v=6.1.0"></script>
 <script>
   /* start the database connection early */
   try { var u = (window.SHOP_CONFIG.supabase || {}).url; if (u) { var l = document.createElement('link'); l.rel = 'preconnect'; l.href = u; l.crossOrigin = ''; document.head.appendChild(l); } } catch (e) {}
@@ -89,7 +89,7 @@
       <span class="right">
         <select class="sort" id="houseSel" aria-label="Filter by house" hidden></select>
         <select class="sort" id="sort" aria-label="Sort perfumes">
-          <option value="house">Sort by house</option>
+          <option value="number">Default order</option>
           <option value="az">Name A to Z</option>
           <option value="low">Price low to high</option>
           <option value="high">Price high to low</option>
@@ -155,6 +155,6 @@
 </aside>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="shop.js?v=6.0.0"></script>
+<script src="shop.js?v=6.1.0"></script>
 </body>
 </html>

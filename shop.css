@@ -349,3 +349,6 @@ body.open .toast{bottom:auto;top:calc(70px + env(safe-area-inset-top,0px))}
 .freehint.ok{color:var(--green)}
 #gsFilter{margin-top:8px}
 .payopt.one>span{color:var(--ink);font-weight:400}
+
+/* v6.1: bKash number big and easy to read */
+.qrinfo .qrnum{display:block;font-size:1.15rem;font-weight:800;letter-spacing:.02em;color:var(--ink);font-variant-numeric:tabular-nums}

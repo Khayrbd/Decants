@@ -458,6 +458,9 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 .brow .bd{color:var(--graphite);font-size:.86rem;font-variant-numeric:tabular-nums}
 .brow .bb{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 #bDate{width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:inherit;background:var(--paper);color:inherit}
+
+/* v6.1: the website is one list, so the house order buttons are not used */
+#hOrdPanel [data-hmove],#hOrdPanel .actions{display:none}
 </style>
 </head>
 <body>
@@ -622,10 +625,10 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <section class="view hidden" id="v-houses">
       <button class="back" type="button" data-go="more">‹ More</button>
       <h2>Houses</h2>
-      <p class="help" style="margin-top:0">On the website, perfumes of the same house are shown together. Inside a house, older perfumes come first, so a new perfume goes to the end of its house by itself. Perfumes without a house are shown last, under <b>Other</b>.</p>
+      <p class="help" style="margin-top:0">The House is shown on each perfume card and in the popup. The website shows all perfumes in <b>one list, in your number order (1, 2, 3 …)</b>, not grouped by house. New perfumes go to the end.</p>
       <div class="panel" id="hSugPanel"><h3>Set houses for perfumes without one</h3><div id="hSug"></div></div>
-      <div class="panel"><h3>House order on the website</h3>
-        <p class="help">A→Z unless you move a house. Houses you add later go after the ones you moved.</p>
+      <div class="panel" id="hOrdPanel"><h3>Your houses</h3>
+        <p class="help">Tap Rename to change a house name on all its perfumes at once.</p>
         <div id="hOrd"></div>
       </div>
     </section>
@@ -769,7 +772,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
           <button type="button" data-store="perfume" aria-pressed="true">PERFUME</button>
           <button type="button" data-store="attar" aria-pressed="false">ATTAR</button>
         </div></div>
-      <p class="help">Importing into <b data-w="FOLDER">PERFUME</b>. Needs a name column (<code>Perfume Name</code>, <code>Attar Name</code> or <code>Name</code>) and size columns like <code id="impSizes">3ml, 6ml, 10ml, 15ml, 30ml</code>. Optional: <code>House</code>, <code>Gender</code> (Male / Female / Unisex), <code>Season</code> (Summer / Winter / All season), <code>Similar To</code>, <code>Fragrantica</code>, <code>SL</code> (number), <code>Category</code> (<span id="impCats"></span>), <code>Juice</code>. Matching products are updated, new ones are added, nothing is deleted, and photos are kept. Blank cells change nothing.</p>
+      <p class="help">Importing into <b data-w="FOLDER">PERFUME</b>. Needs a name column (<code>Perfume Name</code>, <code>Attar Name</code> or <code>Name</code>) and size columns like <code id="impSizes">3ml, 6ml, 10ml, 15ml, 30ml</code>. Optional: <code>House</code>, <code>Season</code> (Summer / Winter / All season), <code>Similar To</code>, <code>Fragrantica</code>, <code>SL</code> (number), <code>Category</code> (<span id="impCats"></span>), <code>Juice</code>. Matching products are updated, new ones are added, nothing is deleted, and photos are kept. Blank cells change nothing.</p>
       <label class="radio" style="margin:4px 0 14px"><input type="checkbox" id="impJuice"><span><b>Allow CSV to Update Juice Levels</b><br><span class="help" style="margin:0">Leave this OFF to keep your current juice levels, even if the CSV has a Juice column.</span></span></label>
       <label class="fl"><span>Choose a CSV file</span><input type="file" id="impFile" accept=".csv,text/csv,text/plain"></label>
       <label class="fl"><span>Or paste CSV text</span><textarea id="impText" rows="4"></textarea></label>
@@ -866,8 +869,8 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <label class="fl"><span id="eNameLbl">Perfume Name</span><input type="text" id="eName" autocomplete="off" maxlength="120"></label>
     <label class="fl"><span>House</span><input type="text" id="eHouse" list="houseOpts" autocomplete="off" maxlength="60" placeholder="e.g. Hawas, Armaf, Lattafa"></label>
     <div style="margin:-6px 0 12px"><button type="button" class="chip" id="eHouseSug" hidden></button></div>
-    <div class="g2" id="eGS">
-      <label class="fl"><span>Male / Female / Unisex</span><select id="eGender"><option value="">Not set</option><option value="male">Male</option><option value="female">Female</option><option value="unisex">Unisex</option></select></label>
+    <div id="eGS">
+      <label class="fl" hidden><span>Male / Female / Unisex</span><select id="eGender"><option value="">Not set</option><option value="male">Male</option><option value="female">Female</option><option value="unisex">Unisex</option></select></label>
       <label class="fl"><span>Season</span><select id="eSeason"><option value="">Not set</option><option value="summer">Summer</option><option value="winter">Winter</option><option value="all">All season</option></select></label>
     </div>
     <label class="fl"><span>Similar to <span class="help" style="font-weight:400">(optional, e.g. Bois Imperial)</span></span><input type="text" id="eSimilar" autocomplete="off" maxlength="80"></label>
@@ -958,7 +961,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 <script>
 (function(){
 'use strict';
-const APP_VERSION = '6.0.0';
+const APP_VERSION = '6.1.0';
 const CFG = window.SHOP_CONFIG || {};
 const SBC = CFG.supabase || {};
 /* One products table with two product types. Attar is kept in the database but is no longer sold on the website. */
@@ -1652,7 +1655,7 @@ function filtered(){
   const q = norm(query.replace(/^\s*#/, '')), words = q.split(' ').filter(Boolean);
   return products.filter(p => {
     if(words.length){
-      const hay = norm(`${p.name} ${p.house} ${gLabel(p.gender)} ${sLabel(p.season)}`);
+      const hay = norm(`${p.name} ${p.house} ${sLabel(p.season)}`);
       const hit = (/^\d+$/.test(q) && Number(p.number) === Number(q)) || words.every(w => hay.includes(w)) || hay.replace(/ /g, '').includes(words.join(''));
       if(!hit) return false;
     }
@@ -1663,7 +1666,7 @@ function filtered(){
     if(filter === 'noimg') return !hasImg(p);
     if(filter === 'out') return anyOut(p);
     if(filter === 'nohouse') return !p.house;
-    if(filter === 'nogs') return !p.gender || !p.season;
+    if(filter === 'nogs') return !p.season;
     if(filter === 'sizeoff') return SIZES.some(s => !pOn(p, s) || !pr(p, s));
     return true;
   });
@@ -1691,7 +1694,7 @@ function rowHTML(p){
   return `<div class="row ${vis ? '' : 'off'}" data-row="${esc(p.id)}">
     <button class="thumb" data-edit="${esc(p.id)}" aria-label="Photo of ${esc(p.name)}. Tap to change">${th ? `<img src="${esc(imgUrl(th))}" alt="" loading="lazy" width="64" height="64">` : '<span>No image<br>Tap to add</span>'}</button>
     <div><div class="nm"><span class="no">#${esc(p.number)}</span> ${esc(p.name)} ${vis ? '' : '<span class="pill">Hidden</span>'} ${p.stock_out ? '<span class="pill red">Stock Out</span>' : ''} ${isLow(p.id) ? '<span class="pill amber">Low juice</span>' : ''}</div>
-      <div class="sub">${[gLabel(p.gender), sLabel(p.season), p.similar_to ? 'Similar to ' + p.similar_to : ''].filter(Boolean).map(esc).join(' · ')}${p.legacy_category ? ` · old category: ${esc(p.legacy_category)}` : ''}</div>
+      <div class="sub">${[sLabel(p.season), p.similar_to ? 'Similar to ' + p.similar_to : ''].filter(Boolean).map(esc).join(' · ')}${p.legacy_category ? ` · old category: ${esc(p.legacy_category)}` : ''}</div>
       <div class="tools">
         ${isP ? `<input type="text" class="hin ${p.house ? '' : 'none'}" list="houseOpts" maxlength="60" placeholder="House" value="${esc(p.house)}" data-house="${esc(p.id)}" aria-label="House of ${esc(p.name)}" autocomplete="off">` : ''}
         <select class="catsel ${p.category ? '' : 'none'}" data-cat="${esc(p.id)}" aria-label="Category of ${esc(p.name)}">
@@ -1740,7 +1743,7 @@ function renderRow(id){
   }, 0);
 }
 function buildFilters(){
-  const list = [['all', 'All'], ...(F.key === 'perfume' ? [['out', 'Stock Out'], ['nohouse', 'No house'], ['nogs', 'No gender / season']] : []), ['uncat', 'Uncategorised'], ...F.cats.map(([c, l]) => ['cat:' + c, l]), ['low', 'Low juice'], ['noimg', 'No image'], ['hidden', 'Hidden'], ['sizeoff', 'Sizes off']];
+  const list = [['all', 'All'], ...(F.key === 'perfume' ? [['out', 'Stock Out'], ['nohouse', 'No house'], ['nogs', 'No season']] : []), ['uncat', 'Uncategorised'], ...F.cats.map(([c, l]) => ['cat:' + c, l]), ['low', 'Low juice'], ['noimg', 'No image'], ['hidden', 'Hidden'], ['sizeoff', 'Sizes off']];
   if(!list.some(x => x[0] === filter)) filter = 'all';
   $('filters').innerHTML = list.map(([f, l]) => `<button class="chip" type="button" data-f="${f}" aria-pressed="${f === filter}">${esc(l)}</button>`).join('');
 }
@@ -2149,7 +2152,6 @@ function analyse(text){
     if(col.num < 0 && /^(sl|sl\.?|sl no\.?|serial|serial no\.?|no|no\.|number|#|perfume no\.?|perfume number|attar no\.?|attar number)$/.test(h)) col.num = i;
     else if(col.name < 0 && /^(perfume name|attar name|name|perfume|attar|product|product name|title)$/.test(h)) col.name = i;
     else if(col.house < 0 && /^(house|house name|perfume house)$/.test(h)) col.house = i;
-    else if(col.gender < 0 && /^(gender|for|male\/female|male \/ female \/ unisex)$/.test(h)) col.gender = i;
     else if(col.season < 0 && /^(season|seasons)$/.test(h)) col.season = i;
     else if(col.similar < 0 && /^(similar to|similar|inspired by|dupe of|clone of)$/.test(h)) col.similar = i;
     else if(col.frag < 0 && /^(fragrantica|fragrantica link|fragrantica url|link)$/.test(h)) col.frag = i;
@@ -2313,9 +2315,9 @@ let itT; $('impText').addEventListener('input', e => { clearTimeout(itT); itT = 
 
 $('exportBtn').onclick = () => {
   const q = v => { v = String(v ?? ''); if(/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; };
-  const head = ['SL', `${F.One} Name`, 'House', 'Gender', 'Season', 'Similar To', 'Category', ...SIZES.map(s => s + 'ml'), 'Juice', 'Bottle', 'Stock Out', 'Fragrantica'];
+  const head = ['SL', `${F.One} Name`, 'House', 'Season', 'Similar To', 'Category', ...SIZES.map(s => s + 'ml'), 'Juice', 'Bottle', 'Stock Out', 'Fragrantica'];
   const outTxt = p => p.stock_out ? 'All' : SIZES.filter(s => manOut(p, s)).map(s => s + 'ml').join(' ');
-  const lines = sorted(products).map(p => { const j = juice[p.id] || {}; return [p.number, p.name, p.house, gLabel(p.gender), sLabel(p.season), p.similar_to, catLabel(F.key, p.category), ...SIZES.map(s => p.prices[s] || ''), j.ml ?? '', j.bottle_ml ?? '', outTxt(p), p.fragrantica_url].map(q).join(','); });
+  const lines = sorted(products).map(p => { const j = juice[p.id] || {}; return [p.number, p.name, p.house, sLabel(p.season), p.similar_to, catLabel(F.key, p.category), ...SIZES.map(s => p.prices[s] || ''), j.ml ?? '', j.bottle_ml ?? '', outTxt(p), p.fragrantica_url].map(q).join(','); });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['﻿' + [head.join(','), ...lines].join('\n')], {type: 'text/csv'}));
   a.download = `khayr-${F.one}s-${new Date().toISOString().slice(0, 10)}.csv`;

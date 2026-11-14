@@ -190,7 +190,7 @@ async function load(){
 }
 
 /* ================= PERFUME LIST ================= */
-const state = {q:'', size:'all', cat:'all', house:'all', gender:'all', season:'all', sort:'house', sel:{}, touched:{}};
+const state = {q:'', size:'all', cat:'all', house:'all', gender:'all', season:'all', sort:'number', sel:{}, touched:{}};
 function houseRanks(){
   const order = (GEN.houseOrder || []).map(houseKey);
   const names = [...new Set(products.map(p => p.house).filter(Boolean))];
@@ -211,10 +211,7 @@ function initShop(){
   if(cat && CATS.some(c => c[0] === cat)) state.cat = cat;
   const size = Number(params.get('size'));
   if(size && activeSizes().includes(size)) state.size = size;
-  const house = params.get('house');
-  if(house){ const k = houseKey(house); if(HR.keys.includes(k) || k === 'other') state.house = k; }
   const gq = String(params.get('gender') || '').toLowerCase(), sq = String(params.get('season') || '').toLowerCase();
-  if(GENDERS.some(g => g[0] === gq)) state.gender = gq;
   if(sq === 'summer' || sq === 'winter') state.season = sq;
   if(params.get('q')){ state.q = params.get('q').slice(0, 80); $('q').value = state.q; $('searchBox').classList.add('has'); }
   if(!products.length){
@@ -255,13 +252,12 @@ function buildFilters(){
   $('catFilter').hidden = !cats.length;
   $('catFilter').innerHTML = [['all', 'All Perfumes'], ...cats].map(([c, label]) =>
     `<button class="chip" type="button" data-cat="${c}" aria-pressed="${c === state.cat}">${esc(label)}</button>`).join('');
-  const gs = [...GENDERS.filter(([g]) => products.some(p => p.gender === g)).map(([g, l]) => ['g:' + g, l]),
-              ...SEASONS.filter(([v]) => v !== 'all' && products.some(p => p.season === v)).map(([v, l]) => ['s:' + v, l])];
+  const gs = [...SEASONS.filter(([v]) => v !== 'all' && products.some(p => p.season === v)).map(([v, l]) => ['s:' + v, l])];
   $('gsFilter').hidden = !gs.length;
   $('gsFilter').innerHTML = gs.map(([k, l]) => `<button class="chip" type="button" data-gs="${k}" aria-pressed="${k === 'g:' + state.gender || k === 's:' + state.season}">${esc(l)}</button>`).join('');
   const hasOther = products.some(p => !p.house);
   const opts = HR.keys.map(k => [k, HR.label(k)]).concat(hasOther && HR.keys.length ? [['other', 'Other']] : []);
-  $('houseSel').hidden = opts.length < 2;
+  $('houseSel').hidden = true;    // one list for everyone, no house groups
   $('houseSel').innerHTML = `<option value="all">All houses</option>` + opts.map(([k, l]) => `<option value="${esc(k)}" ${k === state.house ? 'selected' : ''}>${esc(l)}</option>`).join('');
   $('sort').value = state.sort;
 }
@@ -362,7 +358,7 @@ function searchList(list, raw){
   const q = norm(raw), words = q.split(' ').filter(Boolean);
   if(!words.length) return list;
   return list.filter(p => {
-    const hay = norm(`${p.name} ${p.house} ${p.similar_to || ''} ${catLabel(p.category)} ${gLabel(p.gender)} ${sLabel(p.season)}`);
+    const hay = norm(`${p.name} ${p.house} ${p.similar_to || ''} ${catLabel(p.category)} ${sLabel(p.season)}`);
     return words.every(w => hay.includes(w)) || hay.replace(/ /g, '').includes(words.join(''));
   });
 }
@@ -380,7 +376,7 @@ function visibleList(){
   if(state.sort === 'az') list.sort((a, b) => a.name.localeCompare(b.name));
   else if(state.sort === 'low') list.sort((a, b) => ref(a) - ref(b));
   else if(state.sort === 'high') list.sort((a, b) => ref(b) - ref(a));
-  else list.sort((a, b) => HR.rank(hk(a)) - HR.rank(hk(b)) || a.no - b.no);    // by house; older first, new ones at the end of their house
+  else list.sort((a, b) => a.no - b.no);    // your list order, 1 to 100 (new ones at the end)
   return list;
 }
 function cardHTML(p){
@@ -397,7 +393,7 @@ function cardHTML(p){
     if(sizeOut(p, s)) return `<button class="box out" type="button" disabled aria-disabled="true" data-id="${esc(p.id)}" data-size="${s}" aria-label="${s}ml, out of stock"><span class="ml">${s}ml</span><span class="pr">Out</span></button>`;
     return `<button class="box" type="button" role="radio" aria-checked="${s === sel}" data-id="${esc(p.id)}" data-size="${s}" aria-label="${s}ml, ${price(priceOf(p, s))}" tabindex="${(sel ? s === sel : s === buy[0]) ? 0 : -1}"><span class="ml">${s}ml</span><span class="pr">${price(priceOf(p, s))}</span></button>`;
   }).join('');
-  const cat = catLabel(p.category), tags = [cat, gLabel(p.gender), sLabel(p.season)].filter(Boolean);
+  const cat = catLabel(p.category), tags = [cat, sLabel(p.season)].filter(Boolean);
   return `<article class="card ${out ? 'is-out' : ''}" data-card="${esc(p.id)}" id="p-${esc(p.id)}">
     ${pic}
     <div class="info">
@@ -421,18 +417,7 @@ function render(){
     $('grid').querySelector('[data-clear]').onclick = clearFilters;
     return;
   }
-  if(state.sort !== 'house'){ $('grid').innerHTML = list.map(cardHTML).join(''); return; }
-  let html = '', cur = null;
-  list.forEach(p => {
-    const k = hk(p);
-    if(k !== cur){
-      cur = k;
-      const n = list.filter(x => hk(x) === k).length;
-      html += `<h2 class="house-h" data-house="${esc(k)}"><span>${esc(k === 'other' ? 'Other' : HR.label(k))}</span><small>${n}</small></h2>`;
-    }
-    html += cardHTML(p);
-  });
-  $('grid').innerHTML = html;
+  $('grid').innerHTML = list.map(cardHTML).join('');
 }
 function refreshCard(id){
   const el = document.querySelector(`[data-card="${CSS.escape(id)}"]`), p = findP(id);
@@ -467,7 +452,7 @@ function openPM(id){
   $('pmHouse').textContent = p.house || '';
   $('pmName').textContent = p.name;
   $('pmSim').textContent = p.similar_to ? 'Similar to ' + p.similar_to : '';
-  $('pmTags').innerHTML = [catLabel(p.category), gLabel(p.gender), sLabel(p.season)].filter(Boolean).map(t => `<span class="tag">${esc(t)}</span>`).join(' ');
+  $('pmTags').innerHTML = [catLabel(p.category), sLabel(p.season)].filter(Boolean).map(t => `<span class="tag">${esc(t)}</span>`).join(' ');
   $('pmGrid').style.gridTemplateColumns = `repeat(${Math.max(1, sizesFor(p).length)},minmax(0,1fr))`;
   $('pmGrid').innerHTML = pmHTML(p);
   $('pmLink').hidden = !p.fragrantica_url; if(p.fragrantica_url) $('pmLink').href = p.fragrantica_url;
@@ -841,7 +826,9 @@ function restoreLastAction(){
 
 const WA_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.4-.3Z"/></svg>';
 const COPY_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
-const activeQrs = () => ((GEN.payment || {}).qrs || []).filter(q => q && q.active !== false && (q.image_path || q.thumb_path));
+const BUILTIN_QR = {label: 'bKash (Personal)', details: '01740235029', src: 'bkash-qr.jpg?v=6.1'};   // shown when no QR is set in Admin > Payment
+const activeQrs = () => { const l = ((GEN.payment || {}).qrs || []).filter(q => q && q.active !== false && (q.image_path || q.thumb_path)); return l.length ? l : [BUILTIN_QR]; };
+const qrSrc = (q, big) => q.src || imgUrl(big ? (q.image_path || q.thumb_path) : (q.thumb_path || q.image_path));
 function lineHTML(i, k){
   const p = findP(i.id), ok = lineOk(i), sizes = sizesFor(p), th = imgUrl(p.thumb_path || p.image_path);
   const opts = sizes.map(z => {
@@ -876,11 +863,11 @@ function payHTML(){
       <div class="total"><span>${full ? 'Total to pay' : 'Total'}</span><span>${price(a.total)}</span></div>
       ${need > 0 ? `<p class="freehint">Add ${price(need)} tk more for <b>free delivery</b> all over Bangladesh.</p>` : free > 0 ? `<p class="freehint ok">You get <b>free delivery</b> ✓</p>` : ''}
     </div>
-    ${full && qrs.length ? `<div class="qrs"><div class="qrt">Pay to</div>${qrs.map((q, k) => `<div class="qr">
-        <button type="button" class="qrimg" data-qr="${k}" aria-label="Open ${esc(q.label || 'QR code')}"><img src="${esc(imgUrl(q.thumb_path || q.image_path))}" alt="${esc(q.label || 'Payment QR code')}" width="400" height="400" loading="lazy"></button>
-        <div class="qrinfo"><b>${esc(q.label || 'Payment')}</b>${q.details ? `<span>${esc(q.details)}</span>` : ''}<button type="button" class="qrbtn" data-qr="${k}">View QR</button></div>
+    ${qrs.length ? `<div class="qrs"><div class="qrt">Pay by bKash</div>${qrs.map((q, k) => `<div class="qr">
+        <button type="button" class="qrimg" data-qr="${k}" aria-label="Open ${esc(q.label || 'QR code')}"><img src="${esc(qrSrc(q))}" alt="${esc(q.label || 'Payment QR code')}" width="400" height="400" loading="lazy"></button>
+        <div class="qrinfo"><b>${esc(q.label || 'Payment')}</b>${q.details ? `<span class="qrnum">${esc(q.details)}</span>` : ''}<button type="button" class="qrbtn" data-qr="${k}">View QR</button></div>
       </div>`).join('')}
-      <p class="note">Pay ${price(a.total)} tk, then send the payment screenshot or TrxID to us on WhatsApp.</p></div>` : ''}
+      <p class="note">${full ? `Pay ${price(a.total)} tk` : 'Pay by bKash'}, then send the payment screenshot or TrxID to us on WhatsApp.</p></div>` : ''}
   </div>`;
 }
 function renderDrawer(){
@@ -948,7 +935,7 @@ $('dbody').addEventListener('change', e => {
 /* ---------- QR viewer (big, easy to scan or save) ---------- */
 function openQr(k){
   const q = activeQrs()[k]; if(!q) return;
-  const full = imgUrl(q.image_path || q.thumb_path);
+  const full = qrSrc(q, true);
   $('qrvImg').src = full; $('qrvImg').alt = q.label || 'Payment QR code';
   $('qrvLabel').textContent = q.label || 'Payment';
   $('qrvDetails').textContent = q.details || '';
