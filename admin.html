@@ -44,7 +44,7 @@ button{cursor:pointer;touch-action:manipulation}
 .btn.block{width:100%}
 .btn.big{min-height:54px;font-size:1.05rem}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-input[type=text],input[type=number],input[type=password],input[type=search],input[type=email],input[type=tel],select,textarea{width:100%;height:46px;border:1px solid #C7C7CC;border-radius:12px;padding:0 12px;background:var(--paper);font-size:16px;-webkit-appearance:none;appearance:none}
+input[type=text],input[type=number],input[type=password],input[type=search],input[type=email],input[type=tel],input[type=url],select,textarea{width:100%;height:46px;border:1px solid #C7C7CC;border-radius:12px;padding:0 12px;background:var(--paper);font-size:16px;-webkit-appearance:none;appearance:none}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--graphite) 50%),linear-gradient(135deg,var(--graphite) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
 textarea{height:auto;padding:10px 12px}
 input:focus,textarea:focus,select:focus{border-color:var(--ink);outline:0;box-shadow:0 0 0 1px var(--ink)}
@@ -387,6 +387,20 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 .gcard .grow{display:flex;gap:6px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .gcard .grow label{display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer}
 
+/* v6: quantity, calculator */
+.cl .ca .qty{display:inline-flex;align-items:center;border:1px solid var(--box);border-radius:10px;overflow:hidden}
+.cl .ca .qty button{width:36px;height:34px;border:0;background:var(--paper);font-size:1.05rem}
+.cl .ca .qty span{min-width:26px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.psz .qn{position:absolute;bottom:-7px;right:-4px;background:var(--ink);color:#fff;border-radius:8px;padding:0 5px;font-size:.66rem;font-weight:800}
+.ctab{width:100%;border-collapse:collapse;margin:8px 0;font-variant-numeric:tabular-nums}
+.ctab th,.ctab td{padding:8px 6px;border-top:1px solid var(--line);text-align:right;font-size:.9rem}
+.ctab th:first-child,.ctab td:first-child{text-align:left}
+.ctab thead th{border-top:0;color:var(--graphite);font-weight:600;font-size:.78rem}
+.ctab td.big{font-weight:800;font-size:1.1rem}
+.clist{display:grid;gap:6px;margin:8px 0}
+.clist button{text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;min-height:44px}
+.clist button small{display:block;color:var(--graphite)}
+.htab input[type=number]{height:40px;width:90px}
 /* Computer */
 @media (min-width:900px){
   .tabbar,.salebar,.ptr{display:none!important}
@@ -429,6 +443,21 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
   .htab .hide-s{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* v6: My Purchases */
+.btot{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;font-variant-numeric:tabular-nums}
+.btot b.big{font-size:1.35rem}
+.bsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+.bsum div{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.bsum small{display:block;color:var(--graphite);font-size:.75rem}
+.bsum b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+.brow{border-top:1px solid var(--line);padding:10px 0}
+.brow .bh{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.brow .bh b{font-size:1rem}
+.brow .bp{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.brow .bd{color:var(--graphite);font-size:.86rem;font-variant-numeric:tabular-nums}
+.brow .bb{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+#bDate{width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:inherit;background:var(--paper);color:inherit}
 </style>
 </head>
 <body>
@@ -476,11 +505,14 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <button data-go="perfumes">Products</button>
     <button data-go="houses">Houses</button>
     <button data-go="payment">Payment</button>
+    <button data-go="calc">Calculator</button>
     <button data-go="sizes">ML Settings</button>
     <button data-go="notify">Notifications</button>
     <button data-go="import">CSV Import</button>
     <button data-go="bottles">Bottle Photos</button>
     <button data-go="dashboard">Dashboard</button>
+    <button data-go="buys">My Purchases</button>
+    <button data-go="calcset">Calculator settings</button>
     <button data-go="security">Security</button>
   </div></nav>
   <div class="ptr" id="ptr" aria-hidden="true">↓ Pull to refresh</div>
@@ -489,7 +521,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <!-- Orders -->
     <section class="view hidden" id="v-orders">
       <div class="vh"><h2>Orders</h2><button class="btn sm" id="oReload" type="button">Refresh</button></div>
-      <p class="help" style="margin-top:0">Website orders and your own sales. Confirm a website order after the customer pays: that is when it is sent to Meta as a Purchase.</p>
+      <p class="help" style="margin-top:0">Website orders and your own sales. A website order is counted on Facebook as a Purchase when the customer places it. Confirm it here after the customer pays.</p>
       <div class="findbar">
         <input type="search" id="oq" placeholder="Search order ID, name or phone" aria-label="Search orders">
         <div class="chips" id="ofilters" role="group" aria-label="Order status">
@@ -603,20 +635,95 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       <button class="back" type="button" data-go="more">‹ More</button>
       <h2>Payment</h2>
       <div class="panel"><h3>Payment options at checkout</h3>
-        <p class="help">Customers choose: pay the advance now and the rest on delivery, or pay the full amount now and get a discount. The server calculates the discount.</p>
+        <p class="help">On the website customers can tick "Pay the full amount now" and get this discount on the perfumes (not on delivery). The server calculates it. The advance is not shown on the website; you ask for it on WhatsApp. The advance amount below is only used inside Admin.</p>
         <div class="g2">
-          <label class="fl"><span>Advance amount (taka)</span><input type="number" id="pAdv" min="0" max="100000" step="1" inputmode="numeric"></label>
+          <label class="fl"><span>Advance amount (taka, Admin only)</span><input type="number" id="pAdv" min="0" max="100000" step="1" inputmode="numeric"></label>
           <label class="fl"><span>Discount for full payment (%)</span><input type="number" id="pPct" min="0" max="50" step="0.5" inputmode="decimal"></label>
         </div>
         <p class="help" id="pEx"></p>
         <button class="btn dark" id="pSave" type="button">Save payment options</button>
       </div>
+      <div class="panel"><h3>Delivery charge</h3>
+        <p class="help">Added to every website order. The 1% full-payment discount is never taken off the delivery charge.</p>
+        <div class="g3">
+          <label class="fl"><span>Inside Sylhet (taka)</span><input type="number" id="dIn" min="0" max="5000" step="1" inputmode="numeric"></label>
+          <label class="fl"><span>Outside Sylhet (taka)</span><input type="number" id="dOut" min="0" max="5000" step="1" inputmode="numeric"></label>
+          <label class="fl"><span>Free delivery from (taka)</span><input type="number" id="dFree" min="0" max="1000000" step="1" inputmode="numeric"></label>
+        </div>
+        <p class="help">"Free delivery from" uses the perfume total before the discount. Put 0 to never give free delivery.</p>
+        <button class="btn dark" id="dSave" type="button">Save delivery charge</button>
+      </div>
       <div class="panel"><h3>QR codes and account details</h3>
-        <p class="help">Customers see the QR codes that are ON in their cart, with the account details. They can tap a QR to make it big and save it.</p>
+        <p class="help">When a customer ticks full payment, the cart shows the QR codes that are ON, with the account details. They can tap a QR to make it big and save it.</p>
         <input type="file" id="qFile" accept="image/png,image/jpeg,image/webp" hidden>
         <button class="btn dark" id="qAdd" type="button">+ Add QR code</button>
         <div id="qMsg"></div>
         <div class="qrlist" id="qList"></div>
+      </div>
+    </section>
+
+    <!-- Price calculator -->
+    <section class="view hidden" id="v-calc">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <div class="vh"><h2>Calculator</h2><button class="btn sm" type="button" data-go="calcset">Settings</button></div>
+      <div class="panel">
+        <label class="fl" style="max-width:320px"><span>Perfume cost per ml (taka)</span><input type="number" id="cPer" min="0" step="0.5" inputmode="decimal" placeholder="e.g. 30"></label>
+        <div id="cTable"></div>
+        <p class="help" id="cHow"></p>
+      </div>
+      <div class="panel"><h3>Use these prices for a perfume</h3>
+        <p class="help">Search and choose a perfume. You see its old and new prices, and nothing changes until you press Apply.</p>
+        <input type="search" id="cFind" placeholder="Search perfume or house" aria-label="Search perfume">
+        <div class="clist" id="cList"></div>
+        <div id="cPick"></div>
+      </div>
+    </section>
+
+    <!-- My purchases (admin only) -->
+    <section class="view hidden" id="v-buys">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>My Purchases</h2>
+      <p class="help" style="margin-top:0">What you paid for each full bottle. <b>Only you can see this</b> (after logging in with your authenticator code). Customers and the website never see it.</p>
+      <div class="panel" id="bForm"><h3 id="bTitle">Add a purchase</h3>
+        <label class="fl"><span>Perfume</span><input id="bName" list="bNames" maxlength="120" placeholder="Start typing, e.g. Hawas Ice" autocomplete="off"></label>
+        <datalist id="bNames"></datalist>
+        <div class="g2">
+          <label class="fl"><span>Date bought</span><input type="date" id="bDate"></label>
+          <label class="fl"><span>Bottle size (ml)</span><input type="number" id="bMl" min="0" max="10000" step="0.5" inputmode="decimal" placeholder="e.g. 100"></label>
+        </div>
+        <div class="g2">
+          <label class="fl"><span>1. Purchase price (taka)</span><input type="number" id="bBuy" min="0" step="1" inputmode="numeric" placeholder="e.g. 2800"></label>
+          <label class="fl"><span>2. Delivery cost (taka)</span><input type="number" id="bDel" min="0" step="1" inputmode="numeric" placeholder="e.g. 100"></label>
+        </div>
+        <div class="g2">
+          <label class="fl"><span>Market price (optional)</span><input type="number" id="bMkt" min="0" step="1" inputmode="numeric" placeholder="e.g. 3000"></label>
+          <label class="fl"><span>3. Bought below market (taka)</span><input type="number" id="bBelow" min="0" step="1" inputmode="numeric" placeholder="e.g. 200"></label>
+        </div>
+        <p class="help" style="margin-top:0">"Bought below market" = how much cheaper than the market you bought it. Type the market price and it is filled in by itself (3000 − 2800 = 200).</p>
+        <label class="fl"><span>Note (optional)</span><input id="bNote" maxlength="200" placeholder="e.g. from Dubai seller"></label>
+        <div class="btot" id="bTotal"></div>
+        <button class="btn dark block" id="bSave" type="button">Save purchase</button>
+        <button class="link hidden" id="bCancel" type="button">Cancel editing</button>
+        <div id="bMsg"></div>
+      </div>
+      <div class="panel"><h3>All purchases</h3>
+        <input type="search" id="bFind" placeholder="Search perfume" aria-label="Search purchases">
+        <div id="bSum"></div>
+        <div id="bList"></div>
+      </div>
+    </section>
+
+    <!-- Calculator settings -->
+    <section class="view hidden" id="v-calcset">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>Calculator settings</h2>
+      <p class="help" style="margin-top:0">Price = (perfume cost per ml + profit per ml) × ml + bottle + box and packaging.</p>
+      <div class="panel">
+        <label class="fl" style="max-width:320px"><span>Box and packaging (taka, every size)</span><input type="number" id="csBox" min="0" step="1" inputmode="numeric"></label>
+        <div style="overflow-x:auto"><table class="htab" id="csTab"></table></div>
+        <label class="fl" style="max-width:320px;margin-top:12px"><span>Rounding</span><select id="csRound">
+          <option value="0">No rounding (exact)</option><option value="5">Round up to 5 (e.g. 223 → 225)</option><option value="10">Round up to 10 (e.g. 223 → 230)</option><option value="-10">Nearest 10 (e.g. 223 → 220)</option></select></label>
+        <button class="btn dark" id="csSave" type="button">Save calculator settings</button>
       </div>
     </section>
 
@@ -662,7 +769,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
           <button type="button" data-store="perfume" aria-pressed="true">PERFUME</button>
           <button type="button" data-store="attar" aria-pressed="false">ATTAR</button>
         </div></div>
-      <p class="help">Importing into <b data-w="FOLDER">PERFUME</b>. Needs a name column (<code>Perfume Name</code>, <code>Attar Name</code> or <code>Name</code>) and size columns like <code id="impSizes">3ml, 6ml, 10ml, 15ml, 30ml</code>. Optional: <code>House</code>, <code>SL</code> (number), <code>Brand</code>, <code>Category</code> (<span id="impCats"></span>), <code>Juice</code>. Matching products are updated, new ones are added, nothing is deleted, and photos are kept. Blank cells change nothing.</p>
+      <p class="help">Importing into <b data-w="FOLDER">PERFUME</b>. Needs a name column (<code>Perfume Name</code>, <code>Attar Name</code> or <code>Name</code>) and size columns like <code id="impSizes">3ml, 6ml, 10ml, 15ml, 30ml</code>. Optional: <code>House</code>, <code>Gender</code> (Male / Female / Unisex), <code>Season</code> (Summer / Winter / All season), <code>Similar To</code>, <code>Fragrantica</code>, <code>SL</code> (number), <code>Category</code> (<span id="impCats"></span>), <code>Juice</code>. Matching products are updated, new ones are added, nothing is deleted, and photos are kept. Blank cells change nothing.</p>
       <label class="radio" style="margin:4px 0 14px"><input type="checkbox" id="impJuice"><span><b>Allow CSV to Update Juice Levels</b><br><span class="help" style="margin:0">Leave this OFF to keep your current juice levels, even if the CSV has a Juice column.</span></span></label>
       <label class="fl"><span>Choose a CSV file</span><input type="file" id="impFile" accept=".csv,text/csv,text/plain"></label>
       <label class="fl"><span>Or paste CSV text</span><textarea id="impText" rows="4"></textarea></label>
@@ -719,6 +826,9 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       <div class="group">
         <button class="mi" type="button" data-go="houses"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span><span class="tx">Houses<small>Group perfumes by house, set the order</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="payment"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7v-3"/></svg></span><span class="tx">Payment<small>bKash / bank QR codes, full payment discount</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="calc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2M16 16h0"/></svg></span><span class="tx">Calculator<small>Decant prices from the cost per ml</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="buys"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><span class="tx">My Purchases<small>What you paid for each bottle (only you see it)</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="calcset"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></span><span class="tx">Calculator settings<small>Bottle, box and profit per ml</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="sizes"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span><span class="tx">ML Settings<small>Sizes, automatic Stock Out, WhatsApp number</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="notify"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="tx">Notifications<small id="moreNotify">New order alerts on this phone</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="dashboard"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span><span class="tx">Dashboard<small>Totals and connections</small></span><span class="chev">›</span></button>
@@ -756,7 +866,12 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <label class="fl"><span id="eNameLbl">Perfume Name</span><input type="text" id="eName" autocomplete="off" maxlength="120"></label>
     <label class="fl"><span>House</span><input type="text" id="eHouse" list="houseOpts" autocomplete="off" maxlength="60" placeholder="e.g. Hawas, Armaf, Lattafa"></label>
     <div style="margin:-6px 0 12px"><button type="button" class="chip" id="eHouseSug" hidden></button></div>
-    <label class="fl"><span>Brand Name</span><input type="text" id="eBrand" autocomplete="off" maxlength="80" placeholder="Optional"></label>
+    <div class="g2" id="eGS">
+      <label class="fl"><span>Male / Female / Unisex</span><select id="eGender"><option value="">Not set</option><option value="male">Male</option><option value="female">Female</option><option value="unisex">Unisex</option></select></label>
+      <label class="fl"><span>Season</span><select id="eSeason"><option value="">Not set</option><option value="summer">Summer</option><option value="winter">Winter</option><option value="all">All season</option></select></label>
+    </div>
+    <label class="fl"><span>Similar to <span class="help" style="font-weight:400">(optional, e.g. Bois Imperial)</span></span><input type="text" id="eSimilar" autocomplete="off" maxlength="80"></label>
+    <label class="fl"><span>Fragrantica link <span class="help" style="font-weight:400">(optional)</span></span><input type="url" id="eFrag" autocomplete="off" maxlength="300" placeholder="https://www.fragrantica.com/perfume/…"></label>
     <div class="fl"><span style="font-weight:500;font-size:.88rem">Category</span>
       <div class="cats" id="eCats" role="radiogroup" aria-label="Category"></div>
       <p class="help" id="eLegacy" hidden></p>
@@ -843,7 +958,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 <script>
 (function(){
 'use strict';
-const APP_VERSION = '5.0.0';
+const APP_VERSION = '6.0.0';
 const CFG = window.SHOP_CONFIG || {};
 const SBC = CFG.supabase || {};
 /* One products table with two product types. Attar is kept in the database but is no longer sold on the website. */
@@ -861,6 +976,10 @@ const DEF_SET = {whatsapp:'8801673080800', sizesEnabled:{}, orderNote:'', lowJui
 const SB_URL = String(SBC.url || '').replace(/\/$/, '');
 const FN_URL = SB_URL + '/functions/v1/khayr-api';
 const catLabel = (type, c) => (STORES[type].cats.find(x => x[0] === c) || [])[1] || '';
+const GENDERS = [['male', 'Male'], ['female', 'Female'], ['unisex', 'Unisex']];
+const SEASONS = [['summer', 'Summer'], ['winter', 'Winter'], ['all', 'All season']];
+const gLabel = g => (GENDERS.find(x => x[0] === g) || [])[1] || '';
+const sLabel = v => (SEASONS.find(x => x[0] === v) || [])[1] || '';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const price = n => String(Math.round(Number(n) || 0));
@@ -882,7 +1001,7 @@ const KEEP = {
   del(k){ try { localStorage.removeItem(k); } catch(e){} try { sessionStorage.removeItem(k); } catch(e){} }
 };
 const AUTH_KEY = 'khayr-admin-auth';
-const CACHE_KEY = 'khayr_admin_cache_v5', SALE_KEY = 'khayr_admin_sale_v5';
+const CACHE_KEY = 'khayr_admin_cache_v6', SALE_KEY = 'khayr_admin_sale_v6';
 function newId(){
   try { if(crypto.randomUUID) return crypto.randomUUID(); } catch(e){}
   const b = new Uint8Array(16); crypto.getRandomValues(b); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
@@ -908,6 +1027,8 @@ let tt;
 function toast(t, err){ const el = $('toast'); el.textContent = t; el.classList.toggle('err', !!err); el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), err ? 5200 : 2400); }
 function friendly(e){
   const m = String((e && e.message) || e || 'Something went wrong.');
+  if(/perfume_purchases/i.test(m) && /does not exist|could not find|PGRST20[0-9]|42P01/i.test(m)) return 'My Purchases needs the new database table. Run 06-khayr-v6.sql again in the Supabase SQL Editor (it is safe), then reload this page.';
+  if(/NEEDS_V6/.test(m) || (/(gender|season|similar_to|fragrantica_url|delivery_fee)/i.test(m) && /does not exist|could not find|PGRST20[0-9]|42703/i.test(m))) return 'The database needs the version 6 upgrade. Run 06-khayr-v6.sql in the Supabase SQL Editor, then reload this page.';
   if(/NEEDS_V5/.test(m) || (/(house|stock_out|auto_out|payment_choice|subtotal|push_subscriptions|admin_update_order|admin_create_sale)/i.test(m) && /does not exist|could not find|PGRST20[0-9]|42703|42P01|42883/i.test(m))) return 'The database needs the version 5 upgrade. Run 05-khayr-v5.sql in the Supabase SQL Editor, then reload this page.';
   if(/row-level security|permission denied|not allowed|jwt|aal/i.test(m)) return 'Your login is not fully verified. Please log out and log in again with your authenticator code.';
   if(/product_type|public\.orders|relation .* does not exist|could not find the .*(table|function)|42703|42P01|PGRST20[0-9]/i.test(m)) return 'The database needs the version 4 and 5 upgrades. Run 05-khayr-v5.sql in the Supabase SQL Editor, then reload this page.';
@@ -1024,6 +1145,7 @@ function dropLocal(){
   products = []; allProducts = []; juice = {}; orders = []; ordersLoaded = false;
   sale = blankSale();
   $('list').innerHTML = ''; $('olist').innerHTML = ''; $('slist').innerHTML = '';
+  buys = []; buysLoaded = false; buyEdit = null; $('bList').innerHTML = ''; $('bSum').innerHTML = '';
   setBadges(0);
 }
 async function hardSignOut(scope){
@@ -1126,18 +1248,21 @@ function reauth(){
    ===================================================================== */
 function prep(p){
   return {...p, prices: p.prices || {}, sizes: p.sizes || {}, category: p.category || '', house: p.house || '',
+          gender: p.gender || '', season: p.season || '', similar_to: p.similar_to || '', fragrantica_url: p.fragrantica_url || '',
           stock_out: !!p.stock_out, stock_out_sizes: p.stock_out_sizes || {}, auto_out: p.auto_out || {}};
 }
 async function loadAll(){
-  const [pr, st, jl, v5] = await Promise.all([
+  const [pr, st, jl, v5, v6] = await Promise.all([
     sb.from('products').select('*').order('number', {ascending: true}),
     sb.from('settings').select('id,data').in('id', [1, 2]),
     sb.from('juice_levels').select('*'),
-    sb.from('products').select('id,house,stock_out,stock_out_sizes,auto_out').limit(1)
+    sb.from('products').select('id,house,stock_out,stock_out_sizes,auto_out').limit(1),
+    sb.from('products').select('id,gender,season,similar_to,fragrantica_url').limit(1)
   ]);
   const err = pr.error || st.error || jl.error;
   if(err) throw err;
   if(v5.error) throw new Error('NEEDS_V5 ' + (v5.error.message || ''));
+  if(v6.error) throw new Error('NEEDS_V6 ' + (v6.error.message || ''));
   if(pr.data.length && !('product_type' in pr.data[0])) throw new Error('column products.product_type does not exist');
   allProducts = pr.data.map(prep);
   setRows = {1: {}, 2: {}};
@@ -1148,7 +1273,7 @@ async function loadAll(){
 }
 function saveCache(){
   if(!panelOpen || fromCache) return;
-  KEEP.set(CACHE_KEY, {v: 5, at: Date.now(), who: adminEmail, products: allProducts, settings: setRows, juice, orders: orders.slice(0, 150)});
+  KEEP.set(CACHE_KEY, {v: 6, at: Date.now(), who: adminEmail, products: allProducts, settings: setRows, juice, orders: orders.slice(0, 150)});
 }
 /* settings of one type, with safe defaults (never saved back as a whole) */
 function settingsOf(type){
@@ -1177,7 +1302,7 @@ function showPanel(){
 /* Show the copy saved on this phone at once, then refresh it from the internet. */
 function openFromCache(){
   const c = KEEP.get(CACHE_KEY);
-  if(!c || c.v !== 5 || !Array.isArray(c.products)) return false;
+  if(!c || c.v !== 6 || !Array.isArray(c.products)) return false;
   allProducts = c.products.map(prep); setRows = c.settings || {1: {}, 2: {}}; juice = c.juice || {};
   orders = Array.isArray(c.orders) ? c.orders : []; ordersLoaded = orders.length > 0;
   adminEmail = c.who || '';
@@ -1197,7 +1322,7 @@ async function openPanel(){
   }catch(e){
     const m = friendly(e);
     if(/not fully verified/.test(m)){ await hardSignOut(); loginStep('credentials', m); }
-    else { dropLocal(); loginStep('credentials', 'Could not load data. ' + m, /version 5|version 4/.test(m) ? 'warn' : 'err'); }
+    else { dropLocal(); loginStep('credentials', 'Could not load data. ' + m, /version [456]/.test(m) ? 'warn' : 'err'); }
     return;
   }
   const wasCache = fromCache;
@@ -1345,8 +1470,8 @@ $('impSeg').addEventListener('click', e => { const b = e.target.closest('[data-s
 /* =====================================================================
    NAVIGATION (tab bar on a phone, top menu on a computer)
    ===================================================================== */
-const VIEWS = ['orders', 'sale', 'perfumes', 'more', 'houses', 'payment', 'sizes', 'notify', 'import', 'bottles', 'dashboard', 'security'];
-const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
+const VIEWS = ['orders', 'sale', 'perfumes', 'more', 'houses', 'payment', 'calc', 'calcset', 'buys', 'sizes', 'notify', 'import', 'bottles', 'dashboard', 'security'];
+const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', calc: 'Calculator', calcset: 'Calculator settings', buys: 'My Purchases', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
 function go(view, opt){
   if(view === 'add'){ if(current !== 'perfumes') go('perfumes'); openEdit(null); return; }
   if(!VIEWS.includes(view)) view = 'orders';
@@ -1370,6 +1495,10 @@ function go(view, opt){
   if(view === 'houses') renderHouses();
   if(view === 'payment') renderPayment();
   if(view === 'notify') renderNotify();
+  if(view === 'calc') renderCalc();
+  if(view === 'calcset') renderCalcSet();
+  if(view === 'buys') renderBuys();
+  if(view === 'calc' && !buysLoaded) loadBuys();
   updateSaleBar();
   document.title = (unseen() ? `(${unseen()}) ` : '') + `${TITLES[view]} · KHAYR Admin`;
   window.scrollTo(0, 0);
@@ -1461,7 +1590,7 @@ function renderOrderStats(){
     <button class="stat" data-go="orders" data-ofilter="confirmed"><b>${n('confirmed')}</b><span>Confirmed</span></button>
     <button class="stat" data-go="orders" data-ofilter="all"><b>${todays.length}</b><span>Orders today · ${esc(money(sales))}</span></button>`;
 }
-/* Is the Edge Function there (version 5, JWT check OFF), and are Google Sheet, Meta and notifications connected? */
+/* Is the Edge Function there (version 6, JWT check OFF), and are Google Sheet, Meta and notifications connected? */
 let connCache = null, fnVersion = null;
 async function checkConnections(){
   const box = $('dashConn');
@@ -1476,13 +1605,13 @@ async function checkConnections(){
     else if(!r.ok) html = line('bad', `Edge Function answered ${r.status}. Check it in Supabase.`);
     else {
       fnVersion = j && j.version;
-      html = fnVersion === 5 ? line('ok', 'Order system (Edge Function, version 5) is working.')
-        : line('bad', 'The Edge Function is an <b>older version</b>. Paste the new <code>index.ts</code> into <b>khayr-api</b> and press Deploy. Until then the 1% discount, New Sale and notifications do not work.');
+      html = fnVersion === 6 ? line('ok', 'Order system (Edge Function, version 6) is working.')
+        : line('bad', 'The Edge Function is an <b>older version</b>. Paste the new <code>index.ts</code> into <b>khayr-api</b> and press Deploy. Until then quantity, delivery charge and the Facebook Purchase do not work correctly.');
       const st = await callFn({action: 'admin_status'});
       if(st && st.ok){
         html += st.sheets ? line('ok', 'Google Sheet connected.') : line('warn', 'Google Sheet not connected (add SHEETS_WEBHOOK_URL and SHEETS_SHARED_SECRET in Supabase secrets).');
         html += st.meta ? line(st.metaTestMode ? 'warn' : 'ok', `Meta Conversions API connected (${esc(st.metaApiVersion)})${st.metaTestMode ? '. <b>Test mode is ON</b>: remove META_TEST_EVENT_CODE when testing is finished.' : '.'}`) : line('warn', 'Meta Conversions API not connected (add META_PIXEL_ID and META_CAPI_ACCESS_TOKEN in Supabase secrets).');
-        if(st.version === 5) html += st.pushDevices ? line('ok', `New-order notifications: ${st.pushDevices} device${st.pushDevices === 1 ? '' : 's'}.`) : line('warn', 'No device gets new-order notifications yet. Open <a href="#" data-go="notify">Notifications</a>.');
+        if(st.version >= 5) html += st.pushDevices ? line('ok', `New-order notifications: ${st.pushDevices} device${st.pushDevices === 1 ? '' : 's'}.`) : line('warn', 'No device gets new-order notifications yet. Open <a href="#" data-go="notify">Notifications</a>.');
       } else html += line('bad', esc((st && st.error) || 'Could not read the connection status.'));
     }
   }catch(e){ html = line('bad', 'Could not reach the order system. Check your internet.'); }
@@ -1504,7 +1633,8 @@ async function downloadBackup(btn){
   return busy(btn, 'Preparing…', async () => {
     const o = await sb.from('orders').select('*').order('created_at', {ascending: false}).limit(5000);
     const gp = await sb.from('gallery_photos').select('*').order('sort_order', {ascending: true});
-    const data = {made: new Date().toISOString(), version: 5, products: allProducts, juice_levels: Object.values(juice), settings: setRows, orders: o.error ? [] : o.data, bottle_photos: gp.error ? [] : gp.data};
+    const pu = await sb.from('perfume_purchases').select('*').order('bought_on', {ascending: false}).limit(5000);
+    const data = {made: new Date().toISOString(), version: 6, products: allProducts, juice_levels: Object.values(juice), settings: setRows, orders: o.error ? [] : o.data, bottle_photos: gp.error ? [] : gp.data, my_purchases: pu.error ? [] : pu.data};
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], {type: 'application/json'}));
     a.download = `khayr-backup-${new Date().toISOString().slice(0, 10)}.json`;
@@ -1522,7 +1652,7 @@ function filtered(){
   const q = norm(query.replace(/^\s*#/, '')), words = q.split(' ').filter(Boolean);
   return products.filter(p => {
     if(words.length){
-      const hay = norm(`${p.name} ${p.house} ${p.brand}`);
+      const hay = norm(`${p.name} ${p.house} ${gLabel(p.gender)} ${sLabel(p.season)}`);
       const hit = (/^\d+$/.test(q) && Number(p.number) === Number(q)) || words.every(w => hay.includes(w)) || hay.replace(/ /g, '').includes(words.join(''));
       if(!hit) return false;
     }
@@ -1533,6 +1663,7 @@ function filtered(){
     if(filter === 'noimg') return !hasImg(p);
     if(filter === 'out') return anyOut(p);
     if(filter === 'nohouse') return !p.house;
+    if(filter === 'nogs') return !p.gender || !p.season;
     if(filter === 'sizeoff') return SIZES.some(s => !pOn(p, s) || !pr(p, s));
     return true;
   });
@@ -1560,7 +1691,7 @@ function rowHTML(p){
   return `<div class="row ${vis ? '' : 'off'}" data-row="${esc(p.id)}">
     <button class="thumb" data-edit="${esc(p.id)}" aria-label="Photo of ${esc(p.name)}. Tap to change">${th ? `<img src="${esc(imgUrl(th))}" alt="" loading="lazy" width="64" height="64">` : '<span>No image<br>Tap to add</span>'}</button>
     <div><div class="nm"><span class="no">#${esc(p.number)}</span> ${esc(p.name)} ${vis ? '' : '<span class="pill">Hidden</span>'} ${p.stock_out ? '<span class="pill red">Stock Out</span>' : ''} ${isLow(p.id) ? '<span class="pill amber">Low juice</span>' : ''}</div>
-      <div class="sub">${esc(p.brand || '')}${p.legacy_category ? ` · old category: ${esc(p.legacy_category)}` : ''}</div>
+      <div class="sub">${[gLabel(p.gender), sLabel(p.season), p.similar_to ? 'Similar to ' + p.similar_to : ''].filter(Boolean).map(esc).join(' · ')}${p.legacy_category ? ` · old category: ${esc(p.legacy_category)}` : ''}</div>
       <div class="tools">
         ${isP ? `<input type="text" class="hin ${p.house ? '' : 'none'}" list="houseOpts" maxlength="60" placeholder="House" value="${esc(p.house)}" data-house="${esc(p.id)}" aria-label="House of ${esc(p.name)}" autocomplete="off">` : ''}
         <select class="catsel ${p.category ? '' : 'none'}" data-cat="${esc(p.id)}" aria-label="Category of ${esc(p.name)}">
@@ -1609,7 +1740,7 @@ function renderRow(id){
   }, 0);
 }
 function buildFilters(){
-  const list = [['all', 'All'], ...(F.key === 'perfume' ? [['out', 'Stock Out'], ['nohouse', 'No house']] : []), ['uncat', 'Uncategorised'], ...F.cats.map(([c, l]) => ['cat:' + c, l]), ['low', 'Low juice'], ['noimg', 'No image'], ['hidden', 'Hidden'], ['sizeoff', 'Sizes off']];
+  const list = [['all', 'All'], ...(F.key === 'perfume' ? [['out', 'Stock Out'], ['nohouse', 'No house'], ['nogs', 'No gender / season']] : []), ['uncat', 'Uncategorised'], ...F.cats.map(([c, l]) => ['cat:' + c, l]), ['low', 'Low juice'], ['noimg', 'No image'], ['hidden', 'Hidden'], ['sizeoff', 'Sizes off']];
   if(!list.some(x => x[0] === filter)) filter = 'all';
   $('filters').innerHTML = list.map(([f, l]) => `<button class="chip" type="button" data-f="${f}" aria-pressed="${f === filter}">${esc(l)}</button>`).join('');
 }
@@ -1845,6 +1976,7 @@ function dlgTypeHTML(){
   $('eLegacy').hidden = !(editing && editing.legacy_category);
   $('eLegacy').textContent = editing && editing.legacy_category ? `Old category text "${editing.legacy_category}" did not match a category, so it is not used. Choose one above.` : '';
   $('eHouse').closest('label').hidden = T.key !== 'perfume';
+  $('eGS').hidden = T.key !== 'perfume';
   $('eOut').closest('label').hidden = T.key !== 'perfume';
 }
 function houseHint(){
@@ -1858,11 +1990,12 @@ $('eHouseSug').onclick = () => { $('eHouse').value = $('eHouseSug').dataset.h ||
 function openEdit(id){
   editing = id ? allProducts.find(p => p.id === id) : null;
   dlgT = editing ? STORES[editing.product_type] : F;
-  const p = editing || {name: '', brand: '', house: '', prices: {}, sizes: {}, visible: true, stock_out: false};
+  const p = editing || {name: '', house: '', gender: '', season: '', similar_to: '', fragrantica_url: '', prices: {}, sizes: {}, visible: true, stock_out: false};
   const j = (id && juice[id]) || {};
   imgState = {action: 'keep', prepared: null};
   $('eMsg').innerHTML = '';
-  $('eName').value = p.name; $('eBrand').value = p.brand || ''; $('eHouse').value = p.house || '';
+  $('eName').value = p.name; $('eHouse').value = p.house || '';
+  $('eGender').value = p.gender || ''; $('eSeason').value = p.season || ''; $('eSimilar').value = p.similar_to || ''; $('eFrag').value = p.fragrantica_url || '';
   $('eVisible').checked = p.visible !== false; $('eOut').checked = !!p.stock_out;
   dlgTypeHTML(); houseHint();
   $('eLeft').value = j.ml ?? ''; $('eBottle').value = j.bottle_ml ?? ''; $('eNote').value = j.note ?? '';
@@ -1918,13 +2051,16 @@ $('eSave').onclick = () => busy($('eSave'), 'Saving…', async () => {
   const left = $('eLeft').value, bottle = $('eBottle').value;
   if(left !== '' && !(Number(left) >= 0)) return fail('Juice level must be 0 or more.');
   const house = T.key === 'perfume' ? tidyHouse($('eHouse').value) : (editing ? editing.house : '');
-  const row = {name, brand: clean($('eBrand').value), house, category, prices, sizes, visible: $('eVisible').checked,
+  const frag = $('eFrag').value.trim();
+  if(frag && !/^https:\/\/\S+$/.test(frag)) return fail('The Fragrantica link must start with https://');
+  const row = {name, house, category, prices, sizes, visible: $('eVisible').checked,
+               gender: $('eGender').value, season: $('eSeason').value, similar_to: clean($('eSimilar').value).slice(0, 80), fragrantica_url: frag.slice(0, 300),
                stock_out: T.key === 'perfume' ? $('eOut').checked : !!(editing && editing.stock_out), stock_out_sizes: outs};
   let id, number;
   if(editing){
     id = editing.id; number = editing.number;
     const diff = {};                                                        // send only what changed
-    Object.keys(row).forEach(k => { const was = k === 'category' || k === 'house' ? (editing[k] || '') : editing[k]; if(JSON.stringify(row[k]) !== JSON.stringify(was)) diff[k] = row[k]; });
+    Object.keys(row).forEach(k => { const was = ['category', 'house', 'gender', 'season', 'similar_to', 'fragrantica_url'].includes(k) ? (editing[k] || '') : editing[k]; if(JSON.stringify(row[k]) !== JSON.stringify(was)) diff[k] = row[k]; });
     if(Object.keys(diff).length){
       if(!await run('Save', sb.from('products').update(diff).eq('id', id))) return;
       Object.assign(editing, diff);
@@ -2006,14 +2142,17 @@ function analyse(text){
   if(!rows.length || !rows[0].some(c => c.trim())){ out.errors.push('The CSV is empty.'); return out; }
   if(rows.length > 1001){ out.errors.push('The CSV has more than 1000 rows.'); return out; }
   const head = rows[0].map(h => h.toLowerCase().replace(/\s+/g, ' ').trim());
-  const col = {num: -1, name: -1, brand: -1, house: -1, cat: -1, juice: -1, bottle: -1, off: -1, vis: -1, sizes: {}};
+  const col = {num: -1, name: -1, gender: -1, season: -1, similar: -1, frag: -1, house: -1, cat: -1, juice: -1, bottle: -1, off: -1, vis: -1, sizes: {}};
   head.forEach((h, i) => {
     const m = h.match(/^(?:price\s*)?(\d+)\s*ml(?:\s*price)?$/);
     if(m && SIZES.includes(Number(m[1]))){ col.sizes[Number(m[1])] = i; return; }
     if(col.num < 0 && /^(sl|sl\.?|sl no\.?|serial|serial no\.?|no|no\.|number|#|perfume no\.?|perfume number|attar no\.?|attar number)$/.test(h)) col.num = i;
     else if(col.name < 0 && /^(perfume name|attar name|name|perfume|attar|product|product name|title)$/.test(h)) col.name = i;
     else if(col.house < 0 && /^(house|house name|perfume house)$/.test(h)) col.house = i;
-    else if(col.brand < 0 && /^(brand|brand name)$/.test(h)) col.brand = i;
+    else if(col.gender < 0 && /^(gender|for|male\/female|male \/ female \/ unisex)$/.test(h)) col.gender = i;
+    else if(col.season < 0 && /^(season|seasons)$/.test(h)) col.season = i;
+    else if(col.similar < 0 && /^(similar to|similar|inspired by|dupe of|clone of)$/.test(h)) col.similar = i;
+    else if(col.frag < 0 && /^(fragrantica|fragrantica link|fragrantica url|link)$/.test(h)) col.frag = i;
     else if(col.cat < 0 && /^(category|categories|collection)$/.test(h)) col.cat = i;
     else if(col.bottle < 0 && /bottle/.test(h)) col.bottle = i;
     else if(col.juice < 0 && /^(juice|juice level|juice ml|juice_ml_left|ml left|remaining)$/.test(h)) col.juice = i;
@@ -2022,17 +2161,18 @@ function analyse(text){
     else if(h) out.ignored.push(rows[0][i].trim());
   });
   if(col.name < 0) out.errors.push(`The CSV needs a "${F.One} Name" column in the first row.`);
-  if(!Object.keys(col.sizes).length && col.juice < 0 && col.bottle < 0 && col.cat < 0 && col.brand < 0 && col.house < 0) out.errors.push(`The CSV needs at least one size column for the ${F.label} folder: ${SIZES.map(z => z + 'ml').join(', ')}.`);
+  if(!Object.keys(col.sizes).length && col.juice < 0 && col.bottle < 0 && col.cat < 0 && col.house < 0 && col.gender < 0 && col.season < 0 && col.similar < 0 && col.frag < 0) out.errors.push(`The CSV needs at least one size column for the ${F.label} folder: ${SIZES.map(z => z + 'ml').join(', ')}.`);
   if(out.errors.length) return out;
   out.hasNum = col.num >= 0;
   out.hasJuice = col.juice >= 0 || col.bottle >= 0;
   out.hasCat = col.cat >= 0;
   out.hasHouse = col.house >= 0;
+  out.hasSizes = Object.keys(col.sizes).length > 0;                  // no price columns = details-only CSV: it may only update, never add
   const seenName = new Map(), seenNum = new Map();
   for(let r = 1; r < rows.length; r++){
     const cells = rows[r], rowNo = r + 1;
     if(!cells.some(c => c.trim())) continue;
-    const it = {row: rowNo, name: clean(cells[col.name]), prices: {}, brand: null, house: null, category: null, number: null, juice: null, bottle: null, sizes: null, visible: null};
+    const it = {row: rowNo, name: clean(cells[col.name]), prices: {}, gender: null, season: null, similar: null, frag: null, house: null, category: null, number: null, juice: null, bottle: null, sizes: null, visible: null};
     const bad = m => out.errors.push(`Row ${rowNo}: ${m}`);
     if(!it.name){ bad('Name is missing.'); continue; }
     if(it.name.length > 120) bad('Name is too long (over 120 characters).');
@@ -2047,7 +2187,11 @@ function analyse(text){
       if(!Number.isInteger(n) || n < 1 || n > 100000) bad(`Invalid number "${clean(cells[col.num])}" in the SL / number column.`);
       else { it.number = n; if(seenNum.has(n)) bad(`Number ${n} is used twice (also row ${seenNum.get(n)}).`); else seenNum.set(n, rowNo); }
     }
-    if(col.brand >= 0 && clean(cells[col.brand]) !== '') it.brand = clean(cells[col.brand]).slice(0, 80);
+    const cv = c => c >= 0 ? clean(cells[c]) : '';
+    if(cv(col.gender)){ const g = cv(col.gender).toLowerCase(); it.gender = /^(-|none|not set)$/.test(g) ? '' : /^(m|male|men|man|for men)$/.test(g) ? 'male' : /^(f|female|women|woman|for women)$/.test(g) ? 'female' : /^(u|unisex|both)$/.test(g) ? 'unisex' : null; if(it.gender === null) bad(`Unknown gender "${cv(col.gender)}". Use Male, Female or Unisex.`); }
+    if(cv(col.season)){ const v = cv(col.season).toLowerCase(); it.season = /^(-|none|not set)$/.test(v) ? '' : /^(summer|spring|spring\/summer|hot)$/.test(v) ? 'summer' : /^(winter|fall|autumn|fall\/winter|cold)$/.test(v) ? 'winter' : /^(all|all season|all seasons|all-season|any|year round|all year)$/.test(v) ? 'all' : null; if(it.season === null) bad(`Unknown season "${cv(col.season)}". Use Summer, Winter or All season.`); }
+    if(cv(col.similar)) it.similar = /^(-|none)$/.test(cv(col.similar)) ? '' : cv(col.similar).slice(0, 80);
+    if(cv(col.frag)){ const f = cv(col.frag); if(/^(-|none)$/.test(f)) it.frag = ''; else if(/^https:\/\/\S+$/.test(f) && f.length <= 300) it.frag = f; else bad('The Fragrantica link must start with https://'); }
     if(col.house >= 0 && clean(cells[col.house]) !== ''){ const h = clean(cells[col.house]); if(h.length > 60) bad('House is too long (over 60 characters).'); else it.house = /^(other|none|-)$/i.test(h) ? '' : h; }
     if(col.cat >= 0 && clean(cells[col.cat]) !== ''){
       const raw = clean(cells[col.cat]), k2 = raw.toLowerCase().replace(/[\s_-]+/g, '_');
@@ -2069,10 +2213,11 @@ function analyse(text){
 }
 let imp = null;
 function plan(opts){
-  const items = imp.items.filter(i => !(opts.skipBad && i.errored));
+  let items = imp.items.filter(i => !(opts.skipBad && i.errored));
   const byKey = new Map(products.map(p => [keyOf(p.name), p]));
-  const matchedIds = new Set(), res = {updates: [], inserts: [], juice: [], problems: [], news: [], same: 0, priceChanges: 0, renumbered: 0};
+  const matchedIds = new Set(), res = {updates: [], inserts: [], juice: [], problems: [], news: [], notFound: [], same: 0, priceChanges: 0, renumbered: 0};
   items.forEach(i => { const p = byKey.get(i.key); i.match = p || null; if(p) matchedIds.add(p.id); });
+  if(!imp.hasSizes){ res.notFound = items.filter(i => !i.match).map(i => i.name); items = items.filter(i => i.match); }
   const reserved = new Map();                                     // numbers held by products that are NOT in this CSV
   products.forEach(p => { if(!matchedIds.has(p.id)) reserved.set(Number(p.number), p.name); });
   const useNum = opts.useNum && imp.hasNum;
@@ -2097,15 +2242,17 @@ function plan(opts){
     if(i.match){
       const p = i.match, prices = {...p.prices}; let pc = 0;
       Object.entries(i.prices).forEach(([s, v]) => { if(prices[s] !== v){ prices[s] = v; pc++; } });
-      const next = {id: p.id, product_type: F.key, number: n, name: p.name, brand: i.brand !== null ? i.brand : (p.brand || ''), house: ih !== null ? ih : (p.house || ''),
+      const keep = (v, old) => v !== null ? v : (old || '');
+      const next = {id: p.id, product_type: F.key, number: n, name: p.name, house: ih !== null ? ih : (p.house || ''),
+        gender: keep(i.gender, p.gender), season: keep(i.season, p.season), similar_to: keep(i.similar, p.similar_to), fragrantica_url: keep(i.frag, p.fragrantica_url),
         category: i.category !== null ? i.category : (p.category || ''), prices, sizes: i.sizes || p.sizes, visible: i.visible !== null ? i.visible : p.visible !== false, sort_order: n};
-      const changed = pc || n !== Number(p.number) || next.brand !== (p.brand || '') || next.house !== (p.house || '') || next.category !== (p.category || '') || next.visible !== (p.visible !== false) || (i.sizes && JSON.stringify(i.sizes) !== JSON.stringify(p.sizes));
+      const changed = pc || n !== Number(p.number) || ['gender', 'season', 'similar_to', 'fragrantica_url'].some(k => next[k] !== (p[k] || '')) || next.house !== (p.house || '') || next.category !== (p.category || '') || next.visible !== (p.visible !== false) || (i.sizes && JSON.stringify(i.sizes) !== JSON.stringify(p.sizes));
       if(n !== Number(p.number)) res.renumbered++;
       res.priceChanges += pc;
       if(changed) res.updates.push(next); else res.same++;
     } else {
       const id = uid(i.name, taken); taken.add(id);
-      res.inserts.push({id, product_type: F.key, number: n, name: i.name, brand: i.brand || '', house: ih || '', category: i.category || '', prices: i.prices, sizes: i.sizes || Object.fromEntries(SIZES.map(s => [s, true])), visible: i.visible !== false, sort_order: n});
+      res.inserts.push({id, product_type: F.key, number: n, name: i.name, house: ih || '', gender: i.gender || '', season: i.season || '', similar_to: i.similar || '', fragrantica_url: i.frag || '', category: i.category || '', prices: i.prices, sizes: i.sizes || Object.fromEntries(SIZES.map(s => [s, true])), visible: i.visible !== false, sort_order: n});
       res.news.push(i.name);
     }
     if(opts.allowJuice && (i.juice !== null || i.bottle !== null)){            // only when the owner ticked the box
@@ -2132,7 +2279,8 @@ function showImport(){
     <div class="panel"><h3>What will happen</h3>
       <p style="margin:8px 0 0"><b>${pl.inserts.length}</b> new ${F.one}s added to <b>${F.label}</b> · <b>${pl.updates.length}</b> updated (${pl.priceChanges} price changes) · <b>${pl.same}</b> unchanged (skipped)${opts.skipBad && hasErr ? ` · <b>${imp.items.filter(i => i.errored).length}</b> invalid rows skipped` : ''}${imp.hasNum && opts.useNum ? ` · <b>${pl.renumbered}</b> change number` : ''}</p>
       ${imp.hasJuice ? (opts.allowJuice ? `<p class="msg warn" style="margin:8px 0"><b>${pl.juice.length}</b> juice levels will be replaced with the numbers in the CSV.</p>` : `<p class="help">The CSV has a Juice column, but juice levels will <b>not</b> change ("Allow CSV to Update Juice Levels" is off).</p>`) : ''}
-      ${pl.updates.length ? `<details><summary>Show the ${pl.updates.length} updates</summary><ul class="errlist">${pl.updates.slice(0, 200).map(u => { const p = products.find(x => x.id === u.id); const ch = SIZES.filter(z => (p.prices[z] ?? null) !== (u.prices[z] ?? null)).map(z => `${z}ml ${p.prices[z] ?? '—'} → ${u.prices[z]}`); if(u.number !== Number(p.number)) ch.push(`number ${p.number} → ${u.number}`); if(u.house !== (p.house || '')) ch.push(`house → ${u.house || 'Other'}`); if(u.category !== (p.category || '')) ch.push(`category → ${catLabel(F.key, u.category) || 'Uncategorised'}`); if(u.brand !== (p.brand || '')) ch.push(`brand → ${u.brand || '(empty)'}`); if(u.visible !== (p.visible !== false)) ch.push(u.visible ? 'shown' : 'hidden'); return `<li>${esc(p.name)}: ${esc(ch.join(', ') || 'size switches')}</li>`; }).join('')}</ul></details>` : ''}
+      ${pl.updates.length ? `<details><summary>Show the ${pl.updates.length} updates</summary><ul class="errlist">${pl.updates.slice(0, 200).map(u => { const p = products.find(x => x.id === u.id); const ch = SIZES.filter(z => (p.prices[z] ?? null) !== (u.prices[z] ?? null)).map(z => `${z}ml ${p.prices[z] ?? '—'} → ${u.prices[z]}`); if(u.number !== Number(p.number)) ch.push(`number ${p.number} → ${u.number}`); if(u.house !== (p.house || '')) ch.push(`house → ${u.house || 'Other'}`); if(u.category !== (p.category || '')) ch.push(`category → ${catLabel(F.key, u.category) || 'Uncategorised'}`); if(u.gender !== (p.gender || '')) ch.push(`gender → ${gLabel(u.gender) || 'not set'}`); if(u.season !== (p.season || '')) ch.push(`season → ${sLabel(u.season) || 'not set'}`); if(u.similar_to !== (p.similar_to || '')) ch.push(`similar to → ${u.similar_to || '(empty)'}`); if(u.fragrantica_url !== (p.fragrantica_url || '')) ch.push('Fragrantica link'); if(u.visible !== (p.visible !== false)) ch.push(u.visible ? 'shown' : 'hidden'); return `<li>${esc(p.name)}: ${esc(ch.join(', ') || 'size switches')}</li>`; }).join('')}</ul></details>` : ''}
+      ${pl.notFound.length ? `<div class="msg warn"><b>${pl.notFound.length} name${pl.notFound.length === 1 ? '' : 's'} not found — skipped.</b> This CSV has no price columns, so it only updates ${F.one}s that already exist and never adds new ones. Not found: ${esc(pl.notFound.slice(0, 20).join(', '))}${pl.notFound.length > 20 ? ` and ${pl.notFound.length - 20} more` : ''}. Check the spelling against your list, fix it in the CSV and upload again.</div>` : ''}
       ${pl.news.length ? `<p class="help">New: ${esc(pl.news.slice(0, 12).join(', '))}${pl.news.length > 12 ? ` and ${pl.news.length - 12} more` : ''}. If one of these is an old product with a changed name, cancel and rename the old one first so it is not duplicated.</p>` : ''}
       <p class="help">Blank cells are left as they are. Photos, names and Stock Out of existing items are never changed.${imp.ignored.length ? ` Ignored columns: ${esc(imp.ignored.join(', '))}.` : ''}</p>
       ${imp.hasNum ? `<label class="radio"><input type="checkbox" id="oNum" ${opts.useNum ? 'checked' : ''}><span>Use the <b>SL / number</b> column from the CSV as the numbers</span></label>` : ''}
@@ -2165,9 +2313,9 @@ let itT; $('impText').addEventListener('input', e => { clearTimeout(itT); itT = 
 
 $('exportBtn').onclick = () => {
   const q = v => { v = String(v ?? ''); if(/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; };
-  const head = ['SL', `${F.One} Name`, 'House', 'Brand', 'Category', ...SIZES.map(s => s + 'ml'), 'Juice', 'Bottle', 'Stock Out'];
+  const head = ['SL', `${F.One} Name`, 'House', 'Gender', 'Season', 'Similar To', 'Category', ...SIZES.map(s => s + 'ml'), 'Juice', 'Bottle', 'Stock Out', 'Fragrantica'];
   const outTxt = p => p.stock_out ? 'All' : SIZES.filter(s => manOut(p, s)).map(s => s + 'ml').join(' ');
-  const lines = sorted(products).map(p => { const j = juice[p.id] || {}; return [p.number, p.name, p.house, p.brand, catLabel(F.key, p.category), ...SIZES.map(s => p.prices[s] || ''), j.ml ?? '', j.bottle_ml ?? '', outTxt(p)].map(q).join(','); });
+  const lines = sorted(products).map(p => { const j = juice[p.id] || {}; return [p.number, p.name, p.house, gLabel(p.gender), sLabel(p.season), p.similar_to, catLabel(F.key, p.category), ...SIZES.map(s => p.prices[s] || ''), j.ml ?? '', j.bottle_ml ?? '', outTxt(p), p.fragrantica_url].map(q).join(','); });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['﻿' + [head.join(','), ...lines].join('\n')], {type: 'text/csv'}));
   a.download = `khayr-${F.one}s-${new Date().toISOString().slice(0, 10)}.csv`;
@@ -2188,6 +2336,7 @@ const fullPctOf = o => { const d = o.discount_detail || {}; const v = Number(d.f
 function payText(o){
   const p = o.payment_choice || (isAdminSale(o) ? '' : 'advance');
   if(p === 'full') return `Full payment (${fullPctOf(o)}% off)`;
+  if(p === 'advance' && !isAdminSale(o)) return 'Advance on WhatsApp';
   return PAY_LABEL[p] || 'Not set';
 }
 let oLoading = null, pendingOrder = null;
@@ -2232,9 +2381,10 @@ function sourceOf(o){
   if(!parts.length && a.referrer){ try { parts.push('from ' + new URL(a.referrer).host); } catch(e){} }
   return parts.join(' · ') || 'Direct / unknown';
 }
+const qtyOf = i => Math.max(1, Number(i.qty) || 1);
 function itemLine(i){
-  const d = Number(i.discount) || 0;
-  return `<div class="i"><span>${esc(i.name)} · ${esc(i.size)}ml${i.house ? `<small>${esc(i.house)}</small>` : ''}</span><span class="mono">${d ? `<s>${price(i.price)}</s>${price(i.price - d)}` : price(i.price)}</span></div>`;
+  const d = Number(i.discount) || 0, q = qtyOf(i), line = i.price * q;
+  return `<div class="i"><span>${esc(i.name)} · ${esc(i.size)}ml${q > 1 ? ` <b>× ${q}</b>` : ''}${i.house ? `<small>${esc(i.house)}</small>` : ''}</span><span class="mono">${d ? `<s>${price(line)}</s>${price(line - d)}` : price(line)}</span></div>`;
 }
 function orderCard(o){
   const items = o.items || [];
@@ -2245,7 +2395,7 @@ function orderCard(o){
   const purchase = admin || o.status !== 'confirmed' ? '' : ({sent: '<span class="good">Meta Purchase ✓</span>', failed: `<span class="bad" title="${esc(o.purchase_last_error || '')}">Meta Purchase failed</span>`, pending: '<span class="bad">Meta Purchase not sent yet</span>', skipped: '<span>Meta Purchase skipped (customer turned off ads measurement)</span>'}[o.purchase_status] || '');
   const open = o.status === 'new' || o.status === 'awaiting_advance';
   const wa = waNum(o.phone_norm || o.phone);
-  const sub = subOf(o), disc = Number(o.discount) || 0;
+  const sub = subOf(o), disc = Number(o.discount) || 0, fee = Number(o.delivery_fee) || 0;
   const dd = o.discount_detail || {};
   const discLabel = admin ? [dd.items ? `items −${price(dd.items)}` : '', dd.total ? `total −${price(dd.total)}` : ''].filter(Boolean).join(', ') : `${fullPctOf(o)}% full payment`;
   return `<div class="ocard st-${esc(o.status)}" data-oid="${esc(o.order_id)}">
@@ -2264,7 +2414,7 @@ function orderCard(o){
       </div>
       <div class="oitems">
         ${groups.map(g => (groups.length > 1 || g.t === 'attar' ? `<div class="g">${g.t === 'attar' ? 'ATTAR' : 'PERFUME DECANTS'}</div>` : '') + g.items.map(itemLine).join('')).join('')}
-        ${disc ? `<div class="osum"><span>Subtotal</span><span class="mono">${price(sub)}</span></div><div class="osum"><span>Discount (${esc(discLabel)})</span><span class="mono">−${price(disc)}</span></div>` : ''}
+        ${disc || fee ? `<div class="osum"><span>Subtotal</span><span class="mono">${price(sub)}</span></div>` : ''}${disc ? `<div class="osum"><span>Discount (${esc(discLabel)})</span><span class="mono">−${price(disc)}</span></div>` : ''}${fee ? `<div class="osum"><span>Delivery</span><span class="mono">${price(fee)}</span></div>` : ''}
         <div class="otot"><span>Total</span><span class="mono">${price(o.total)}${o.status === 'confirmed' && o.confirmed_value && o.confirmed_value !== o.total ? ` (sold for ${price(o.confirmed_value)})` : ''}</span></div>
       </div>
     </div>
@@ -2311,13 +2461,13 @@ function openOrder(id){
 function orderPlain(o){
   const items = o.items || [];
   const groups = ['perfume', 'attar'].map(t => ({t, items: items.filter(i => (i.type || 'perfume') === t)})).filter(g => g.items.length);
-  const line = i => { const d = Number(i.discount) || 0; return `${i.name}\n${i.size}ml — ${d ? `${price(i.price - d)} (was ${price(i.price)})` : price(i.price)}`; };
-  const disc = Number(o.discount) || 0;
+  const line = i => { const d = Number(i.discount) || 0, q = qtyOf(i), t = i.price * q; return `${i.name}\n${i.size}ml${q > 1 ? ` × ${q}` : ''} — ${d ? `${price(t - d)} (was ${price(t)})` : price(t)}`; };
+  const disc = Number(o.discount) || 0, fee = Number(o.delivery_fee) || 0;
   return [`KHAYR ORDER`, '', `Order ID: ${o.order_id}`, '',
     o.customer_name ? `Name: ${o.customer_name}` : null, o.phone ? `Phone: ${o.phone}` : null, o.email ? `Email: ${o.email}` : null,
     o.address ? `Address: ${o.address}` : null, o.delivery_area ? `Delivery Area: ${o.delivery_area}` : null, o.customer_name || o.phone || o.address ? '' : null,
     groups.map(g => (groups.length > 1 || g.t === 'attar' ? (g.t === 'attar' ? 'ATTAR\n' : 'PERFUME DECANTS\n') : '') + g.items.map(line).join('\n\n')).join('\n\n'), '',
-    disc ? `Subtotal: ${price(subOf(o))}` : null, disc ? `Discount: -${price(disc)}` : null,
+    disc || fee ? `Subtotal: ${price(subOf(o))}` : null, disc ? `Discount: -${price(disc)}` : null, fee ? `Delivery: ${price(fee)}` : null,
     `Total: ${price(o.total)}`, `Payment: ${payText(o)}`].filter(x => x !== null).join('\n');
 }
 async function setStatus(o, st, value, note, payment){
@@ -2376,7 +2526,7 @@ let cfOrder = null, cfTouched = false;
 function cfTotalFor(o, pay){
   if(isAdminSale(o)) return Number(o.total);
   const sub = subOf(o);
-  return pay === 'full' ? sub - Math.round(sub * fullPctOf(o) / 100) : sub;
+  return (pay === 'full' ? sub - Math.round(sub * fullPctOf(o) / 100) : sub) + (Number(o.delivery_fee) || 0);
 }
 function openConfirm(o){
   cfOrder = o; cfTouched = false;
@@ -2385,7 +2535,9 @@ function openConfirm(o){
   $('cfGo').textContent = admin ? 'Mark paid' : 'Confirm Purchase';
   $('cfMsg').innerHTML = ''; $('cfId').textContent = o.order_id;
   $('cfWho').textContent = `${o.customer_name || 'Walk-in customer'} · total ${price(o.total)}`;
-  $('cfHelp').innerHTML = admin ? 'Your own sale. It is not sent to Meta.' : 'Confirm only after the customer has paid. A confirmed order cannot be changed back, and it is sent to Meta once as a <b>Purchase</b> with the final amount.';
+  $('cfHelp').innerHTML = admin ? 'Your own sale. It is not sent to Meta.' : o.purchase_status === 'sent'
+    ? 'Confirm after the customer has paid. A confirmed order cannot be changed back. Facebook already counted this order as a <b>Purchase</b> when it was placed, so nothing is sent again.'
+    : 'Confirm only after the customer has paid. A confirmed order cannot be changed back, and it is sent to Meta once as a <b>Purchase</b> with the final amount.';
   const opts = admin ? ['cash', 'bkash', 'bank', 'advance', 'other'].map(v => [v, PAY_LABEL[v]])
                      : [['advance', `Advance (rest on delivery)`], ['full', `Full payment (${fullPctOf(o)}% off)`]];
   const cur = o.payment_choice || (admin ? 'cash' : 'advance');
@@ -2399,7 +2551,8 @@ function cfCalc(){
   const o = cfOrder, pay = $('cfPay').value, t = cfTotalFor(o, pay);
   if(!isAdminSale(o)){
     const sub = subOf(o);
-    $('cfCalc').innerHTML = pay === 'full' ? `Subtotal ${price(sub)} − ${fullPctOf(o)}% (${price(sub - t)}) = <b>${price(t)}</b> to pay` : `Total <b>${price(t)}</b> (advance now, rest on delivery)`;
+    const fee = Number(o.delivery_fee) || 0, d = pay === 'full' ? Math.round(sub * fullPctOf(o) / 100) : 0;
+    $('cfCalc').innerHTML = `Subtotal ${price(sub)}${d ? ` − ${fullPctOf(o)}% (${price(d)})` : ''}${fee ? ` + delivery ${price(fee)}` : ''} = <b>${price(t)}</b>${pay === 'full' ? ' paid in full' : ''}`;
     if(pay !== $('cfPay').dataset.start) $('cfCalc').innerHTML += '<br>The order, the Google Sheet and Meta will use this new total.';
   } else $('cfCalc').textContent = '';
   if(!cfTouched) $('cfValue').value = t;
@@ -2481,7 +2634,19 @@ $('bnGo').onclick = () => { $('banner').classList.remove('show'); if(bnId){ setO
    NEW SALE  (in the shop / on the phone). The server checks every price
    and discount; your sales are never sent to Meta.
    ===================================================================== */
-const blankSale = () => ({ref: newId(), items: [], tdisc: 0, name: '', phone: '', address: '', area: '', payment: 'cash', paid: true, note: '', hist: [], saved: null});
+const blankSale = () => ({ref: newId(), items: [], tdisc: 0, name: '', phone: '', address: '', area: '', delivery: true, payment: 'cash', paid: true, note: '', hist: [], saved: null});
+/* Delivery charge rule (same as the website and the server): free when the perfumes cost freeOver or more. */
+function delivOf(){
+  const d = (setRows[1] || {}).delivery || {};
+  const n = (v, x) => { const k = Number(v); return v === undefined || v === null || v === '' || !Number.isFinite(k) ? x : Math.max(0, Math.round(k)); };
+  return {inside: n(d.insideSylhet, 50), outside: n(d.outsideSylhet, 100), freeOver: n(d.freeOver, 3000)};
+}
+function feeFor(area, sub){
+  const d = delivOf();
+  if(area !== 'Inside Sylhet' && area !== 'Outside Sylhet') return 0;
+  if(d.freeOver > 0 && sub >= d.freeOver) return 0;
+  return area === 'Inside Sylhet' ? d.inside : d.outside;
+}
 let sale = blankSale();
 let posTab = 'browse', squery = '', shouse = 'all';
 function loadSale(){ const s = KEEP.get(SALE_KEY); if(s && Array.isArray(s.items) && s.ref) sale = {...blankSale(), ...s}; }
@@ -2490,12 +2655,14 @@ const findAny = id => allProducts.find(p => p.id === id);
 const posSizes = () => STORES.perfume.sizes.filter(s => settingsOf('perfume').sizesEnabled[s] !== false);
 function saleCalc(){
   const lines = sale.items.map((i, k) => {
-    const p = findAny(i.id), unit = p ? (Number(p.prices[i.size]) || 0) : 0, d = Math.min(Math.max(0, Math.round(i.discount || 0)), unit);
-    return {k, i, p, unit, d, net: unit - d, bad: !p || !unit};
+    const p = findAny(i.id), unit = p ? (Number(p.prices[i.size]) || 0) : 0, q = Math.max(1, Math.round(Number(i.qty) || 1)), gross = unit * q;
+    const d = Math.min(Math.max(0, Math.round(i.discount || 0)), gross);
+    return {k, i, p, unit, q, gross, d, net: gross - d, bad: !p || !unit};
   });
-  const sub = lines.reduce((a, l) => a + l.unit, 0), idisc = lines.reduce((a, l) => a + l.d, 0);
+  const sub = lines.reduce((a, l) => a + l.gross, 0), idisc = lines.reduce((a, l) => a + l.d, 0), count = lines.reduce((a, l) => a + l.q, 0);
   const after = sub - idisc, td = Math.min(Math.max(0, Math.round(sale.tdisc || 0)), after);
-  return {lines, sub, idisc, td, final: after - td, after, bad: lines.filter(l => l.bad)};
+  const fee = sale.area && sale.delivery !== false ? feeFor(sale.area, sub) : 0;
+  return {lines, sub, idisc, td, fee, count, final: after - td + fee, after, bad: lines.filter(l => l.bad)};
 }
 function saleProducts(){
   const sizes = posSizes();
@@ -2504,7 +2671,7 @@ function saleProducts(){
   return allProducts.filter(p => p.product_type === 'perfume' && sizes.some(s => Number(p.prices[s]) > 0)).filter(p => {
     if(shouse !== 'all' && hk(p) !== shouse) return false;
     if(!words.length) return true;
-    const hay = norm(`${p.name} ${p.house} ${p.brand}`);
+    const hay = norm(`${p.name} ${p.house}`);
     return words.every(w => hay.includes(w)) || hay.replace(/ /g, '').includes(words.join(''));
   }).sort((a, b) => R.rank(hk(a)) - R.rank(hk(b)) || a.number - b.number);
 }
@@ -2519,7 +2686,8 @@ function renderSale(){
 }
 function renderPosList(){
   const sizes = posSizes(), list = saleProducts(), R = houseRanks('perfume');
-  const inSale = (id, s) => sale.items.some(i => i.id === id && Number(i.size) === s);
+  const qIn = (id, s) => { const it = sale.items.find(i => i.id === id && Number(i.size) === s); return it ? Math.max(1, Number(it.qty) || 1) : 0; };
+  const inSale = (id, s) => qIn(id, s) > 0;
   $('ssum').textContent = `${list.length} perfume${list.length === 1 ? '' : 's'}`;
   let last = null, html = '';
   list.forEach(p => {
@@ -2534,24 +2702,25 @@ function renderPosList(){
         if(!pv) return `<span class="psz blank"></span>`;
         const out = sOut(p, s), hid = p.sizes[s] === false;
         const cls = inSale(p.id, s) ? 'in' : out ? 'out' : hid ? 'hid' : '';
-        return `<button type="button" class="psz ${cls}" data-add="${esc(p.id)}" data-size="${s}" aria-pressed="${inSale(p.id, s)}" aria-label="${esc(p.name)} ${s}ml ${pv}${out ? ', Stock Out' : ''}">${s}ml<b>${price(pv)}</b>${!inSale(p.id, s) && out ? '<small>OUT</small>' : !inSale(p.id, s) && hid ? '<small>HIDDEN</small>' : ''}</button>`;
+        return `<button type="button" class="psz ${cls}" data-add="${esc(p.id)}" data-size="${s}" aria-pressed="${inSale(p.id, s)}" aria-label="${esc(p.name)} ${s}ml ${pv}${out ? ', Stock Out' : ''}">${s}ml<b>${price(pv)}</b>${qIn(p.id, s) > 1 ? `<small class="qn">×${qIn(p.id, s)}</small>` : !inSale(p.id, s) && out ? '<small>OUT</small>' : !inSale(p.id, s) && hid ? '<small>HIDDEN</small>' : ''}</button>`;
       }).join('')}</div>
     </div>`;
   });
   $('slist').innerHTML = html || `<div class="empty">${squery ? 'Nothing matches this search.' : 'No perfumes with prices yet.'}</div>`;
 }
 function renderCart(){
-  const c = saleCalc(), saved = !!sale.saved, n = sale.items.length;
+  const c = saleCalc(), saved = !!sale.saved, n = c.count;
   $('posN').textContent = n ? String(n) : '';
   $('sSaved').innerHTML = saved ? `<div class="savedbox"><b>Saved as order ${esc(sale.saved.orderId)} ✓</b><br><span style="font-size:.88rem">It is in Orders and the Google Sheet. Copy or send it to the customer, then start a new sale.</span>
       <div class="actions" style="margin-top:8px"><button class="btn sm dark" type="button" id="sNew">Start a new sale</button><button class="btn sm" type="button" id="sOpen">Open in Orders</button></div></div>` : '';
   if(saved){ $('sNew').onclick = () => clearSale(true); $('sOpen').onclick = () => { setOFilter('all'); openOrder(sale.saved.orderId); }; }
   $('sLines').innerHTML = n ? c.lines.map(l => `<div class="cl" data-li="${l.k}">
-      <div class="cn">${esc(l.p ? l.p.name : 'Removed product')}<small>${esc(l.i.size)}ml${l.p && l.p.house ? ' · ' + esc(l.p.house) : ''}${l.bad ? ' · <b style="color:var(--red)">no price now, remove it</b>' : ''}</small></div>
-      <div class="cp">${l.d ? `<s>${price(l.unit)}</s>` : ''}${price(l.net)}</div>
+      <div class="cn">${esc(l.p ? l.p.name : 'Removed product')}<small>${esc(l.i.size)}ml${l.q > 1 ? ` × ${l.q} (${price(l.unit)} each)` : ''}${l.p && l.p.house ? ' · ' + esc(l.p.house) : ''}${l.bad ? ' · <b style="color:var(--red)">no price now, remove it</b>' : ''}</small></div>
+      <div class="cp">${l.d ? `<s>${price(l.gross)}</s>` : ''}${price(l.net)}</div>
       ${saved ? '' : `<div class="ca">
-        <button type="button" class="minus" data-ldisc="${l.k}" aria-label="Discount on ${esc(l.p ? l.p.name : '')} ${esc(l.i.size)}ml">−</button>
-        ${l.d ? `<span class="dtag">−${price(l.d)} <button type="button" data-lundo="${l.k}" aria-label="Remove this discount">Undo</button></span>` : '<span class="help" style="margin:0">Discount</span>'}
+        <span class="qty"><button type="button" data-lq="-1" data-li2="${l.k}" aria-label="One less">−</button><span>${l.q}</span><button type="button" data-lq="1" data-li2="${l.k}" aria-label="One more">+</button></span>
+        <button type="button" class="minus" data-ldisc="${l.k}" aria-label="Discount on ${esc(l.p ? l.p.name : '')} ${esc(l.i.size)}ml">− Discount</button>
+        ${l.d ? `<span class="dtag">−${price(l.d)} <button type="button" data-lundo="${l.k}" aria-label="Remove this discount">Undo</button></span>` : ''}
         <button type="button" class="rm" data-ldel="${l.k}">Remove</button>
       </div>`}
     </div>`).join('') : `<div class="empty" style="padding:28px 12px">No items yet. Tap a size in <b>Perfumes</b> to add it.</div>`;
@@ -2559,14 +2728,16 @@ function renderCart(){
       <div class="r"><span class="k">Subtotal (${n} item${n === 1 ? '' : 's'})</span><span class="v">${price(c.sub)}</span></div>
       ${c.idisc ? `<div class="r disc"><span class="k">Item discounts</span><span class="v">−${price(c.idisc)}</span></div>` : ''}
       <div class="r disc"><span class="k">${saved ? 'Discount on total' : `<button type="button" class="minus" id="tDisc" aria-label="Discount on the total">−</button> Discount on total`}</span><span class="v">${c.td ? `−${price(c.td)}` : '<span class="help" style="margin:0">none</span>'} ${c.td && !saved ? `<button type="button" class="btn sm" id="tUndo">Undo</button>` : ''}</span></div>
+      ${sale.area ? `<div class="r"><span class="k"><label class="swl" style="gap:8px">${saved ? '' : `<input type="checkbox" class="sw" id="sDel" ${sale.delivery !== false ? 'checked' : ''} aria-label="Charge delivery">`} Delivery (${esc(sale.area)})</label></span><span class="v">${c.fee ? '+' + price(c.fee) : sale.delivery === false ? 'not charged' : 'Free'}</span></div>` : ''}
       <div class="final"><span>FINAL TOTAL</span><b id="sFinal">${esc(money(c.final))}</b></div>
-      <div class="saveline">${c.sub - c.final > 0 ? `Customer saves ${esc(money(c.sub - c.final))}` : ''}</div>
+      <div class="saveline">${c.idisc + c.td > 0 ? `Customer saves ${esc(money(c.idisc + c.td))}` : ''}</div>
       ${sale.hist.length && !saved ? `<button type="button" class="btn sm" id="sUndoLast">↶ Undo last discount change</button>` : ''}
     </div>` : '';
   if(!saved && n){
     $('tDisc').onclick = () => openKeypad({title: 'Discount on the total', baseLabel: 'Total', base: c.after, cur: c.td, apply: v => setDisc('total', null, v)});
     if($('tUndo')) $('tUndo').onclick = () => setDisc('total', null, 0);
     if($('sUndoLast')) $('sUndoLast').onclick = undoLast;
+    if($('sDel')) $('sDel').onchange = e => { sale.delivery = e.target.checked; keepSale(); renderCart(); };
   }
   ['sName', 'sPhone', 'sAddr', 'sArea', 'sNote'].forEach(id => { $(id).disabled = saved; });
   $('sName').value = sale.name; $('sPhone').value = sale.phone; $('sAddr').value = sale.address; $('sArea').value = sale.area; $('sNote').value = sale.note;
@@ -2578,7 +2749,7 @@ function renderCart(){
   updateSaleBar();
 }
 function updateSaleBar(){
-  const n = sale.items.length, show = panelOpen && current === 'sale' && posTab === 'browse' && n > 0;
+  const n = sale.items.reduce((a, i) => a + Math.max(1, Number(i.qty) || 1), 0), show = panelOpen && current === 'sale' && posTab === 'browse' && n > 0;
   $('saleBar').classList.toggle('hidden', !show);
   $('tabSale').textContent = n && current !== 'sale' ? String(n) : '';
   if(show){ const c = saleCalc(); $('sbN').textContent = `${n} item${n === 1 ? '' : 's'}${sale.saved ? ' · saved' : ''}`; $('sbT').textContent = money(c.final); }
@@ -2597,20 +2768,28 @@ $('slist').addEventListener('click', e => {
   const b = e.target.closest('[data-add]'); if(!b) return;
   if(sale.saved){ toast('This sale is already saved. Tap "Start a new sale" first.', true); return; }
   const p = findAny(b.dataset.add), s = Number(b.dataset.size);
-  const at = sale.items.findIndex(i => i.id === p.id && Number(i.size) === s);
-  if(at > -1){
-    if(sale.items[at].discount){ toast('This item has a discount. Remove it in Checkout.', true); return; }
-    sale.items.splice(at, 1); keepSale(); renderPosList(); renderCart(); toast(`Removed ${p.name} ${s}ml`); return;
+  const it = sale.items.find(i => i.id === p.id && Number(i.size) === s);
+  if(it){
+    it.qty = Math.min(99, (Number(it.qty) || 1) + 1);
+    keepSale(); renderPosList(); renderCart(); toast(`${p.name} ${s}ml × ${it.qty}`); return;
   }
   if(sOut(p, s) && !confirm(`${p.name} ${s}ml is marked Stock Out. Add it to this sale anyway?`)) return;
-  sale.items.push({id: p.id, size: s, discount: 0});
+  sale.items.push({id: p.id, size: s, qty: 1, discount: 0});
   keepSale(); renderPosList(); renderCart();
   toast(`Added ${p.name} ${s}ml · ${price(p.prices[s])}`);
 });
 $('sLines').addEventListener('click', e => {
+  const qb = e.target.closest('[data-lq]');
+  if(qb && !sale.saved){
+    const it = sale.items[Number(qb.dataset.li2)]; if(!it) return;
+    const q = (Number(it.qty) || 1) + Number(qb.dataset.lq);
+    if(q < 1){ sale.items.splice(Number(qb.dataset.li2), 1); sale.hist = []; }
+    else { it.qty = Math.min(99, q); const c2 = saleCalc(), l2 = c2.lines.find(l => l.i === it); if(l2 && (it.discount || 0) > l2.gross) it.discount = l2.gross; }
+    keepSale(); renderPosList(); renderCart(); return;
+  }
   const t = e.target.closest('[data-ldisc],[data-lundo],[data-ldel]'); if(!t || sale.saved) return;
   const k = Number(t.dataset.ldisc ?? t.dataset.lundo ?? t.dataset.ldel), c = saleCalc(), l = c.lines[k]; if(!l) return;
-  if(t.dataset.ldisc !== undefined) openKeypad({title: `Discount on ${l.p ? l.p.name : ''} ${l.i.size}ml`, base: l.unit, cur: l.d, apply: v => setDisc('item', k, v)});
+  if(t.dataset.ldisc !== undefined) openKeypad({title: `Discount on ${l.p ? l.p.name : ''} ${l.i.size}ml${l.q > 1 ? ' × ' + l.q : ''}`, base: l.gross, cur: l.d, apply: v => setDisc('item', k, v)});
   else if(t.dataset.lundo !== undefined) setDisc('item', k, 0);
   else { sale.items.splice(k, 1); sale.hist = []; keepSale(); renderPosList(); renderCart(); }
 });
@@ -2629,7 +2808,7 @@ function undoLast(){
   keepSale(); renderCart(); toast('Undone ✓');
 }
 ['sName', 'sPhone', 'sAddr', 'sNote'].forEach(id => $(id).addEventListener('input', e => { sale[{sName: 'name', sPhone: 'phone', sAddr: 'address', sNote: 'note'}[id]] = e.target.value; keepSale(); }));
-$('sArea').addEventListener('change', e => { sale.area = e.target.value; keepSale(); });
+$('sArea').addEventListener('change', e => { sale.area = e.target.value; keepSale(); renderCart(); });
 $('sPay').addEventListener('change', e => { if(e.target.name === 'sPay'){ sale.payment = e.target.value; keepSale(); } });
 $('sPaid').addEventListener('change', e => { sale.paid = e.target.checked; keepSale(); });
 function clearSale(force){
@@ -2639,14 +2818,14 @@ function clearSale(force){
 $('sClear').onclick = () => clearSale(!!sale.saved);
 function saleText(){
   const c = saleCalc(), s = sale;
-  const lines = c.lines.filter(l => l.p).map(l => `${l.p.name}\n${l.i.size}ml — ${l.d ? `${price(l.net)} (was ${price(l.unit)})` : price(l.unit)}`);
-  const disc = c.sub - c.final;
+  const lines = c.lines.filter(l => l.p).map(l => `${l.p.name}\n${l.i.size}ml${l.q > 1 ? ` × ${l.q}` : ''} — ${l.d ? `${price(l.net)} (was ${price(l.gross)})` : price(l.gross)}`);
+  const disc = c.idisc + c.td;
   return ['KHAYR ORDER', '', s.saved ? `Order ID: ${s.saved.orderId}` : null, s.saved ? '' : null,
     clean(s.name) ? `Name: ${clean(s.name)}` : null, clean(s.phone) ? `Phone: ${phoneNorm(s.phone) || clean(s.phone)}` : null,
     clean(s.address) ? `Address: ${clean(s.address)}` : null, s.area ? `Delivery Area: ${s.area}` : null,
     clean(s.name) || clean(s.phone) || clean(s.address) || s.area ? '' : null,
     lines.join('\n\n'), '',
-    disc ? `Subtotal: ${price(c.sub)}` : null, disc ? `Discount: -${price(disc)}` : null,
+    disc || c.fee ? `Subtotal: ${price(c.sub)}` : null, disc ? `Discount: -${price(disc)}` : null, c.fee ? `Delivery: ${price(c.fee)}` : null,
     `Total: ${price(c.final)}`, `Payment: ${PAY_LABEL[s.payment] || 'Cash'}${s.paid !== false ? ' (paid)' : ''}`].filter(x => x !== null).join('\n');
 }
 $('sCopy').onclick = () => { if(!sale.items.length){ toast('Add an item first.', true); return; } copyText(saleText(), 'Order text copied ✓'); };
@@ -2664,8 +2843,8 @@ $('sSave').onclick = () => busy($('sSave'), 'Saving…', async () => {
   const phone = clean(sale.phone) ? phoneNorm(sale.phone) : '';
   if(phone && !/^01[3-9]\d{8}$/.test(phone)) return msg('The phone number is not valid. Use 01XXXXXXXXX, or leave it empty.');
   const body = {action: 'admin_create_sale', sale: {clientRef: sale.ref, name: clean(sale.name), phone, address: clean(sale.address), area: sale.area,
-    payment: sale.payment, paid: sale.paid !== false, note: clean(sale.note), items: c.lines.map(l => ({id: l.i.id, size: Number(l.i.size), discount: l.d})),
-    totalDiscount: c.td, expectedFinal: c.final}};
+    payment: sale.payment, paid: sale.paid !== false, note: clean(sale.note), items: c.lines.map(l => ({id: l.i.id, size: Number(l.i.size), qty: l.q, discount: l.d})),
+    totalDiscount: c.td, deliveryFee: c.fee, expectedFinal: c.final}};
   const r = await callFn(body);
   if(!r.ok){
     msg(friendly(r.error || 'Could not save the sale.'));
@@ -2821,11 +3000,12 @@ async function savePay(next, okMsg){
   return ok;
 }
 function payExample(){
-  const pct = Math.max(0, Math.min(50, Number($('pPct').value) || 0)), adv = Math.max(0, Math.round(Number($('pAdv').value) || 0));
+  const pct = Math.max(0, Math.min(50, Number($("pPct").value) || 0));
   const d = Math.round(2000 * pct / 100);
-  $('pEx').innerHTML = `Example for a 2000 order: <b>Pay ${adv} advance</b> (rest on delivery), or <b>pay 2000 − ${d} = ${2000 - d}</b> now (${pct}% off, rounded to the nearest taka).`;
+  $('pEx').innerHTML = `Example: perfumes 2000 + delivery. Full payment now: <b>2000 − ${d} = ${2000 - d}</b> + delivery (${pct}% off the perfumes, rounded to the nearest taka).`;
 }
 function renderPayment(){
+  const dl = delivOf(); $('dIn').value = dl.inside; $('dOut').value = dl.outside; $('dFree').value = dl.freeOver;
   const pay = payOf();
   $('pAdv').value = pay.advance; $('pPct').value = pay.fullDiscountPct; payExample();
   $('qList').innerHTML = pay.qrs.length ? pay.qrs.map(q => `<div class="qrc ${q.active === false ? 'off' : ''}" data-qid="${esc(q.id)}">
@@ -2843,6 +3023,13 @@ $('pSave').onclick = () => busy($('pSave'), 'Saving…', async () => {
   if(!(pct >= 0 && pct <= 50)){ toast('Discount must be between 0 and 50 %.', true); return; }
   const next = payOf(); next.advance = adv; next.fullDiscountPct = Math.round(pct * 100) / 100;
   if(await savePay(next, `Saved ✓ Advance ${adv}, full payment ${next.fullDiscountPct}% off`)) renderPayment();
+});
+$('dSave').onclick = () => busy($('dSave'), 'Saving…', async () => {
+  const v = id => Number($(id).value);
+  const a = v('dIn'), b = v('dOut'), f = v('dFree');
+  if(![a, b].every(x => Number.isInteger(x) && x >= 0 && x <= 5000)) { toast('Delivery charge must be a whole number from 0 to 5000.', true); return; }
+  if(!(Number.isInteger(f) && f >= 0 && f <= 1000000)) { toast('"Free delivery from" must be a whole number.', true); return; }
+  if(await saveSettingsRow('perfume', {delivery: {insideSylhet: a, outsideSylhet: b, freeOver: f}})) toast(`Saved ✓ Inside ${a}, Outside ${b}, free from ${f || 'never'}`);
 });
 let qTarget = null;
 $('qAdd').onclick = () => { qTarget = null; $('qFile').click(); };
@@ -2882,6 +3069,183 @@ $('qList').addEventListener('click', async e => {
     next.qrs = next.qrs.filter(x => x !== q);
     if(await savePay(next, 'QR code deleted')){ await dropFiles([q.image_path, q.thumb_path]); renderPayment(); }
   }
+});
+
+/* =====================================================================
+   PRICE CALCULATOR
+   price = (cost per ml + profit per ml) × ml + bottle + box
+   ===================================================================== */
+const CALC_SIZES = [3, 6, 10, 15, 30];
+const CALC_DEF = {box: 40, bottle: {3: 40, 6: 40, 10: 50, 15: 50, 30: 100}, profit: {3: 20, 6: 15, 10: 12, 15: 10, 30: 7}, round: 0};
+function calcOf(){
+  const c = (setRows[1] || {}).calc || {}, n = (v, d) => { const k = Number(v); return v === undefined || v === null || v === '' || !Number.isFinite(k) ? d : Math.max(0, k); };
+  return {box: n(c.box, CALC_DEF.box), round: [0, 5, 10, -10].includes(Number(c.round)) ? Number(c.round) : 0,
+          bottle: Object.fromEntries(CALC_SIZES.map(z => [z, n((c.bottle || {})[z], CALC_DEF.bottle[z])])),
+          profit: Object.fromEntries(CALC_SIZES.map(z => [z, n((c.profit || {})[z], CALC_DEF.profit[z])]))};
+}
+function roundPrice(x, r){
+  if(r === 5 || r === 10) return Math.ceil(Math.round(x * 100) / 100 / r) * r;
+  if(r === -10) return Math.round(x / 10) * 10;
+  return Math.round(x);
+}
+function calcPrices(perMl){
+  const c = calcOf();
+  return Object.fromEntries(CALC_SIZES.map(z => [z, roundPrice((perMl + c.profit[z]) * z + c.bottle[z] + c.box, c.round)]));
+}
+let cPickId = null;
+function renderCalc(){
+  const c = calcOf(), per = Number($('cPer').value), ok = $('cPer').value !== '' && per >= 0;
+  const pr = ok ? calcPrices(per) : null;
+  $('cTable').innerHTML = `<table class="ctab"><thead><tr><th>Size</th><th>Perfume</th><th>Profit</th><th>Bottle</th><th>Box</th><th>Price</th></tr></thead><tbody>
+    ${CALC_SIZES.map(z => `<tr><td><b>${z} ml</b></td><td>${ok ? price(per * z) : '—'}</td><td>${price(c.profit[z] * z)}</td><td>${price(c.bottle[z])}</td><td>${price(c.box)}</td><td class="big" data-cp="${z}">${ok ? price(pr[z]) : '—'}</td></tr>`).join('')}
+  </tbody></table>`;
+  $('cHow').innerHTML = ok ? `Example 3 ml: (${per} + ${c.profit[3]}) × 3 + ${c.bottle[3]} + ${c.box} = <b>${price((per + c.profit[3]) * 3 + c.bottle[3] + c.box)}</b>${c.round ? ` → rounded <b>${price(pr[3])}</b>` : ''}` : 'Type the perfume cost per ml. All 5 prices appear at once.';
+  renderCalcList(); renderCalcPick();
+}
+function renderCalcList(){
+  const q = norm($('cFind').value), words = q.split(' ').filter(Boolean);
+  if(!words.length){ $('cList').innerHTML = ''; return; }
+  const list = allProducts.filter(p => p.product_type === 'perfume').filter(p => { const h = norm(`${p.name} ${p.house}`); return words.every(w => h.includes(w)); }).slice(0, 8);
+  $('cList').innerHTML = list.length ? list.map(p => `<button type="button" data-cpick="${esc(p.id)}">${esc(p.name)}<small>${esc(p.house || 'Other')} · now ${CALC_SIZES.map(z => p.prices[z] ? price(p.prices[z]) : '—').join(' / ')}</small></button>`).join('') : '<p class="help">No perfume found.</p>';
+}
+function renderCalcPick(){
+  const p = cPickId && allProducts.find(x => x.id === cPickId), box = $('cPick');
+  if(!p){ box.innerHTML = ''; return; }
+  const per = Number($('cPer').value), ok = $('cPer').value !== '' && per >= 0, pr = ok ? calcPrices(per) : null;
+  box.innerHTML = `<div class="panel" style="border:1px solid var(--line)"><h3>${esc(p.name)}</h3>
+    <table class="ctab"><thead><tr><th>Size</th><th>Now</th><th>New</th></tr></thead><tbody>
+      ${CALC_SIZES.map(z => `<tr><td>${z} ml</td><td>${p.prices[z] ? price(p.prices[z]) : '—'}</td><td class="big">${ok ? price(pr[z]) : '—'}</td></tr>`).join('')}
+    </tbody></table>
+    ${(() => { const lb = lastBuyFor(p.id); return lb ? `<p class="help" id="cLast">Your last purchase (${esc(lb.bought_on)}, ${lb.bottle_ml} ml): Perfume Price ${price(lb.total)} = <b>${perMlOf(lb)} tk per ml</b>. <button class="link" type="button" id="cUseLast">Use this cost</button></p>` : ''; })()}
+    ${ok ? `<button class="btn dark block" type="button" id="cApply">Apply these prices to ${esc(p.name)}</button>` : '<p class="help">Type the cost per ml above first.</p>'}
+    <button class="link" type="button" id="cUnpick">Choose another perfume</button></div>`;
+  if($('cApply')) $('cApply').onclick = () => busy($('cApply'), 'Saving…', async () => {
+    if(!confirm(`Change the prices of ${p.name}?\n\n` + CALC_SIZES.map(z => `${z}ml: ${p.prices[z] || '—'} → ${pr[z]}`).join('\n'))) return;
+    const next = {...p.prices}; CALC_SIZES.forEach(z => { next[z] = pr[z]; });
+    if(await run('Prices', sb.from('products').update({prices: next}).eq('id', p.id))){ p.prices = next; useType(); saveCache(); toast(`New prices saved for ${p.name} ✓`); renderCalcPick(); renderCalcList(); }
+  });
+  if($('cUseLast')) $('cUseLast').onclick = () => { $('cPer').value = perMlOf(lastBuyFor(p.id)); renderCalc(); };
+  $('cUnpick').onclick = () => { cPickId = null; renderCalcPick(); $('cFind').focus(); };
+}
+$('cPer').addEventListener('input', renderCalc);
+$('cFind').addEventListener('input', renderCalcList);
+$('cList').addEventListener('click', e => { const b = e.target.closest('[data-cpick]'); if(!b) return; cPickId = b.dataset.cpick; $('cFind').value = ''; renderCalcList(); renderCalcPick(); $('cPick').scrollIntoView({block: 'nearest', behavior: 'smooth'}); });
+function renderCalcSet(){
+  const c = calcOf();
+  $('csBox').value = c.box; $('csRound').value = String(c.round);
+  $('csTab').innerHTML = `<thead><tr><th>Size</th><th>Bottle (taka)</th><th>Profit per ml (taka)</th></tr></thead><tbody>
+    ${CALC_SIZES.map(z => `<tr><td><b>${z} ml</b></td><td><input type="number" min="0" step="1" inputmode="numeric" data-csb="${z}" value="${c.bottle[z]}" aria-label="Bottle cost ${z}ml"></td><td><input type="number" min="0" step="0.5" inputmode="decimal" data-csp="${z}" value="${c.profit[z]}" aria-label="Profit per ml ${z}ml"></td></tr>`).join('')}</tbody>`;
+}
+$('csSave').onclick = () => busy($('csSave'), 'Saving…', async () => {
+  const box = Number($('csBox').value), bottle = {}, profit = {};
+  if(!(box >= 0 && box <= 100000)){ toast('Box cost is not valid.', true); return; }
+  for(const z of CALC_SIZES){
+    const b = Number(document.querySelector(`[data-csb="${z}"]`).value), pf = Number(document.querySelector(`[data-csp="${z}"]`).value);
+    if(!(b >= 0 && b <= 100000) || !(pf >= 0 && pf <= 100000)){ toast(`Check the numbers for ${z} ml.`, true); return; }
+    bottle[z] = b; profit[z] = pf;
+  }
+  if(await saveSettingsRow('perfume', {calc: {box, bottle, profit, round: Number($('csRound').value)}})) toast('Calculator settings saved ✓');
+});
+
+/* =====================================================================
+   MY PURCHASES (admin only, table perfume_purchases, RLS = is_admin)
+   Perfume Price = purchase price + delivery cost + bought below market
+   ===================================================================== */
+let buys = [], buysLoaded = false, buyEdit = null;
+const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const intOr0 = v => { const n = Number(v); return v === '' || v === null || !Number.isFinite(n) ? 0 : Math.round(n); };
+const perMlOf = b => b.bottle_ml > 0 ? Math.round(b.total / b.bottle_ml * 10) / 10 : null;
+async function loadBuys(){
+  const r = await sb.from('perfume_purchases').select('*').order('bought_on', {ascending: false}).limit(5000);
+  if(r.error){ buysLoaded = false; if(current === 'buys') $('bList').innerHTML = `<div class="msg err">${esc(friendly(r.error))}</div>`; return false; }
+  buys = (r.data || []).map(b => ({...b, bottle_ml: b.bottle_ml === null ? null : Number(b.bottle_ml)}))
+    .sort((x, y) => String(y.bought_on).localeCompare(String(x.bought_on)) || String(y.created_at).localeCompare(String(x.created_at)));
+  buysLoaded = true;
+  if(current === 'buys') renderBuyList();
+  if(current === 'calc') renderCalcPick();
+  return true;
+}
+function lastBuyFor(id){ return buys.find(b => b.product_id === id && perMlOf(b) !== null) || null; }
+function buyForm(){
+  const buy = intOr0($('bBuy').value), del = intOr0($('bDel').value), below = intOr0($('bBelow').value), ml = Number($('bMl').value);
+  return {buy, del, below, ml: $('bMl').value === '' ? null : ml, total: buy + del + below};
+}
+function paintBuyTotal(){
+  const f = buyForm();
+  $('bTotal').innerHTML = `${price(f.buy)} + ${price(f.del)} + ${price(f.below)} = <b>Perfume Price</b> <b class="big" id="bTot">${price(f.total)}</b> taka`
+    + (f.ml > 0 ? `<br><span class="help" style="margin:0">Cost per ml: <b id="bPer">${Math.round(f.total / f.ml * 10) / 10}</b> taka (Perfume Price ÷ ${f.ml} ml)</span>` : '');
+}
+function fillBuyForm(b){
+  buyEdit = b ? b.id : null;
+  $('bTitle').textContent = b ? 'Edit purchase' : 'Add a purchase';
+  $('bSave').textContent = b ? 'Save changes' : 'Save purchase';
+  $('bCancel').classList.toggle('hidden', !b);
+  $('bName').value = b ? b.product_name : ''; $('bDate').value = b ? b.bought_on : today();
+  $('bMl').value = b && b.bottle_ml !== null ? b.bottle_ml : '';
+  $('bBuy').value = b ? b.purchase_price : ''; $('bDel').value = b ? b.delivery_cost : '';
+  $('bMkt').value = b && b.market_price !== null ? b.market_price : ''; $('bBelow').value = b ? b.below_market : '';
+  $('bNote').value = b ? b.note : ''; $('bMsg').innerHTML = '';
+  paintBuyTotal();
+}
+function renderBuys(){
+  $('bNames').innerHTML = allProducts.filter(p => p.product_type === 'perfume').map(p => `<option value="${esc(p.name)}">`).join('');
+  if(!buyEdit) fillBuyForm(null);
+  renderBuyList();
+  loadBuys();
+}
+function renderBuyList(){
+  if(!buysLoaded){ $('bSum').innerHTML = ''; if(!$('bList').querySelector('.msg')) $('bList').innerHTML = '<p class="help">Loading…</p>'; return; }
+  const words = norm($('bFind').value).split(' ').filter(Boolean);
+  const list = buys.filter(b => words.every(w => norm(`${b.product_name} ${b.note}`).includes(w)));
+  const sum = k => list.reduce((a, b) => a + (Number(b[k]) || 0), 0);
+  $('bSum').innerHTML = list.length ? `<div class="bsum">
+    <div><small>Bottles</small><b id="bsN">${list.length}</b></div>
+    <div><small>Purchase price</small><b id="bsBuy">${price(sum('purchase_price'))}</b></div>
+    <div><small>Delivery cost</small><b>${price(sum('delivery_cost'))}</b></div>
+    <div><small>Below market</small><b>${price(sum('below_market'))}</b></div>
+    <div><small>Perfume Price</small><b id="bsTot">${price(sum('total'))}</b></div></div>
+    <p class="help" style="margin:0">Money you actually paid (purchase + delivery): <b id="bsPaid">${price(sum('purchase_price') + sum('delivery_cost'))}</b> taka.</p>` : '';
+  $('bList').innerHTML = list.length ? list.map(b => { const pm = perMlOf(b); return `<div class="brow" data-bid="${esc(b.id)}">
+    <div class="bh"><b>${esc(b.product_name)}</b><span class="bp">${price(b.total)} tk</span></div>
+    <div class="bd">${esc(b.bought_on)}${b.bottle_ml ? ` · ${b.bottle_ml} ml` : ''} · bought ${price(b.purchase_price)} + delivery ${price(b.delivery_cost)} + below market ${price(b.below_market)}${b.market_price !== null ? ` (market ${price(b.market_price)})` : ''}${pm !== null ? ` · <b>${pm} tk per ml</b>` : ''}${b.product_id ? '' : ' · not in your shop list'}</div>
+    ${b.note ? `<div class="bd">${esc(b.note)}</div>` : ''}
+    <div class="bb"><button class="btn sm" type="button" data-bedit>Edit</button>${pm !== null && b.product_id ? `<button class="btn sm" type="button" data-bcalc>Prices from this cost</button>` : ''}<button class="btn sm" type="button" data-bdel>Delete</button></div>
+  </div>`; }).join('') : `<p class="help">${buys.length ? 'Nothing found.' : 'No purchases yet. Add your first bottle above.'}</p>`;
+}
+['bBuy', 'bDel', 'bBelow', 'bMl'].forEach(id => $(id).addEventListener('input', paintBuyTotal));
+$('bMkt').addEventListener('input', () => {
+  if($('bMkt').value !== '' && $('bBuy').value !== '') $('bBelow').value = Math.max(0, intOr0($('bMkt').value) - intOr0($('bBuy').value));
+  paintBuyTotal();
+});
+$('bBuy').addEventListener('input', () => { if($('bMkt').value !== '') $('bBelow').value = Math.max(0, intOr0($('bMkt').value) - intOr0($('bBuy').value)); paintBuyTotal(); });
+$('bFind').addEventListener('input', renderBuyList);
+$('bCancel').onclick = () => fillBuyForm(null);
+$('bSave').onclick = () => busy($('bSave'), 'Saving…', async () => {
+  const name = clean($('bName').value), f = buyForm(), msg = t => { $('bMsg').innerHTML = `<div class="msg err">${esc(t)}</div>`; };
+  if(!name) return msg('Type the perfume name.');
+  const nums = [['Purchase price', $('bBuy').value, 10000000], ['Delivery cost', $('bDel').value, 1000000], ['Bought below market', $('bBelow').value, 10000000], ['Market price', $('bMkt').value, 10000000]];
+  for(const [l, v, max] of nums){ if(v !== '' && !(Number(v) >= 0 && Number(v) <= max)) return msg(`${l} is not a valid amount.`); }
+  if(!($('bBuy').value !== '')) return msg('Type the purchase price.');
+  if(f.ml !== null && !(f.ml > 0 && f.ml <= 10000)) return msg('Bottle size must be more than 0 ml.');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test($('bDate').value)) return msg('Choose the date.');
+  const p = allProducts.find(x => x.product_type === 'perfume' && keyOf(x.name) === keyOf(name));
+  const row = {product_id: p ? p.id : null, product_name: p ? p.name : name.slice(0, 120), bought_on: $('bDate').value, bottle_ml: f.ml,
+               purchase_price: f.buy, delivery_cost: f.del, below_market: f.below, market_price: $('bMkt').value === '' ? null : intOr0($('bMkt').value), note: clean($('bNote').value).slice(0, 200)};
+  const ok = buyEdit ? await run('Purchase', sb.from('perfume_purchases').update(row).eq('id', buyEdit)) : await run('Purchase', sb.from('perfume_purchases').insert(row));
+  if(!ok) return;
+  toast(`${buyEdit ? 'Purchase updated' : 'Purchase saved'} ✓ Perfume Price ${price(f.total)} taka`);
+  fillBuyForm(null); await loadBuys();
+});
+$('bList').addEventListener('click', async e => {
+  const rowEl = e.target.closest('[data-bid]'); if(!rowEl) return;
+  const b = buys.find(x => x.id === rowEl.dataset.bid); if(!b) return;
+  if(e.target.closest('[data-bedit]')){ fillBuyForm(b); $('bForm').scrollIntoView({block: 'start', behavior: 'smooth'}); return; }
+  if(e.target.closest('[data-bdel]')){
+    if(!confirm(`Delete this purchase?\n\n${b.product_name} · ${b.bought_on} · ${price(b.total)} taka`)) return;
+    if(await run('Delete purchase', sb.from('perfume_purchases').delete().eq('id', b.id))){ if(buyEdit === b.id) fillBuyForm(null); toast('Purchase deleted'); await loadBuys(); }
+    return;
+  }
+  if(e.target.closest('[data-bcalc]')){ go('calc'); $('cPer').value = perMlOf(b); cPickId = b.product_id; renderCalc(); $('cPick').scrollIntoView({block: 'nearest'}); }
 });
 
 /* =====================================================================

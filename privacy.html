@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shop.css?v=5.0.0">
+<link rel="stylesheet" href="shop.css?v=6.0.0">
 <script src="config.js"></script>
-<script src="site-config.js?v=5.0.0"></script>
+<script src="site-config.js?v=6.0.0"></script>
 <script>
   /* start the database connection early */
   try { var u = (window.SHOP_CONFIG.supabase || {}).url; if (u) { var l = document.createElement('link'); l.rel = 'preconnect'; l.href = u; l.crossOrigin = ''; document.head.appendChild(l); } } catch (e) {}
@@ -72,7 +72,7 @@
     <h2>What we collect when you order</h2>
     <ul>
       <li>Your name, phone number, delivery address, delivery area and, if you choose to give it, your email address.</li>
-      <li>The perfumes, sizes and prices in your order, the order total, and whether you chose to pay an advance or the full amount.</li>
+      <li>The perfumes, sizes and prices in your order, the order total, and whether you chose to pay the full amount in advance, and the delivery charge.</li>
       <li>Whether you sent the order with “Order on WhatsApp” or “Copy Full Order”.</li>
     </ul>
     <p>We use this only to confirm, prepare and deliver your order, and to contact you about it.</p>
@@ -91,7 +91,7 @@
     <p>Your cart, your payment choice and the details you type in the order form are saved in your own browser, so you do not have to type them again. They stay on your device. You can remove them by clearing this website’s data in your browser.</p>
 
     <h2>Advertising measurement (Meta Pixel and Conversions API)</h2>
-    <p>We advertise on Facebook and Instagram. To understand which ads bring customers, this website uses the Meta Pixel and Meta’s Conversions API. They tell Meta about actions such as viewing a perfume, adding to cart, starting an order, sending an order and a confirmed purchase. This uses cookies (for example <code>_fbp</code> and <code>_fbc</code>), your browser details and IP address, and the advertising link you arrived from (such as utm tags or the Facebook click ID).</p>
+    <p>We advertise on Facebook and Instagram. To understand which ads bring customers, this website uses the Meta Pixel and Meta’s Conversions API. They tell Meta about actions such as viewing a perfume, adding to cart, starting an order, sending an order (counted as a purchase). This uses cookies (for example <code>_fbp</code> and <code>_fbc</code>), your browser details and IP address, and the advertising link you arrived from (such as utm tags or the Facebook click ID).</p>
     <p>When you place an order, we may also send Meta your phone number, email, first and last name, city and country in <b>hashed</b> (scrambled, one-way coded) form, so Meta can match the order to an ad. <b>Your address is never sent to Meta.</b> A purchase is only reported after we confirm your order.</p>
     <p>Meta’s own use of this information is covered by Meta’s Privacy Policy.</p>
     <div class="optbox">
@@ -131,6 +131,21 @@
 
 <div class="lb" id="lb" role="dialog" aria-label="Product photo"><button type="button" aria-label="Close photo">✕</button><img id="lbImg" alt=""></div>
 
+<div class="pm" id="pm" role="dialog" aria-modal="true" aria-labelledby="pmName" hidden>
+  <div class="pmbox">
+    <button type="button" class="pmx" id="pmClose" aria-label="Close">✕</button>
+    <div class="pmimg" id="pmImg"></div>
+    <div class="pmbody">
+      <div class="pmhouse" id="pmHouse"></div>
+      <h2 id="pmName"></h2>
+      <div class="pmsim" id="pmSim"></div>
+      <div class="pmtags" id="pmTags"></div>
+      <div class="pmgrid" id="pmGrid"></div>
+      <a class="pmlink" id="pmLink" href="#" target="_blank" rel="noopener" hidden>Fragrantica ↗</a>
+    </div>
+  </div>
+</div>
+
 <div class="qrv" id="qrv" role="dialog" aria-modal="true" aria-labelledby="qrvLabel">
   <div class="qrbox">
     <button type="button" class="x" id="qrvClose" aria-label="Close">✕</button>
@@ -153,6 +168,6 @@
 </aside>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="shop.js?v=5.0.0"></script>
+<script src="shop.js?v=6.0.0"></script>
 </body>
 </html>
