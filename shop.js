@@ -667,7 +667,7 @@ function pmHTML(p){
   const sizes = sizesFor(p);
   return sizes.map(s => {
     const out = sizeOut(p, s), inCart = cart.find(i => i.id === p.id && i.size === s);
-    return `<div class="pmc ${out ? 'out' : ''}"><span class="ml">${s} ml</span><b>${out ? '—' : price(priceOf(p, s))}</b><small>${out ? 'Stock Out' : 'tk'}</small>${out ? '' : `<small class="pml">${perMl(p, s)}/ml</small>`}
+    return `<div class="pmc ${out ? 'out' : ''}"><span class="ml">${s} ml</span><b>${out ? '—' : price(priceOf(p, s))}</b><small>${out ? 'Stock Out' : 'tk'}</small>
       ${out ? `<button type="button" class="pmadd notify" data-pmnotify="${s}" aria-label="Notify me when ${s}ml of ${esc(p.name)} is back">Notify me</button>`
             : `<button type="button" class="pmadd ${inCart ? 'in' : ''}" data-pmadd="${s}" aria-label="Add ${s}ml of ${esc(p.name)} to cart">${inCart ? `Added${inCart.qty > 1 ? ' ×' + inCart.qty : ''}` : 'Add'}</button>`}</div>`;
   }).join('');
