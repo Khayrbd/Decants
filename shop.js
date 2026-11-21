@@ -54,7 +54,8 @@ function newId(){
 }
 
 /* ---------- বাংলা: switch the customer pages to Bangla (product names stay as they are) ---------- */
-const LANG = (() => { try { return localStorage.getItem('khayr_lang') === 'bn' ? 'bn' : 'en'; } catch(e){ return 'en'; } })();
+const LANG = 'en';   // v12: English only (the বাংলা switch is removed)
+try { localStorage.removeItem('khayr_lang'); } catch(e){}
 const BN = {
   /* v10 */
   "We fill your decant after you order": "অর্ডারের পর আমরা আপনার ডিক্যান্ট ভরে দিই",
@@ -382,9 +383,7 @@ async function load(){
   if(PAGE === 'perfume'){ initShop(); renderInfo(); }
   else if(PAGE === 'bottles') initBottles();
   if($('trustFree') && freeOver() > 0) $('trustFree').textContent = `Free from ${price(freeOver())} tk`;
-  if($('waFloat')) $('waFloat').href = waUrl('Hi KHAYR, I have a question.');
   renderTopbar(); renderSocial(); renderReturns();
-  if($('msFloat')){ $('msFloat').hidden = !msOn(); if(msOn()) $('msFloat').href = msUrl('Hi KHAYR, I have a question.'); }
   updateCartUI();
   restoreLastAction();
 }
@@ -1474,13 +1473,16 @@ const SOCIAL = {
   instagram: ['Instagram', '<path d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2Zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2Zm6.1-8.1a1.1 1.1 0 1 1-2.2 0 1.1 1.1 0 0 1 2.2 0ZM21.4 8c-.1-1.5-.4-2.9-1.5-4s-2.5-1.4-4-1.5C14.3 2.4 9.7 2.4 8.1 2.5c-1.5.1-2.9.4-4 1.5S2.6 6.5 2.5 8c-.1 1.6-.1 6.2 0 7.9.1 1.5.4 2.9 1.5 4s2.5 1.4 4 1.5c1.6.1 6.2.1 7.9 0 1.5-.1 2.9-.4 4-1.5s1.4-2.5 1.5-4c.1-1.6.1-6.2 0-7.9Zm-2.1 9.6a3.2 3.2 0 0 1-1.8 1.8c-1.3.5-4.3.4-5.6.4s-4.4.1-5.6-.4a3.2 3.2 0 0 1-1.8-1.8c-.5-1.3-.4-4.3-.4-5.6s-.1-4.4.4-5.6a3.2 3.2 0 0 1 1.8-1.8c1.3-.5 4.3-.4 5.6-.4s4.4-.1 5.6.4a3.2 3.2 0 0 1 1.8 1.8c.5 1.3.4 4.3.4 5.6s.1 4.4-.4 5.6Z"/>'],
   tiktok: ['TikTok', '<path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-1.8-2.5V9.8a5.7 5.7 0 1 0 4.9 5.6V9.1a7.4 7.4 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6Z"/>'],
   youtube: ['YouTube', '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5.2 3L10 15Z"/>'],
-  whatsapp: ['WhatsApp', '<path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.4-.3Z"/>'],
+  whatsapp: ['WhatsApp', '<path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3a.5.5 0 0 0 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.2-.2-.4-.3Z"/>'],
   other: ['Link', '<path d="M10.6 13.4a1 1 0 0 1 0-1.4l3.5-3.5a1 1 0 1 1 1.4 1.4L12 13.4a1 1 0 0 1-1.4 0ZM8 17a3 3 0 0 1-2.1-5.1l2.3-2.3a1 1 0 0 1 1.4 1.4l-2.3 2.3A1 1 0 0 0 8.7 15l2.3-2.3a1 1 0 1 1 1.4 1.4l-2.3 2.3A3 3 0 0 1 8 17Zm7.8-2.6a1 1 0 0 1-.7-1.7l2.3-2.3A1 1 0 0 0 16 9l-2.3 2.3a1 1 0 1 1-1.4-1.4L14.6 7.6a3 3 0 0 1 4.2 4.2l-2.3 2.3a1 1 0 0 1-.7.3Z"/>'],
 };
 const safeLink = u => { try { const x = new URL(String(u || '').trim()); return x.protocol === 'https:' ? x.href : ''; } catch(e){ return ''; } };
 function renderSocial(){
   const box = $('social'); if(!box) return;
   const list = (Array.isArray(GEN.social) ? GEN.social : []).map(x => ({type: SOCIAL[x && x.type] ? x.type : 'other', url: safeLink(x && x.url), label: clean(x && x.label)})).filter(x => x.url).slice(0, 10);
+  // v12: WhatsApp is always there, with the number from Admin > ML Settings
+  const wa = String(GEN.whatsapp || '').replace(/\D/g, '');
+  if(wa && !list.some(x => x.type === 'whatsapp')) list.push({type: 'whatsapp', url: 'https://wa.me/' + wa, label: ''});
   box.hidden = !list.length;
   box.innerHTML = list.map(x => { const [name, path] = SOCIAL[x.type], label = x.type === 'other' && x.label ? x.label : name;
     return `<a href="${esc(x.url)}" target="_blank" rel="noopener" aria-label="KHAYR on ${esc(label)}" data-social="${x.type}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${path}</svg><span>${esc(label)}</span></a>`; }).join('');

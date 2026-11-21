@@ -747,7 +747,11 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         <div style="overflow-x:auto"><div id="cTable"></div></div>
         <p class="help" id="cHow"></p>
       </div>
-      <div class="panel"><h3>Use these prices for a perfume</h3>
+      <div class="panel"><h3>Add a new perfume with these prices</h3>
+        <p class="help">Opens the Add perfume form with these 5 prices filled in. Type the name (and photo, house…), then Save.</p>
+        <button class="btn dark" type="button" id="cNew" disabled>+ New perfume with these prices</button>
+      </div>
+      <div class="panel"><h3>Use these prices for an existing perfume</h3>
         <p class="help">Search and choose a perfume. You see its old and new prices, and nothing changes until you press Apply.</p>
         <input type="search" id="cFind" placeholder="Search perfume or house" aria-label="Search perfume">
         <div class="clist" id="cList"></div>
@@ -807,8 +811,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         <div id="csGaps"></div>
       </div>
       <div class="panel">
-        <label class="fl" style="max-width:320px"><span>Rounding</span><select id="csRound">
-          <option value="0">No rounding (exact)</option><option value="5">Round up to 5 (e.g. 223 → 225)</option><option value="10">Round up to 10 (e.g. 223 → 230)</option><option value="-10">Nearest 10 (e.g. 223 → 220)</option></select></label>
+        <p class="help" id="csRoundInfo"><b>Rounding:</b> every price goes down to the round 10 below it (416 → 410, 988 → 980).</p>
         <div id="csMsg"></div>
         <button class="btn dark" id="csSave" type="button">Save calculator settings</button>
       </div>
@@ -3364,10 +3367,9 @@ function rangeGaps(ranges){
   out.push(`above ${price(r[r.length - 1].max)}`);
   return out;
 }
-function roundPrice(x, r){
-  if(r === 5 || r === 10) return Math.ceil(Math.round(x * 100) / 100 / r) * r;
-  if(r === -10) return Math.round(x / 10) * 10;
-  return Math.round(x);
+/* v12: prices always go DOWN to the round 10 below (416 → 410, 988 → 980; 410 stays 410). */
+function roundPrice(x){
+  return Math.floor(Math.round(x * 100) / 100 / 10) * 10;
 }
 /* {ok, perMl, range, rows:{z:{liquid,bottle,box,profit,price}}, error} */
 function calcFor(buy){
@@ -3378,7 +3380,7 @@ function calcFor(buy){
   const missing = CALC_SIZES.filter(z => range.profit[z] === null);
   if(missing.length) return {ok: false, perMl, range, error: `The range ${price(range.min)}–${price(range.max)} has no profit for ${missing.map(z => z + ' ml').join(', ')}. Fill it in Calculator settings.`};
   const rows = Object.fromEntries(CALC_SIZES.map(z => { const liquid = perMl * z; return [z, {liquid, bottle: c.bottle[z], box: c.box, profit: range.profit[z], price: roundPrice(liquid + c.bottle[z] + c.box + range.profit[z], c.round)}]; }));
-  return {ok: true, perMl, range, rows, round: c.round};
+  return {ok: true, perMl, range, rows, round: true};
 }
 const calcPrices = buy => { const r = calcFor(buy); return r.ok ? Object.fromEntries(CALC_SIZES.map(z => [z, r.rows[z].price])) : null; };
 const money2 = v => (Math.round(v * 100) / 100).toLocaleString('en-US', {maximumFractionDigits: 2});
@@ -3393,7 +3395,7 @@ function renderCalc(){
   </tbody></table>`;
   $('cHow').innerHTML = r.ok ? `3 ml: ${money2(r.perMl)} × 3 = ${money2(r.rows[3].liquid)} + bottle ${price(r.rows[3].bottle)} + box ${price(r.rows[3].box)} + profit ${price(r.rows[3].profit)} = <b>${money2(r.rows[3].liquid + r.rows[3].bottle + r.rows[3].box + r.rows[3].profit)}</b>${r.round ? ` → rounded <b>${price(r.rows[3].price)}</b>` : ''}`
     : (buy > 0 ? '' : 'Type what you paid for the 100 ml bottle. All 5 prices appear at once.');
-  renderCalcList(); renderCalcPick();
+  renderCalcList(); renderCalcPick(); renderCalcNew();
 }
 function renderCalcList(){
   const q = norm($('cFind').value), words = q.split(' ').filter(Boolean);
@@ -3424,11 +3426,19 @@ function renderCalcPick(){
 $('cBuy').addEventListener('input', renderCalc);
 $('cFind').addEventListener('input', renderCalcList);
 $('cList').addEventListener('click', e => { const b = e.target.closest('[data-cpick]'); if(!b) return; cPickId = b.dataset.cpick; $('cFind').value = ''; renderCalcList(); renderCalcPick(); $('cPick').scrollIntoView({block: 'nearest', behavior: 'smooth'}); });
+/* v12: start a NEW perfume with the calculator prices (nothing is saved until you press Save in the form) */
+function renderCalcNew(){ const ok = !!calcPrices(cBuyVal()); $('cNew').disabled = !ok; }
+$('cNew').onclick = () => {
+  const pr = calcPrices(cBuyVal()); if(!pr){ toast('Type a buying price inside a price range first.', true); return; }
+  openEdit(null);
+  CALC_SIZES.forEach(z => { const i = $('ePrices').querySelector(`[data-p="${z}"]`); if(i) i.value = pr[z]; });
+  $('eMsg').innerHTML = `<div class="msg ok">Prices from the calculator (${price(cBuyVal())} taka for 100 ml). Type the perfume name, then Save.</div>`;
+};
 
 let csRanges = null;
 function renderCalcSet(){
   const c = calcOf();
-  $('csBox').value = c.box; $('csRound').value = String(c.round); $('csMsg').innerHTML = '';
+  $('csBox').value = c.box; $('csMsg').innerHTML = '';
   $('csTab').innerHTML = `<thead><tr><th>Size</th><th>Bottle (taka)</th></tr></thead><tbody>
     ${CALC_SIZES.map(z => `<tr><td><b>${z} ml</b></td><td><input type="number" min="0" step="1" inputmode="numeric" data-csb="${z}" value="${c.bottle[z]}" aria-label="Bottle cost ${z}ml"></td></tr>`).join('')}</tbody>`;
   csRanges = c.ranges.map(r => ({min: r.min, max: r.max, profit: {...r.profit}}));
@@ -3469,7 +3479,7 @@ $('csSave').onclick = () => busy($('csSave'), 'Saving…', async () => {
   for(const z of CALC_SIZES){ const el = document.querySelector(`[data-csb="${z}"]`), b = Number(el.value); if(el.value === '' || !(b >= 0 && b <= 100000)) return msg(`Check the bottle cost for ${z} ml.`); bottle[z] = b; }
   const bad = checkRanges(csRanges); if(bad) return msg(bad);
   const ranges = cleanRanges(csRanges);
-  if(await saveSettingsRow('perfume', {calc: {box, bottle, ranges, round: Number($('csRound').value)}})){ $('csMsg').innerHTML = ''; toast('Calculator settings saved ✓'); renderCalcSet(); }
+  if(await saveSettingsRow('perfume', {calc: {box, bottle, ranges, round: 'down10'}})){ $('csMsg').innerHTML = ''; toast('Calculator settings saved ✓'); renderCalcSet(); }
 });
 
 /* =====================================================================
