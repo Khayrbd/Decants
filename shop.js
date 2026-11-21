@@ -1394,7 +1394,7 @@ function renderExtras(filtered){
         <div class="setp"><s>${price(pr.full)}</s> <b>${price(pr.now)} tk</b> <span>-${Number(st.pct)}%</span></div><button type="button" class="setadd" data-setadd="${esc(st.id)}">Add set to cart</button></div>`;
     }).join('') + '</div>' : '';
   }
-  if($('seenRow')){
+  if($('seenRow') && false){                                   // "Recently viewed" removed (owner asked)
     const seen = ls.get('khayr_seen', []).map(findP).filter(p => p && sizesFor(p).length).slice(0, 8);
     $('seenRow').hidden = !show || !seen.length;
     $('seenRow').innerHTML = show && seen.length ? `<h2 class="rowh">Recently viewed</h2><div class="hscroll">` + seen.map(p => { const th = imgUrl(p.thumb_path || p.image_path); return `<button type="button" class="seen" data-pm="${esc(p.id)}">${th ? `<img src="${esc(th)}" alt="" width="72" height="72" loading="lazy">` : '<span class="ph"></span>'}<span>${esc(p.name)}</span></button>`; }).join('') + '</div>' : '';
