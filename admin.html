@@ -461,6 +461,49 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 
 /* v6.1: the website is one list, so the house order buttons are not used */
 #hOrdPanel [data-hmove],#hOrdPanel .actions{display:none}
+
+/* v7: calculator ranges, share links, password reset */
+.rcard{border:1px solid var(--line);border-radius:12px;padding:10px;margin:0 0 10px}
+.rcard input{width:100%;min-height:42px;border:1px solid var(--line);border-radius:8px;padding:0 8px;font:inherit;font-size:16px;background:var(--paper);color:inherit}
+.rcard label span{display:block;font-size:.74rem;color:var(--graphite);margin-bottom:2px;white-space:nowrap}
+.rhead{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+.rprof{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:8px}
+.lkrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.lkrow:first-child{border-top:0}
+.lkurl{font-size:.82rem;color:var(--graphite);word-break:break-all;margin-top:2px}
+.lkbtn{display:flex;gap:8px;flex-shrink:0}
+@media (max-width:560px){.lkrow{flex-direction:column;align-items:stretch}.lkbtn .btn{flex:1;text-align:center}}
+#rSql{width:100%;font:16px/1.4 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:10px;padding:8px;margin:6px 0 8px;background:var(--paper);color:inherit;resize:vertical}
+.help.steps{padding-left:20px;margin:10px 0 4px}
+.help.steps li{margin:3px 0}
+.rlbl{font-size:.74rem;color:var(--graphite);margin:8px 0 0}
+.rprof{margin-top:2px}
+
+/* v8: scent fields, coupons, sets, reviews/FAQ, Notify me */
+.chkgrid{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chk{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.9rem;cursor:pointer;min-height:40px}
+.chk input{width:18px;height:18px;margin:0}
+.krow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.krow:first-child{border-top:0}
+.krow.off{opacity:.55}
+.kcode{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1rem}
+.kbtn{display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:560px){.krow{flex-direction:column;align-items:stretch}.kbtn{justify-content:flex-start}}
+.stitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+.stitem:first-child{border-top:0}
+.tcard{border:1px solid var(--line);border-radius:12px;padding:10px;margin:0 0 10px}
+.tcard textarea,.tcard input{width:100%}
+.datein{width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font:inherit;font-size:16px;background:var(--paper);color:inherit}
+/* v10 */
+.trow{display:flex;gap:8px;align-items:center;margin:0 0 8px}
+.trow input,.trow select{flex:1;min-width:0;height:44px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font-size:16px;background:#fff}
+.trow.so select{flex:0 0 130px}
+@media (max-width:560px){.trow.so{flex-wrap:wrap}.trow.so select{flex:1 1 100%}}
+.rplist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:10px 0}
+.rpcard{border:1px solid var(--line);border-radius:12px;padding:8px;display:grid;gap:8px}
+.rpcard img{width:100%;height:200px;object-fit:cover;object-position:top;border-radius:8px;background:#f4f4f4}
+.rpcard .kbtn{justify-content:flex-start}
+.cnote{margin:6px 0 0;padding:6px 10px;border-radius:8px;background:#FFF7E0;border:1px solid #F0DCA0;font-size:.9rem}
 </style>
 </head>
 <body>
@@ -477,7 +520,30 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       <label class="lf"><span>Password</span><div class="pw"><input type="password" id="lPass" autocomplete="current-password"><button type="button" id="showPw">Show</button></div></label>
       <label class="remember"><input type="checkbox" id="lRemember" checked> Remember me on this device</label>
       <button class="btn dark" type="submit" id="lGo">Log in</button>
+      <p class="help" style="margin:10px 0 0">Username: <b>Khayr96</b> (not your email).</p>
+      <button type="button" class="link" id="lForgot">Forgot password or lost your authenticator app?</button>
     </form>
+
+    <div id="resetBox" hidden>
+      <p class="help" style="margin-top:0">Reset the admin password yourself in <b>Supabase</b>. Only someone who can log in to your Supabase account can do this, so it is safe.</p>
+      <label class="lf"><span>New password (at least 10 characters)</span><input type="password" id="rPass1" autocomplete="new-password" maxlength="72"></label>
+      <label class="lf"><span>New password again</span><input type="password" id="rPass2" autocomplete="new-password" maxlength="72"></label>
+      <label class="remember"><input type="checkbox" id="rMfa"> I also lost my authenticator app (you set up a new one at the next login)</label>
+      <div id="rMsg"></div>
+      <button class="btn dark" type="button" id="rMake">Make my reset code</button>
+      <div id="rOut" hidden>
+        <ol class="help steps">
+          <li>Press <b>Copy reset code</b>.</li>
+          <li>Open <a id="rSqlLink" href="#" target="_blank" rel="noopener">Supabase → SQL Editor</a> (new query), paste, press <b>Run</b>.</li>
+          <li>The result must say <b>OK - password reset</b>.</li>
+          <li>Come back here and log in with username <b>Khayr96</b> and the new password.</li>
+          <li>Then delete that query in Supabase (it contains the new password).</li>
+        </ol>
+        <textarea id="rSql" rows="6" readonly aria-label="Reset code"></textarea>
+        <button class="btn" type="button" id="rCopy">Copy reset code</button>
+      </div>
+      <button type="button" class="link" id="rBack">Back to login</button>
+    </div>
 
     <form id="mfaForm" hidden novalidate>
       <p class="help" style="margin-top:0">Open Google Authenticator (or your authenticator app) and enter the 6-digit code for <b>KHAYR Admin</b>.</p>
@@ -515,6 +581,11 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <button data-go="bottles">Bottle Photos</button>
     <button data-go="dashboard">Dashboard</button>
     <button data-go="buys">My Purchases</button>
+    <button data-go="sets">Sets</button>
+    <button data-go="coupons">Coupons</button>
+    <button data-go="restock">Notify me</button>
+    <button data-go="site">Website text</button>
+    <button data-go="links">Share links</button>
     <button data-go="calcset">Calculator settings</button>
     <button data-go="security">Security</button>
   </div></nav>
@@ -638,16 +709,16 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       <button class="back" type="button" data-go="more">‹ More</button>
       <h2>Payment</h2>
       <div class="panel"><h3>Payment options at checkout</h3>
-        <p class="help">On the website customers can tick "Pay the full amount now" and get this discount on the perfumes (not on delivery). The server calculates it. The advance is not shown on the website; you ask for it on WhatsApp. The advance amount below is only used inside Admin.</p>
+        <p class="help">There is no full-payment discount any more (removed in v9). The advance is not shown on the website; you ask for it on WhatsApp. The advance amount below is only used inside Admin. No QR code is shown on the website: you send your payment details to the customer on WhatsApp.</p>
         <div class="g2">
           <label class="fl"><span>Advance amount (taka, Admin only)</span><input type="number" id="pAdv" min="0" max="100000" step="1" inputmode="numeric"></label>
-          <label class="fl"><span>Discount for full payment (%)</span><input type="number" id="pPct" min="0" max="50" step="0.5" inputmode="decimal"></label>
+          <label class="fl" hidden><span>Discount for full payment (%)</span><input type="number" id="pPct" min="0" max="50" step="0.5" inputmode="decimal"></label>
         </div>
         <p class="help" id="pEx"></p>
         <button class="btn dark" id="pSave" type="button">Save payment options</button>
       </div>
       <div class="panel"><h3>Delivery charge</h3>
-        <p class="help">Added to every website order. The 1% full-payment discount is never taken off the delivery charge.</p>
+        <p class="help">Added to every website order. Coupons and set discounts are never taken off the delivery charge.</p>
         <div class="g3">
           <label class="fl"><span>Inside Sylhet (taka)</span><input type="number" id="dIn" min="0" max="5000" step="1" inputmode="numeric"></label>
           <label class="fl"><span>Outside Sylhet (taka)</span><input type="number" id="dOut" min="0" max="5000" step="1" inputmode="numeric"></label>
@@ -656,7 +727,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         <p class="help">"Free delivery from" uses the perfume total before the discount. Put 0 to never give free delivery.</p>
         <button class="btn dark" id="dSave" type="button">Save delivery charge</button>
       </div>
-      <div class="panel"><h3>QR codes and account details</h3>
+      <div class="panel" id="qrPanel" hidden><h3>QR codes and account details</h3>
         <p class="help">When a customer ticks full payment, the cart shows the QR codes that are ON, with the account details. They can tap a QR to make it big and save it.</p>
         <input type="file" id="qFile" accept="image/png,image/jpeg,image/webp" hidden>
         <button class="btn dark" id="qAdd" type="button">+ Add QR code</button>
@@ -665,13 +736,15 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       </div>
     </section>
 
-    <!-- Price calculator -->
+    <!-- Price calculator (v7: from the 100 ml buying price) -->
     <section class="view hidden" id="v-calc">
       <button class="back" type="button" data-go="more">‹ More</button>
       <div class="vh"><h2>Calculator</h2><button class="btn sm" type="button" data-go="calcset">Settings</button></div>
       <div class="panel">
-        <label class="fl" style="max-width:320px"><span>Perfume cost per ml (taka)</span><input type="number" id="cPer" min="0" step="0.5" inputmode="decimal" placeholder="e.g. 30"></label>
-        <div id="cTable"></div>
+        <label class="fl" style="max-width:340px"><span>Buying price of the 100 ml bottle (taka)</span><input type="number" id="cBuy" min="0" step="1" inputmode="numeric" placeholder="e.g. 3200"></label>
+        <p class="help" id="cPerMl" style="margin-top:-4px"></p>
+        <div id="cWarn"></div>
+        <div style="overflow-x:auto"><div id="cTable"></div></div>
         <p class="help" id="cHow"></p>
       </div>
       <div class="panel"><h3>Use these prices for a perfume</h3>
@@ -720,12 +793,21 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <section class="view hidden" id="v-calcset">
       <button class="back" type="button" data-go="more">‹ More</button>
       <h2>Calculator settings</h2>
-      <p class="help" style="margin-top:0">Price = (perfume cost per ml + profit per ml) × ml + bottle + box and packaging.</p>
-      <div class="panel">
+      <p class="help" style="margin-top:0">Price = (cost per ml × ml) + bottle + box and packaging + profit. Cost per ml = buying price of the 100 ml bottle ÷ 100. The profit comes from the price range below.</p>
+      <div class="panel"><h3>Bottle and packaging</h3>
         <label class="fl" style="max-width:320px"><span>Box and packaging (taka, every size)</span><input type="number" id="csBox" min="0" step="1" inputmode="numeric"></label>
         <div style="overflow-x:auto"><table class="htab" id="csTab"></table></div>
-        <label class="fl" style="max-width:320px;margin-top:12px"><span>Rounding</span><select id="csRound">
+      </div>
+      <div class="panel"><h3>Profit by buying price (100 ml bottle)</h3>
+        <p class="help">Each row is one price range (from and to are included). The calculator never guesses: a buying price outside every range shows a warning until you add a range for it.</p>
+        <div id="csRanges"></div>
+        <button class="btn sm" id="csAddRange" type="button">+ Add range</button>
+        <div id="csGaps"></div>
+      </div>
+      <div class="panel">
+        <label class="fl" style="max-width:320px"><span>Rounding</span><select id="csRound">
           <option value="0">No rounding (exact)</option><option value="5">Round up to 5 (e.g. 223 → 225)</option><option value="10">Round up to 10 (e.g. 223 → 230)</option><option value="-10">Nearest 10 (e.g. 223 → 220)</option></select></label>
+        <div id="csMsg"></div>
         <button class="btn dark" id="csSave" type="button">Save calculator settings</button>
       </div>
     </section>
@@ -747,6 +829,8 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
           <label class="fl"><span>WhatsApp number for orders</span><input type="text" id="sWa" inputmode="tel" placeholder="+8801XXXXXXXXX"></label>
         </div>
         <label class="fl"><span>Note shown in the customer's cart (optional)</span><input type="text" id="sNoteSet"></label>
+        <label class="swl" style="justify-content:space-between;margin:8px 0"><span><b>Messenger ordering</b> — shows "Order on Messenger" in the cart and a blue chat button</span><input type="checkbox" class="sw" id="sMsOn"></label>
+        <label class="fl"><span>Facebook Page username (the part after facebook.com/)</span><input type="text" id="sMsPage" maxlength="80" autocapitalize="none" placeholder="khayrbd"></label>
         <button class="btn dark" id="saveSettings" type="button">Save settings</button>
       </div>
       <details class="panel"><summary style="margin:0">Attar sizes (attar is not on the website)</summary>
@@ -821,6 +905,119 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       <button class="back" type="button" data-go="more">‹ More</button>
       <h2>Security</h2>
       <div class="panel" id="secPanel"></div>
+      <div class="panel"><h3>Change password</h3>
+        <p class="help">You stay logged in. Use at least 10 characters. Write it somewhere safe.</p>
+        <label class="fl" style="max-width:360px"><span>New password</span><input type="password" id="cpNew1" autocomplete="new-password" maxlength="72"></label>
+        <label class="fl" style="max-width:360px"><span>New password again</span><input type="password" id="cpNew2" autocomplete="new-password" maxlength="72"></label>
+        <div id="cpMsg"></div>
+        <button class="btn dark" type="button" id="cpSave">Change password</button>
+      </div>
+    </section>
+
+    <!-- v8: Coupons -->
+    <section class="view hidden" id="v-coupons">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>Coupons</h2>
+      <p class="help" style="margin-top:0">Give a code to an influencer or put it in an ad (e.g. <code>EID100</code>). The customer types it in the cart. The server checks every code; the discount is only on the perfumes, never on delivery. Only you can see this list.</p>
+      <div class="panel"><h3>New coupon</h3>
+        <div class="g2">
+          <label class="fl"><span>Code (A–Z, 0–9)</span><input type="text" id="kCode" maxlength="30" autocapitalize="characters" autocomplete="off" placeholder="EID100"></label>
+          <label class="fl"><span>Type</span><select id="kKind"><option value="amount">Taka off</option><option value="pct">% off</option></select></label>
+        </div>
+        <div class="g2">
+          <label class="fl"><span id="kValLbl">Taka off</span><input type="number" id="kValue" min="1" step="1" inputmode="numeric"></label>
+          <label class="fl"><span>Minimum perfumes (taka, optional)</span><input type="number" id="kMin" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+        </div>
+        <div class="g2">
+          <label class="fl"><span>Max uses (optional)</span><input type="number" id="kMax" min="1" step="1" inputmode="numeric" placeholder="No limit"></label>
+          <label class="fl"><span>Last day (optional)</span><input type="date" id="kEnds" class="datein"></label>
+        </div>
+        <label class="fl"><span>Note (only for you)</span><input type="text" id="kNote" maxlength="120" placeholder="e.g. Instagram, Rafi"></label>
+        <div id="kMsg"></div>
+        <button class="btn dark" id="kAdd" type="button">Add coupon</button>
+      </div>
+      <div class="panel"><h3>Your coupons</h3><div id="kList"></div></div>
+    </section>
+
+    <!-- v8: Discovery sets -->
+    <section class="view hidden" id="v-sets">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>Discovery sets</h2>
+      <p class="help" style="margin-top:0">A set is 2 or more perfumes with a size. Customers add the whole set with one tap, and when all of them are in the cart they get the set's % off those perfumes. The server checks it again.</p>
+      <div class="panel" id="stForm"><h3 id="stTitle">New set</h3>
+        <label class="fl"><span>Name</span><input type="text" id="stName" maxlength="60" placeholder="e.g. Summer starter"></label>
+        <label class="fl"><span>Short text (optional)</span><input type="text" id="stDesc" maxlength="120" placeholder="e.g. 3 fresh perfumes to try"></label>
+        <div class="g2">
+          <label class="fl"><span>Discount % (1–50)</span><input type="number" id="stPct" min="1" max="50" step="1" inputmode="numeric" placeholder="10"></label>
+          <label class="fl"><span>Show on the website</span><select id="stActive"><option value="1">Yes</option><option value="0">No (hidden)</option></select></label>
+        </div>
+        <div class="fl"><span style="font-weight:500;font-size:.88rem">Perfumes in the set</span><div id="stItems"></div></div>
+        <div class="g2">
+          <label class="fl"><span>Add a perfume</span><input type="search" id="stFind" placeholder="Search perfume" autocomplete="off"></label>
+          <label class="fl"><span>Size</span><select id="stSize"><option value="3">3 ml</option><option value="6" selected>6 ml</option><option value="10">10 ml</option><option value="15">15 ml</option><option value="30">30 ml</option></select></label>
+        </div>
+        <div class="clist" id="stList"></div>
+        <div id="stMsg"></div>
+        <button class="btn dark" id="stSave" type="button">Save set</button>
+        <button class="link hidden" id="stCancel" type="button">Cancel editing</button>
+      </div>
+      <div class="panel"><h3>Your sets</h3><div id="stAll"></div></div>
+    </section>
+
+    <!-- v8: Reviews & FAQ -->
+    <section class="view hidden" id="v-site">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>Website text</h2>
+      <div class="panel"><h3>Review photos (screenshots of your Facebook reviews)</h3>
+        <p class="help">Take a screenshot of a real review on your Facebook page, then tap <b>+ Add review photo</b>. It shows on the main page at once. Use ↑ ↓ to change the order.</p>
+        <input type="file" id="rpFile" accept="image/png,image/jpeg,image/webp" multiple hidden>
+        <div class="rplist" id="rpList"></div>
+        <div id="rpMsg"></div>
+        <button class="btn dark" id="rpAdd" type="button">+ Add review photo</button>
+      </div>
+      <div class="panel"><h3>Customer reviews (text)</h3>
+        <p class="help">Only add <b>real</b> reviews, with the customer's permission. They show on the main page. Leave empty to hide the section.</p>
+        <div id="rvList"></div>
+        <button class="btn sm" id="rvAdd" type="button">+ Add review</button>
+      </div>
+      <div class="panel"><h3>Questions (FAQ)</h3>
+        <p class="help">Shown at the bottom of the main page. Add your delivery time, what happens if a bottle leaks, etc.</p>
+        <div id="fqList"></div>
+        <button class="btn sm" id="fqAdd" type="button">+ Add question</button>
+      </div>
+      <div class="panel"><h3>Top bar (scrolling messages)</h3>
+        <p class="help">The thin black bar at the very top of the website. Only write things that are true. Remove all lines to hide the bar.</p>
+        <div id="tbList"></div>
+        <button class="btn sm" id="tbAdd" type="button">+ Add message</button>
+      </div>
+      <div class="panel"><h3>Social links</h3>
+        <p class="help">Shown at the bottom of every page. Choose the platform and paste the link (it must start with https://). Add TikTok or others any time.</p>
+        <div id="soList"></div>
+        <button class="btn sm" id="soAdd" type="button">+ Add social link</button>
+      </div>
+      <div class="panel"><h3>Returns &amp; Replacement page</h3>
+        <p class="help">How many days after delivery a customer can tell you a perfume is not original. Leave empty to show "as soon as possible after delivery". The rest of the page is fixed (your rules).</p>
+        <label class="fl" style="max-width:260px"><span>Days to report</span><input type="number" id="retDays" min="1" max="60" step="1" inputmode="numeric" placeholder="empty"></label>
+      </div>
+      <div id="siteMsg"></div>
+      <button class="btn dark" id="siteSave" type="button">Save website text</button>
+    </section>
+
+    <!-- v8: Notify me requests -->
+    <section class="view hidden" id="v-restock">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>Notify me requests</h2>
+      <p class="help" style="margin-top:0">Customers who want a Stock Out perfume. When it is back, tap <b>WhatsApp</b> to message them, then <b>Done</b>.</p>
+      <label class="radio"><input type="checkbox" id="rsDone"><span>Show done requests too</span></label>
+      <div class="panel" id="rsList"></div>
+    </section>
+
+    <!-- Share links -->
+    <section class="view hidden" id="v-links">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>Share links</h2>
+      <p class="help" style="margin-top:0">Send these links to customers or use them in ads. Anyone can open them, no login. They always show the perfumes that are in that group <b>right now</b>: change a perfume's season or category in Products and the link updates by itself.</p>
+      <div class="panel" id="lkList"></div>
     </section>
 
     <!-- More (phone) -->
@@ -828,18 +1025,23 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       <h2>More</h2>
       <div class="group">
         <button class="mi" type="button" data-go="houses"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span><span class="tx">Houses<small>Group perfumes by house, set the order</small></span><span class="chev">›</span></button>
-        <button class="mi" type="button" data-go="payment"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7v-3"/></svg></span><span class="tx">Payment<small>bKash / bank QR codes, full payment discount</small></span><span class="chev">›</span></button>
-        <button class="mi" type="button" data-go="calc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2M16 16h0"/></svg></span><span class="tx">Calculator<small>Decant prices from the cost per ml</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="payment"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7v-3"/></svg></span><span class="tx">Payment<small>Full payment discount, delivery charge</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="calc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2M16 16h0"/></svg></span><span class="tx">Calculator<small>Decant prices from the 100 ml buying price</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="buys"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><span class="tx">My Purchases<small>What you paid for each bottle (only you see it)</small></span><span class="chev">›</span></button>
-        <button class="mi" type="button" data-go="calcset"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></span><span class="tx">Calculator settings<small>Bottle, box and profit per ml</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="calcset"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></span><span class="tx">Calculator settings<small>Bottle, box and profit by price range</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="sizes"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span><span class="tx">ML Settings<small>Sizes, automatic Stock Out, WhatsApp number</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="notify"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="tx">Notifications<small id="moreNotify">New order alerts on this phone</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="sets"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg></span><span class="tx">Discovery sets<small>Bundles with a discount</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="coupons"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg></span><span class="tx">Coupons<small>Codes for ads and influencers</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="restock"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="tx">Notify me requests<small id="moreRestock">Customers waiting for Stock Out perfumes</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="site"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></svg></span><span class="tx">Website text<small>Review photos, reviews, FAQ, top bar, social links, returns</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="links"><span class="ic"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><span class="tx">Share links<small>Summer, Winter, Niche, Designer, Middle Eastern</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="dashboard"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span><span class="tx">Dashboard<small>Totals and connections</small></span><span class="chev">›</span></button>
       </div>
       <div class="group">
         <button class="mi" type="button" data-go="import"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M4 15v5h16v-5"/></svg></span><span class="tx">CSV Import / Export</span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="bottles"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg></span><span class="tx">Bottle Photos</span><span class="chev">›</span></button>
-        <button class="mi" type="button" data-go="security"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span class="tx">Security<small>Authenticator, log out of all devices</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="security"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span class="tx">Security<small>Password, authenticator, log out of all devices</small></span><span class="chev">›</span></button>
       </div>
       <div class="group">
         <a class="mi" href="./" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v6H4V6h6"/></svg></span><span class="tx">View shop</span><span class="chev">›</span></a>
@@ -872,6 +1074,16 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <div id="eGS">
       <label class="fl" hidden><span>Male / Female / Unisex</span><select id="eGender"><option value="">Not set</option><option value="male">Male</option><option value="female">Female</option><option value="unisex">Unisex</option></select></label>
       <label class="fl"><span>Season</span><select id="eSeason"><option value="">Not set</option><option value="summer">Summer</option><option value="winter">Winter</option><option value="all">All season</option></select></label>
+    </div>
+    <div id="eScentBox">
+      <div class="fl"><span style="font-weight:500;font-size:.88rem">Smell <span class="help" style="font-weight:400">(tick what fits; customers can filter by it)</span></span><div class="chkgrid" id="eScent"></div></div>
+      <label class="fl"><span>Notes <span class="help" style="font-weight:400">(optional, e.g. Bergamot, pepper, ambroxan)</span></span><input type="text" id="eNotes" autocomplete="off" maxlength="300"></label>
+      <div class="g2">
+        <label class="fl"><span>How long it lasts</span><select id="eLong"><option value="">Not set</option><option value="light">Light</option><option value="moderate">Moderate</option><option value="long">Long-lasting</option><option value="very_long">Very long-lasting</option></select></label>
+        <label class="fl"><span>How strong</span><select id="eStrength"><option value="">Not set</option><option value="soft">Soft</option><option value="moderate">Moderate</option><option value="strong">Strong</option></select></label>
+      </div>
+      <div class="fl"><span style="font-weight:500;font-size:.88rem">When to wear</span><div class="chkgrid" id="eOcc"></div></div>
+      <label class="fl"><span>Badge on the website</span><select id="eBadge"><option value="">None</option><option value="bestseller">Bestseller</option><option value="new">New</option></select></label>
     </div>
     <label class="fl"><span>Similar to <span class="help" style="font-weight:400">(optional, e.g. Bois Imperial)</span></span><input type="text" id="eSimilar" autocomplete="off" maxlength="80"></label>
     <label class="fl"><span>Fragrantica link <span class="help" style="font-weight:400">(optional)</span></span><input type="url" id="eFrag" autocomplete="off" maxlength="300" placeholder="https://www.fragrantica.com/perfume/…"></label>
@@ -961,7 +1173,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 <script>
 (function(){
 'use strict';
-const APP_VERSION = '6.1.0';
+const APP_VERSION = '9.0.0';
 const CFG = window.SHOP_CONFIG || {};
 const SBC = CFG.supabase || {};
 /* One products table with two product types. Attar is kept in the database but is no longer sold on the website. */
@@ -975,7 +1187,8 @@ let F = STORES.perfume;
 let SIZES = F.sizes;
 const BUCKET = SBC.imageBucket || 'perfume-images';
 const DOMAIN = CFG.adminEmailDomain || 'khayr.shop';
-const DEF_SET = {whatsapp:'8801673080800', sizesEnabled:{}, orderNote:'', lowJuiceMl:15};
+let hasV8 = true;
+const DEF_SET = {whatsapp:'8801569126359', sizesEnabled:{}, orderNote:'', lowJuiceMl:15};
 const SB_URL = String(SBC.url || '').replace(/\/$/, '');
 const FN_URL = SB_URL + '/functions/v1/khayr-api';
 const catLabel = (type, c) => (STORES[type].cats.find(x => x[0] === c) || [])[1] || '';
@@ -1077,7 +1290,7 @@ function makeClient(remember){
 }
 function loginStep(step, msg, kind){
   $('panel').classList.add('hidden'); document.body.classList.remove('app'); $('loginView').classList.remove('hidden'); panelOpen = false; fromCache = false;
-  $('loginForm').hidden = step !== 'credentials'; $('mfaForm').hidden = step !== 'code'; $('gateBox').hidden = step !== 'gate'; $('gateOut').hidden = step !== 'gate';
+  $('loginForm').hidden = step !== 'credentials'; $('resetBox').hidden = true; $('mfaForm').hidden = step !== 'code'; $('gateBox').hidden = step !== 'gate'; $('gateOut').hidden = step !== 'gate';
   $('loginTitle').textContent = step === 'code' ? 'Two-step verification' : step === 'gate' ? 'Set up two-step verification' : 'Admin login';
   $('loginMsg').innerHTML = msg ? `<div class="msg ${kind || 'err'}">${esc(msg)}</div>` : '';
   if(step === 'credentials'){ $('lPass').value = ''; setTimeout(() => $('lUser').focus(), 50); }
@@ -1252,6 +1465,7 @@ function reauth(){
 function prep(p){
   return {...p, prices: p.prices || {}, sizes: p.sizes || {}, category: p.category || '', house: p.house || '',
           gender: p.gender || '', season: p.season || '', similar_to: p.similar_to || '', fragrantica_url: p.fragrantica_url || '',
+          scent: Array.isArray(p.scent) ? p.scent : [], notes: p.notes || '', longevity: p.longevity || '', strength: p.strength || '', occasions: Array.isArray(p.occasions) ? p.occasions : [], badge: p.badge || '',
           stock_out: !!p.stock_out, stock_out_sizes: p.stock_out_sizes || {}, auto_out: p.auto_out || {}};
 }
 async function loadAll(){
@@ -1262,6 +1476,8 @@ async function loadAll(){
     sb.from('products').select('id,house,stock_out,stock_out_sizes,auto_out').limit(1),
     sb.from('products').select('id,gender,season,similar_to,fragrantica_url').limit(1)
   ]);
+  const v8 = await sb.from('products').select('id,scent,badge').limit(1);
+  hasV8 = !v8.error;
   const err = pr.error || st.error || jl.error;
   if(err) throw err;
   if(v5.error) throw new Error('NEEDS_V5 ' + (v5.error.message || ''));
@@ -1473,8 +1689,8 @@ $('impSeg').addEventListener('click', e => { const b = e.target.closest('[data-s
 /* =====================================================================
    NAVIGATION (tab bar on a phone, top menu on a computer)
    ===================================================================== */
-const VIEWS = ['orders', 'sale', 'perfumes', 'more', 'houses', 'payment', 'calc', 'calcset', 'buys', 'sizes', 'notify', 'import', 'bottles', 'dashboard', 'security'];
-const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', calc: 'Calculator', calcset: 'Calculator settings', buys: 'My Purchases', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
+const VIEWS = ['orders', 'sale', 'perfumes', 'more', 'houses', 'payment', 'calc', 'calcset', 'buys', 'links', 'coupons', 'sets', 'site', 'restock', 'sizes', 'notify', 'import', 'bottles', 'dashboard', 'security'];
+const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', calc: 'Calculator', calcset: 'Calculator settings', buys: 'My Purchases', links: 'Share links', coupons: 'Coupons', sets: 'Discovery sets', site: 'Website text', restock: 'Notify me requests', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
 function go(view, opt){
   if(view === 'add'){ if(current !== 'perfumes') go('perfumes'); openEdit(null); return; }
   if(!VIEWS.includes(view)) view = 'orders';
@@ -1501,6 +1717,11 @@ function go(view, opt){
   if(view === 'calc') renderCalc();
   if(view === 'calcset') renderCalcSet();
   if(view === 'buys') renderBuys();
+  if(view === 'links') renderLinks();
+  if(view === 'coupons') loadCoupons();
+  if(view === 'sets') renderSets();
+  if(view === 'site') renderSiteText();
+  if(view === 'restock') loadRestock();
   if(view === 'calc' && !buysLoaded) loadBuys();
   updateSaleBar();
   document.title = (unseen() ? `(${unseen()}) ` : '') + `${TITLES[view]} · KHAYR Admin`;
@@ -1608,8 +1829,8 @@ async function checkConnections(){
     else if(!r.ok) html = line('bad', `Edge Function answered ${r.status}. Check it in Supabase.`);
     else {
       fnVersion = j && j.version;
-      html = fnVersion === 6 ? line('ok', 'Order system (Edge Function, version 6) is working.')
-        : line('bad', 'The Edge Function is an <b>older version</b>. Paste the new <code>index.ts</code> into <b>khayr-api</b> and press Deploy. Until then quantity, delivery charge and the Facebook Purchase do not work correctly.');
+      html = fnVersion >= 8 ? line('ok', `Order system (Edge Function, version ${fnVersion}) is working.`)
+        : line('bad', 'The Edge Function is an <b>older version</b>. Paste the new <code>index.ts</code> into <b>khayr-api</b> and press Deploy. Until then coupons, Notify me and the Meta catalog do not work.');
       const st = await callFn({action: 'admin_status'});
       if(st && st.ok){
         html += st.sheets ? line('ok', 'Google Sheet connected.') : line('warn', 'Google Sheet not connected (add SHEETS_WEBHOOK_URL and SHEETS_SHARED_SECRET in Supabase secrets).');
@@ -1667,6 +1888,7 @@ function filtered(){
     if(filter === 'out') return anyOut(p);
     if(filter === 'nohouse') return !p.house;
     if(filter === 'nogs') return !p.season;
+    if(filter.startsWith('s:')) return p.season === filter.slice(2);
     if(filter === 'sizeoff') return SIZES.some(s => !pOn(p, s) || !pr(p, s));
     return true;
   });
@@ -1701,6 +1923,10 @@ function rowHTML(p){
           <option value="" ${p.category ? '' : 'selected'}>Uncategorised</option>
           ${STORES[p.product_type].cats.map(([c, l]) => `<option value="${c}" ${p.category === c ? 'selected' : ''}>${esc(l)}</option>`).join('')}
         </select>
+        ${isP ? `<select class="catsel ${p.season ? '' : 'none'}" data-season="${esc(p.id)}" aria-label="Season of ${esc(p.name)}">
+          <option value="" ${p.season ? '' : 'selected'}>No season</option>
+          ${SEASONS.map(([v, l]) => `<option value="${v}" ${p.season === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}
+        </select>` : ''}
         ${isP ? `<button class="btn sm" type="button" data-adlink="${esc(p.id)}" title="Copy a link that opens this perfume on the website">Ad link</button>` : ''}
       </div></div>
     <div class="sizes" style="grid-template-columns:repeat(${SIZES.length},minmax(0,1fr))">${SIZES.map(s => chipHTML(p, s)).join('')}</div>
@@ -1743,7 +1969,7 @@ function renderRow(id){
   }, 0);
 }
 function buildFilters(){
-  const list = [['all', 'All'], ...(F.key === 'perfume' ? [['out', 'Stock Out'], ['nohouse', 'No house'], ['nogs', 'No season']] : []), ['uncat', 'Uncategorised'], ...F.cats.map(([c, l]) => ['cat:' + c, l]), ['low', 'Low juice'], ['noimg', 'No image'], ['hidden', 'Hidden'], ['sizeoff', 'Sizes off']];
+  const list = [['all', 'All'], ...(F.key === 'perfume' ? [['out', 'Stock Out'], ['nohouse', 'No house'], ['nogs', 'No season'], ['s:summer', 'Summer'], ['s:winter', 'Winter'], ['s:all', 'All season']] : []), ['uncat', 'Uncategorised'], ...F.cats.map(([c, l]) => ['cat:' + c, l]), ['low', 'Low juice'], ['noimg', 'No image'], ['hidden', 'Hidden'], ['sizeoff', 'Sizes off']];
   if(!list.some(x => x[0] === filter)) filter = 'all';
   $('filters').innerHTML = list.map(([f, l]) => `<button class="chip" type="button" data-f="${f}" aria-pressed="${f === filter}">${esc(l)}</button>`).join('');
 }
@@ -1813,6 +2039,15 @@ $('list').addEventListener('change', e => {
     });
     return;
   }
+  if(d.season !== undefined){
+    const p = products.find(x => x.id === d.season), v = e.target.value, before = p.season || '';
+    if(v !== '' && !SEASONS.some(x => x[0] === v)) return;
+    p.season = v; renderRow(p.id);
+    run('Season', sb.from('products').update({season: v}).eq('id', p.id)).then(ok => {
+      if(ok) toast(`${p.name} → ${sLabel(v) || 'no season'} ✓`); else { p.season = before; renderRow(p.id); }
+    });
+    return;
+  }
   if(d.cat !== undefined){
     const p = products.find(x => x.id === d.cat), cat = e.target.value, before = p.category;
     if(cat !== '' && !F.cats.some(c => c[0] === cat)) return;
@@ -1870,6 +2105,7 @@ function renderSizes(){
   const s1 = settingsOf('perfume');
   $('sWa').value = '+' + String(s1.whatsapp).replace(/\D/g, ''); $('sNoteSet').value = s1.orderNote || '';
   $('sAuto').checked = !!s1.autoStockOut;
+  const ms = s1.messenger || {}; $('sMsOn').checked = ms.on !== false; $('sMsPage').value = ms.page === undefined ? 'khayrbd' : ms.page;
 }
 ['perfume', 'attar'].forEach(type => {
   $('gsizes-' + type).addEventListener('change', async e => {
@@ -1897,7 +2133,9 @@ $('sAuto').addEventListener('change', async e => {
 $('saveSettings').onclick = () => busy($('saveSettings'), 'Saving…', async () => {
   const wa = $('sWa').value.replace(/\D/g, '');
   if(!/^8801\d{9}$/.test(wa)){ toast('WhatsApp number should look like +8801XXXXXXXXX', true); return; }
-  if(await saveSettingsRow('perfume', {whatsapp: wa, orderNote: $('sNoteSet').value.trim().slice(0, 200)})) toast('Settings saved ✓');
+  const page = $('sMsPage').value.trim().replace(/^https?:\/\/(www\.|m\.)?(facebook\.com|m\.me)\//i, '').replace(/[/?#].*$/, '');
+  if($('sMsOn').checked && !/^[A-Za-z0-9.\-]{2,80}$/.test(page)){ toast('Type your Facebook Page username, like khayrbd', true); return; }
+  if(await saveSettingsRow('perfume', {whatsapp: wa, orderNote: $('sNoteSet').value.trim().slice(0, 200), messenger: {on: $('sMsOn').checked, page}})){ $('sMsPage').value = page; toast('Settings saved ✓'); }
 });
 
 /* =====================================================================
@@ -1931,9 +2169,21 @@ async function encode(canvas, maxKB){
     }
   }
 }
+function fitCanvas(im, maxSide){          // v10: keep the shape (review screenshots are tall)
+  const k = Math.min(1, maxSide / Math.max(im.w, im.h)), c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(im.w * k)); c.height = Math.max(1, Math.round(im.h * k));
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.imageSmoothingQuality = 'high';
+  x.drawImage(im.src, 0, 0, c.width, c.height);
+  return c;
+}
 async function prepareImage(file, opt){
   opt = opt || {};
   const im = await readImage(file), big = Math.max(im.w, im.h);
+  if(opt.keepShape){
+    const full = await encode(fitCanvas(im, opt.full || 1400), opt.fullKB || 350);
+    const thumb = await encode(fitCanvas(im, 600), opt.thumbKB || 90);
+    return {full, thumb, padded: false, w: im.w, h: im.h};
+  }
   const full = await encode(squareCanvas(im, Math.min(opt.full || 1200, big)), opt.fullKB || 300);
   const thumb = await encode(squareCanvas(im, Math.min(400, big)), opt.thumbKB || 40);
   return {full, thumb, padded: Math.abs(im.w - im.h) / big > 0.02, w: im.w, h: im.h};
@@ -1980,6 +2230,7 @@ function dlgTypeHTML(){
   $('eLegacy').textContent = editing && editing.legacy_category ? `Old category text "${editing.legacy_category}" did not match a category, so it is not used. Choose one above.` : '';
   $('eHouse').closest('label').hidden = T.key !== 'perfume';
   $('eGS').hidden = T.key !== 'perfume';
+  $('eScentBox').hidden = T.key !== 'perfume' || !hasV8;
   $('eOut').closest('label').hidden = T.key !== 'perfume';
 }
 function houseHint(){
@@ -1998,6 +2249,7 @@ function openEdit(id){
   imgState = {action: 'keep', prepared: null};
   $('eMsg').innerHTML = '';
   $('eName').value = p.name; $('eHouse').value = p.house || '';
+  paintScentInputs(p);
   $('eGender').value = p.gender || ''; $('eSeason').value = p.season || ''; $('eSimilar').value = p.similar_to || ''; $('eFrag').value = p.fragrantica_url || '';
   $('eVisible').checked = p.visible !== false; $('eOut').checked = !!p.stock_out;
   dlgTypeHTML(); houseHint();
@@ -2059,11 +2311,12 @@ $('eSave').onclick = () => busy($('eSave'), 'Saving…', async () => {
   const row = {name, house, category, prices, sizes, visible: $('eVisible').checked,
                gender: $('eGender').value, season: $('eSeason').value, similar_to: clean($('eSimilar').value).slice(0, 80), fragrantica_url: frag.slice(0, 300),
                stock_out: T.key === 'perfume' ? $('eOut').checked : !!(editing && editing.stock_out), stock_out_sizes: outs};
+  if(hasV8 && T.key === 'perfume') Object.assign(row, scentRow());
   let id, number;
   if(editing){
     id = editing.id; number = editing.number;
     const diff = {};                                                        // send only what changed
-    Object.keys(row).forEach(k => { const was = ['category', 'house', 'gender', 'season', 'similar_to', 'fragrantica_url'].includes(k) ? (editing[k] || '') : editing[k]; if(JSON.stringify(row[k]) !== JSON.stringify(was)) diff[k] = row[k]; });
+    Object.keys(row).forEach(k => { const was = ['category', 'house', 'gender', 'season', 'similar_to', 'fragrantica_url', 'notes', 'longevity', 'strength', 'badge'].includes(k) ? (editing[k] || '') : editing[k]; if(JSON.stringify(row[k]) !== JSON.stringify(was)) diff[k] = row[k]; });
     if(Object.keys(diff).length){
       if(!await run('Save', sb.from('products').update(diff).eq('id', id))) return;
       Object.assign(editing, diff);
@@ -2399,7 +2652,8 @@ function orderCard(o){
   const wa = waNum(o.phone_norm || o.phone);
   const sub = subOf(o), disc = Number(o.discount) || 0, fee = Number(o.delivery_fee) || 0;
   const dd = o.discount_detail || {};
-  const discLabel = admin ? [dd.items ? `items −${price(dd.items)}` : '', dd.total ? `total −${price(dd.total)}` : ''].filter(Boolean).join(', ') : `${fullPctOf(o)}% full payment`;
+  const discLabel = admin ? [dd.items ? `items −${price(dd.items)}` : '', dd.total ? `total −${price(dd.total)}` : ''].filter(Boolean).join(', ')
+    : [...(Array.isArray(dd.sets) ? dd.sets.map(x => `set ${x.name} −${price(x.amount)}`) : []), dd.coupon ? `coupon ${dd.coupon.code} −${price(dd.coupon.amount)}` : '', o.payment_choice === 'full' ? `${fullPctOf(o)}% full payment` : ''].filter(Boolean).join(', ');
   return `<div class="ocard st-${esc(o.status)}" data-oid="${esc(o.order_id)}">
     <div class="ohead">
       <div><div class="oid">${esc(o.order_id)}</div><div class="odate">${esc(dhakaTime(o.created_at))} · ${esc((o.checkout_methods || []).join(' + '))}</div></div>
@@ -2412,6 +2666,7 @@ function orderCard(o){
         ${o.phone ? `<a href="tel:${esc(o.phone)}">${esc(o.phone)}</a>${wa ? ` · <a href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}<br>` : ''}
         ${o.email ? esc(o.email) + '<br>' : ''}${o.address ? esc(o.address) + '<br>' : ''}
         ${o.delivery_area ? `<span class="help" style="margin:0">${esc(o.delivery_area)}</span>` : ''}
+        ${o.customer_note ? `<div class="cnote">Customer note: ${esc(o.customer_note)}</div>` : ''}
         ${o.admin_note ? `<div class="help" style="margin:6px 0 0">Note: ${esc(o.admin_note)}</div>` : ''}
       </div>
       <div class="oitems">
@@ -2467,7 +2722,7 @@ function orderPlain(o){
   const disc = Number(o.discount) || 0, fee = Number(o.delivery_fee) || 0;
   return [`KHAYR ORDER`, '', `Order ID: ${o.order_id}`, '',
     o.customer_name ? `Name: ${o.customer_name}` : null, o.phone ? `Phone: ${o.phone}` : null, o.email ? `Email: ${o.email}` : null,
-    o.address ? `Address: ${o.address}` : null, o.delivery_area ? `Delivery Area: ${o.delivery_area}` : null, o.customer_name || o.phone || o.address ? '' : null,
+    o.address ? `Address: ${o.address}` : null, o.delivery_area ? `Delivery Area: ${o.delivery_area}` : null, o.customer_note ? `Note: ${o.customer_note}` : null, o.customer_name || o.phone || o.address ? '' : null,
     groups.map(g => (groups.length > 1 || g.t === 'attar' ? (g.t === 'attar' ? 'ATTAR\n' : 'PERFUME DECANTS\n') : '') + g.items.map(line).join('\n\n')).join('\n\n'), '',
     disc || fee ? `Subtotal: ${price(subOf(o))}` : null, disc ? `Discount: -${price(disc)}` : null, fee ? `Delivery: ${price(fee)}` : null,
     `Total: ${price(o.total)}`, `Payment: ${payText(o)}`].filter(x => x !== null).join('\n');
@@ -2525,10 +2780,12 @@ $('olist').addEventListener('click', async e => {
 /* Confirm: the owner can change how the customer paid. For a website order, switching between
    "advance" and "full payment" makes the server recalculate the discount and the total. */
 let cfOrder = null, cfTouched = false;
+/* set discount + coupon of a website order (they stay when the payment changes) */
+const otherDiscOf = o => { const d = o.discount_detail || {}; return (Array.isArray(d.sets) ? d.sets.reduce((t, x) => t + (Number(x.amount) || 0), 0) : 0) + (Number((d.coupon || {}).amount) || 0); };
 function cfTotalFor(o, pay){
   if(isAdminSale(o)) return Number(o.total);
-  const sub = subOf(o);
-  return (pay === 'full' ? sub - Math.round(sub * fullPctOf(o) / 100) : sub) + (Number(o.delivery_fee) || 0);
+  const sub = subOf(o), other = otherDiscOf(o);
+  return sub - other - (pay === 'full' ? Math.round((sub - other) * fullPctOf(o) / 100) : 0) + (Number(o.delivery_fee) || 0);
 }
 function openConfirm(o){
   cfOrder = o; cfTouched = false;
@@ -2553,8 +2810,8 @@ function cfCalc(){
   const o = cfOrder, pay = $('cfPay').value, t = cfTotalFor(o, pay);
   if(!isAdminSale(o)){
     const sub = subOf(o);
-    const fee = Number(o.delivery_fee) || 0, d = pay === 'full' ? Math.round(sub * fullPctOf(o) / 100) : 0;
-    $('cfCalc').innerHTML = `Subtotal ${price(sub)}${d ? ` − ${fullPctOf(o)}% (${price(d)})` : ''}${fee ? ` + delivery ${price(fee)}` : ''} = <b>${price(t)}</b>${pay === 'full' ? ' paid in full' : ''}`;
+    const other = otherDiscOf(o), fee = Number(o.delivery_fee) || 0, d = pay === 'full' ? Math.round((sub - other) * fullPctOf(o) / 100) : 0;
+    $('cfCalc').innerHTML = `Subtotal ${price(sub)}${other ? ` − set/coupon ${price(other)}` : ''}${d ? ` − ${fullPctOf(o)}% (${price(d)})` : ''}${fee ? ` + delivery ${price(fee)}` : ''} = <b>${price(t)}</b>${pay === 'full' ? ' paid in full' : ''}`;
     if(pay !== $('cfPay').dataset.start) $('cfCalc').innerHTML += '<br>The order, the Google Sheet and Meta will use this new total.';
   } else $('cfCalc').textContent = '';
   if(!cfTouched) $('cfValue').value = t;
@@ -2994,7 +3251,7 @@ function renderHouseOrder(){
 function payOf(){
   const p = (setRows[1] || {}).payment || {};
   const num = (v, d) => { const n = Number(v); return v === undefined || v === null || v === '' || !Number.isFinite(n) ? d : n; };
-  return {advance: num(p.advance, 150), fullDiscountPct: Math.max(0, Math.min(50, num(p.fullDiscountPct, 1))), qrs: Array.isArray(p.qrs) ? p.qrs.map(q => ({...q})) : []};
+  return {advance: num(p.advance, 150), fullDiscountPct: 0,   /* v9: removed */ qrs: Array.isArray(p.qrs) ? p.qrs.map(q => ({...q})) : []};
 }
 async function savePay(next, okMsg){
   const ok = await saveSettingsRow('perfume', {payment: next});
@@ -3002,9 +3259,7 @@ async function savePay(next, okMsg){
   return ok;
 }
 function payExample(){
-  const pct = Math.max(0, Math.min(50, Number($("pPct").value) || 0));
-  const d = Math.round(2000 * pct / 100);
-  $('pEx').innerHTML = `Example: perfumes 2000 + delivery. Full payment now: <b>2000 − ${d} = ${2000 - d}</b> + delivery (${pct}% off the perfumes, rounded to the nearest taka).`;
+  $('pEx').textContent = 'Customers pay the advance (or the full amount) on WhatsApp. No discount is given for paying in full.';
 }
 function renderPayment(){
   const dl = delivOf(); $('dIn').value = dl.inside; $('dOut').value = dl.outside; $('dFree').value = dl.freeOver;
@@ -3020,11 +3275,11 @@ function renderPayment(){
 }
 $('pAdv').addEventListener('input', payExample); $('pPct').addEventListener('input', payExample);
 $('pSave').onclick = () => busy($('pSave'), 'Saving…', async () => {
-  const adv = Number($('pAdv').value), pct = Number($('pPct').value);
+  const adv = Number($('pAdv').value), pct = 0;   // v9: full-payment discount removed
   if(!(adv >= 0 && adv <= 100000) || !Number.isInteger(adv)){ toast('Advance must be a whole number of taka.', true); return; }
   if(!(pct >= 0 && pct <= 50)){ toast('Discount must be between 0 and 50 %.', true); return; }
   const next = payOf(); next.advance = adv; next.fullDiscountPct = Math.round(pct * 100) / 100;
-  if(await savePay(next, `Saved ✓ Advance ${adv}, full payment ${next.fullDiscountPct}% off`)) renderPayment();
+  if(await savePay(next, `Saved ✓ Advance ${adv}`)) renderPayment();
 });
 $('dSave').onclick = () => busy($('dSave'), 'Saving…', async () => {
   const v = id => Number($(id).value);
@@ -3074,34 +3329,68 @@ $('qList').addEventListener('click', async e => {
 });
 
 /* =====================================================================
-   PRICE CALCULATOR
-   price = (cost per ml + profit per ml) × ml + bottle + box
+   PRICE CALCULATOR (v7)
+   cost per ml = buying price of the 100 ml bottle ÷ 100
+   price = cost per ml × ml + bottle + box + profit (profit from the buying-price range)
    ===================================================================== */
 const CALC_SIZES = [3, 6, 10, 15, 30];
-const CALC_DEF = {box: 40, bottle: {3: 40, 6: 40, 10: 50, 15: 50, 30: 100}, profit: {3: 20, 6: 15, 10: 12, 15: 10, 30: 7}, round: 0};
+const CALC_RANGES_DEF = [
+  {min: 2000, max: 5000, profit: {3: 20, 6: 15, 10: 12, 15: 10, 30: 7}},
+  {min: 5001, max: 9000, profit: {3: 23, 6: 18, 10: 15, 15: 12, 30: 8}},
+  {min: 9001, max: 15000, profit: {3: 25, 6: 20, 10: 18, 15: 15, 30: 10}},
+  {min: 15001, max: 20000, profit: {3: 35, 6: 28, 10: 25, 15: 20, 30: 13}},
+  {min: 20001, max: 25000, profit: {3: 45, 6: 38, 10: 33, 15: 28, 30: 20}}];
+const CALC_DEF = {box: 40, bottle: {3: 40, 6: 40, 10: 50, 15: 50, 30: 100}, ranges: CALC_RANGES_DEF, round: 0};
+const numOk = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) && Number(v) >= 0;
+function cleanRanges(list){
+  return (Array.isArray(list) ? list : []).filter(r => r && numOk(r.min) && numOk(r.max) && Number(r.min) <= Number(r.max))
+    .map(r => ({min: Number(r.min), max: Number(r.max), profit: Object.fromEntries(CALC_SIZES.map(z => [z, numOk((r.profit || {})[z]) ? Number(r.profit[z]) : null]))}))
+    .sort((a, b) => a.min - b.min);
+}
 function calcOf(){
-  const c = (setRows[1] || {}).calc || {}, n = (v, d) => { const k = Number(v); return v === undefined || v === null || v === '' || !Number.isFinite(k) ? d : Math.max(0, k); };
+  const c = (setRows[1] || {}).calc || {}, n = (v, d) => numOk(v) ? Number(v) : d;
   return {box: n(c.box, CALC_DEF.box), round: [0, 5, 10, -10].includes(Number(c.round)) ? Number(c.round) : 0,
           bottle: Object.fromEntries(CALC_SIZES.map(z => [z, n((c.bottle || {})[z], CALC_DEF.bottle[z])])),
-          profit: Object.fromEntries(CALC_SIZES.map(z => [z, n((c.profit || {})[z], CALC_DEF.profit[z])]))};
+          ranges: Array.isArray(c.ranges) ? cleanRanges(c.ranges) : cleanRanges(CALC_RANGES_DEF)};
+}
+const rangeFor = (buy, ranges) => ranges.find(r => buy >= r.min && buy <= r.max) || null;
+function rangeGaps(ranges){
+  const out = []; if(!ranges.length) return ['every price (no ranges yet)'];
+  const r = [...ranges].sort((a, b) => a.min - b.min);
+  if(r[0].min > 0) out.push(`below ${price(r[0].min)}`);
+  for(let k = 1; k < r.length; k++) if(r[k].min > r[k - 1].max + 1) out.push(`${price(r[k - 1].max + 1)}–${price(r[k].min - 1)}`);
+  out.push(`above ${price(r[r.length - 1].max)}`);
+  return out;
 }
 function roundPrice(x, r){
   if(r === 5 || r === 10) return Math.ceil(Math.round(x * 100) / 100 / r) * r;
   if(r === -10) return Math.round(x / 10) * 10;
   return Math.round(x);
 }
-function calcPrices(perMl){
+/* {ok, perMl, range, rows:{z:{liquid,bottle,box,profit,price}}, error} */
+function calcFor(buy){
   const c = calcOf();
-  return Object.fromEntries(CALC_SIZES.map(z => [z, roundPrice((perMl + c.profit[z]) * z + c.bottle[z] + c.box, c.round)]));
+  if(!(buy > 0)) return {ok: false, error: ''};
+  const perMl = buy / 100, range = rangeFor(buy, c.ranges);
+  if(!range) return {ok: false, perMl, error: `No profit range for ${price(buy)} taka. The calculator does not guess. Add a range for this price in Calculator settings.`};
+  const missing = CALC_SIZES.filter(z => range.profit[z] === null);
+  if(missing.length) return {ok: false, perMl, range, error: `The range ${price(range.min)}–${price(range.max)} has no profit for ${missing.map(z => z + ' ml').join(', ')}. Fill it in Calculator settings.`};
+  const rows = Object.fromEntries(CALC_SIZES.map(z => { const liquid = perMl * z; return [z, {liquid, bottle: c.bottle[z], box: c.box, profit: range.profit[z], price: roundPrice(liquid + c.bottle[z] + c.box + range.profit[z], c.round)}]; }));
+  return {ok: true, perMl, range, rows, round: c.round};
 }
+const calcPrices = buy => { const r = calcFor(buy); return r.ok ? Object.fromEntries(CALC_SIZES.map(z => [z, r.rows[z].price])) : null; };
+const money2 = v => (Math.round(v * 100) / 100).toLocaleString('en-US', {maximumFractionDigits: 2});
 let cPickId = null;
+function cBuyVal(){ const v = $('cBuy').value; return v === '' ? NaN : Number(v); }
 function renderCalc(){
-  const c = calcOf(), per = Number($('cPer').value), ok = $('cPer').value !== '' && per >= 0;
-  const pr = ok ? calcPrices(per) : null;
-  $('cTable').innerHTML = `<table class="ctab"><thead><tr><th>Size</th><th>Perfume</th><th>Profit</th><th>Bottle</th><th>Box</th><th>Price</th></tr></thead><tbody>
-    ${CALC_SIZES.map(z => `<tr><td><b>${z} ml</b></td><td>${ok ? price(per * z) : '—'}</td><td>${price(c.profit[z] * z)}</td><td>${price(c.bottle[z])}</td><td>${price(c.box)}</td><td class="big" data-cp="${z}">${ok ? price(pr[z]) : '—'}</td></tr>`).join('')}
+  const buy = cBuyVal(), r = calcFor(buy);
+  $('cPerMl').innerHTML = buy > 0 ? `Cost per ml = ${price(buy)} ÷ 100 = <b id="cPm">${money2(buy / 100)}</b> taka${r.range ? ` · price range <b>${price(r.range.min)}–${price(r.range.max)}</b>` : ''}` : '';
+  $('cWarn').innerHTML = r.error ? `<div class="msg warn" id="cWarnMsg">${esc(r.error)}<br><button class="link" type="button" data-go="calcset">Open Calculator settings</button></div>` : '';
+  $('cTable').innerHTML = `<table class="ctab"><thead><tr><th>Size</th><th>Perfume (liquid)</th><th>Bottle</th><th>Box</th><th>Profit</th><th>Price</th></tr></thead><tbody>
+    ${CALC_SIZES.map(z => { const x = r.ok ? r.rows[z] : null; return `<tr><td><b>${z} ml</b></td><td>${x ? money2(x.liquid) : '—'}</td><td>${x ? price(x.bottle) : '—'}</td><td>${x ? price(x.box) : '—'}</td><td>${x ? price(x.profit) : '—'}</td><td class="big" data-cp="${z}">${x ? price(x.price) : '—'}</td></tr>`; }).join('')}
   </tbody></table>`;
-  $('cHow').innerHTML = ok ? `Example 3 ml: (${per} + ${c.profit[3]}) × 3 + ${c.bottle[3]} + ${c.box} = <b>${price((per + c.profit[3]) * 3 + c.bottle[3] + c.box)}</b>${c.round ? ` → rounded <b>${price(pr[3])}</b>` : ''}` : 'Type the perfume cost per ml. All 5 prices appear at once.';
+  $('cHow').innerHTML = r.ok ? `3 ml: ${money2(r.perMl)} × 3 = ${money2(r.rows[3].liquid)} + bottle ${price(r.rows[3].bottle)} + box ${price(r.rows[3].box)} + profit ${price(r.rows[3].profit)} = <b>${money2(r.rows[3].liquid + r.rows[3].bottle + r.rows[3].box + r.rows[3].profit)}</b>${r.round ? ` → rounded <b>${price(r.rows[3].price)}</b>` : ''}`
+    : (buy > 0 ? '' : 'Type what you paid for the 100 ml bottle. All 5 prices appear at once.');
   renderCalcList(); renderCalcPick();
 }
 function renderCalcList(){
@@ -3113,41 +3402,400 @@ function renderCalcList(){
 function renderCalcPick(){
   const p = cPickId && allProducts.find(x => x.id === cPickId), box = $('cPick');
   if(!p){ box.innerHTML = ''; return; }
-  const per = Number($('cPer').value), ok = $('cPer').value !== '' && per >= 0, pr = ok ? calcPrices(per) : null;
+  const pr = calcPrices(cBuyVal()), ok = !!pr;
+  const lb = lastBuyFor(p.id);
   box.innerHTML = `<div class="panel" style="border:1px solid var(--line)"><h3>${esc(p.name)}</h3>
+    ${lb ? `<p class="help" id="cLast">Your last purchase (${esc(lb.bought_on)}, ${lb.bottle_ml} ml): Perfume Price ${price(lb.total)} = <b>${price(per100Of(lb))} taka for 100 ml</b>. <button class="link" type="button" id="cUseLast">Use this price</button></p>` : ''}
     <table class="ctab"><thead><tr><th>Size</th><th>Now</th><th>New</th></tr></thead><tbody>
       ${CALC_SIZES.map(z => `<tr><td>${z} ml</td><td>${p.prices[z] ? price(p.prices[z]) : '—'}</td><td class="big">${ok ? price(pr[z]) : '—'}</td></tr>`).join('')}
     </tbody></table>
-    ${(() => { const lb = lastBuyFor(p.id); return lb ? `<p class="help" id="cLast">Your last purchase (${esc(lb.bought_on)}, ${lb.bottle_ml} ml): Perfume Price ${price(lb.total)} = <b>${perMlOf(lb)} tk per ml</b>. <button class="link" type="button" id="cUseLast">Use this cost</button></p>` : ''; })()}
-    ${ok ? `<button class="btn dark block" type="button" id="cApply">Apply these prices to ${esc(p.name)}</button>` : '<p class="help">Type the cost per ml above first.</p>'}
+    ${ok ? `<button class="btn dark block" type="button" id="cApply">Apply these prices to ${esc(p.name)}</button>` : '<p class="help">Type a buying price above that is inside a price range first.</p>'}
     <button class="link" type="button" id="cUnpick">Choose another perfume</button></div>`;
   if($('cApply')) $('cApply').onclick = () => busy($('cApply'), 'Saving…', async () => {
     if(!confirm(`Change the prices of ${p.name}?\n\n` + CALC_SIZES.map(z => `${z}ml: ${p.prices[z] || '—'} → ${pr[z]}`).join('\n'))) return;
     const next = {...p.prices}; CALC_SIZES.forEach(z => { next[z] = pr[z]; });
     if(await run('Prices', sb.from('products').update({prices: next}).eq('id', p.id))){ p.prices = next; useType(); saveCache(); toast(`New prices saved for ${p.name} ✓`); renderCalcPick(); renderCalcList(); }
   });
-  if($('cUseLast')) $('cUseLast').onclick = () => { $('cPer').value = perMlOf(lastBuyFor(p.id)); renderCalc(); };
+  if($('cUseLast')) $('cUseLast').onclick = () => { $('cBuy').value = per100Of(lastBuyFor(p.id)); renderCalc(); };
   $('cUnpick').onclick = () => { cPickId = null; renderCalcPick(); $('cFind').focus(); };
 }
-$('cPer').addEventListener('input', renderCalc);
+$('cBuy').addEventListener('input', renderCalc);
 $('cFind').addEventListener('input', renderCalcList);
 $('cList').addEventListener('click', e => { const b = e.target.closest('[data-cpick]'); if(!b) return; cPickId = b.dataset.cpick; $('cFind').value = ''; renderCalcList(); renderCalcPick(); $('cPick').scrollIntoView({block: 'nearest', behavior: 'smooth'}); });
+
+let csRanges = null;
 function renderCalcSet(){
   const c = calcOf();
-  $('csBox').value = c.box; $('csRound').value = String(c.round);
-  $('csTab').innerHTML = `<thead><tr><th>Size</th><th>Bottle (taka)</th><th>Profit per ml (taka)</th></tr></thead><tbody>
-    ${CALC_SIZES.map(z => `<tr><td><b>${z} ml</b></td><td><input type="number" min="0" step="1" inputmode="numeric" data-csb="${z}" value="${c.bottle[z]}" aria-label="Bottle cost ${z}ml"></td><td><input type="number" min="0" step="0.5" inputmode="decimal" data-csp="${z}" value="${c.profit[z]}" aria-label="Profit per ml ${z}ml"></td></tr>`).join('')}</tbody>`;
+  $('csBox').value = c.box; $('csRound').value = String(c.round); $('csMsg').innerHTML = '';
+  $('csTab').innerHTML = `<thead><tr><th>Size</th><th>Bottle (taka)</th></tr></thead><tbody>
+    ${CALC_SIZES.map(z => `<tr><td><b>${z} ml</b></td><td><input type="number" min="0" step="1" inputmode="numeric" data-csb="${z}" value="${c.bottle[z]}" aria-label="Bottle cost ${z}ml"></td></tr>`).join('')}</tbody>`;
+  csRanges = c.ranges.map(r => ({min: r.min, max: r.max, profit: {...r.profit}}));
+  paintRanges();
+}
+function paintRanges(){
+  $('csRanges').innerHTML = csRanges.map((r, k) => `<div class="rcard" data-ri="${k}">
+      <div class="rhead"><label><span>From (taka)</span><input type="number" min="0" step="1" inputmode="numeric" data-rf="min" value="${r.min ?? ''}" aria-label="Range ${k + 1} from"></label>
+        <label><span>To (taka)</span><input type="number" min="0" step="1" inputmode="numeric" data-rf="max" value="${r.max ?? ''}" aria-label="Range ${k + 1} to"></label>
+        <button class="btn sm" type="button" data-rdel="${k}" aria-label="Delete range ${k + 1}">Delete</button></div>
+      <div class="rlbl">Profit (taka)</div>
+      <div class="rprof">${CALC_SIZES.map(z => `<label><span>${z} ml</span><input type="number" min="0" step="1" inputmode="numeric" data-rp="${z}" value="${r.profit[z] ?? ''}" aria-label="Range ${k + 1} profit ${z}ml"></label>`).join('')}</div>
+    </div>`).join('') || '<p class="help">No ranges yet. Press + Add range.</p>';
+  const valid = cleanRanges(csRanges);
+  $('csGaps').innerHTML = `<p class="help" id="csGapTxt">No profit range for: <b>${rangeGaps(valid).map(esc).join(', ')}</b>. A buying price there shows a warning.</p>`;
+}
+$('csRanges').addEventListener('input', e => {
+  const tr = e.target.closest('[data-ri]'); if(!tr) return; const r = csRanges[+tr.dataset.ri], v = e.target.value === '' ? null : Number(e.target.value);
+  if(e.target.dataset.rf) r[e.target.dataset.rf] = v; else if(e.target.dataset.rp) r.profit[e.target.dataset.rp] = v;
+  const valid = cleanRanges(csRanges); $('csGapTxt').innerHTML = `No profit range for: <b>${rangeGaps(valid).map(esc).join(', ')}</b>. A buying price there shows a warning.`;
+});
+$('csRanges').addEventListener('click', e => { const b = e.target.closest('[data-rdel]'); if(!b) return; csRanges.splice(+b.dataset.rdel, 1); paintRanges(); });
+$('csAddRange').onclick = () => { csRanges.push({min: null, max: null, profit: Object.fromEntries(CALC_SIZES.map(z => [z, null]))}); paintRanges(); const ins = $('csRanges').querySelectorAll('[data-ri]'); const last = ins[ins.length - 1]; if(last) last.querySelector('input').focus(); };
+function checkRanges(list){
+  for(const [k, r] of list.entries()){
+    const n = `Range ${k + 1}`;
+    if(!numOk(r.min) || !numOk(r.max)) return `${n}: fill in From and To.`;
+    if(Number(r.min) > Number(r.max)) return `${n}: From must be smaller than To.`;
+    for(const z of CALC_SIZES) if(!numOk(r.profit[z]) || Number(r.profit[z]) > 100000) return `${n}: fill in the profit for ${z} ml.`;
+  }
+  const sorted = [...list].sort((a, b) => a.min - b.min);
+  for(let k = 1; k < sorted.length; k++) if(Number(sorted[k].min) <= Number(sorted[k - 1].max)) return `Ranges ${price(sorted[k - 1].min)}–${price(sorted[k - 1].max)} and ${price(sorted[k].min)}–${price(sorted[k].max)} overlap. A price can only be in one range.`;
+  return '';
 }
 $('csSave').onclick = () => busy($('csSave'), 'Saving…', async () => {
-  const box = Number($('csBox').value), bottle = {}, profit = {};
-  if(!(box >= 0 && box <= 100000)){ toast('Box cost is not valid.', true); return; }
-  for(const z of CALC_SIZES){
-    const b = Number(document.querySelector(`[data-csb="${z}"]`).value), pf = Number(document.querySelector(`[data-csp="${z}"]`).value);
-    if(!(b >= 0 && b <= 100000) || !(pf >= 0 && pf <= 100000)){ toast(`Check the numbers for ${z} ml.`, true); return; }
-    bottle[z] = b; profit[z] = pf;
-  }
-  if(await saveSettingsRow('perfume', {calc: {box, bottle, profit, round: Number($('csRound').value)}})) toast('Calculator settings saved ✓');
+  const box = Number($('csBox').value), bottle = {}, msg = t => { $('csMsg').innerHTML = `<div class="msg err">${esc(t)}</div>`; };
+  if(!($('csBox').value !== '' && box >= 0 && box <= 100000)) return msg('Box and packaging cost is not valid.');
+  for(const z of CALC_SIZES){ const el = document.querySelector(`[data-csb="${z}"]`), b = Number(el.value); if(el.value === '' || !(b >= 0 && b <= 100000)) return msg(`Check the bottle cost for ${z} ml.`); bottle[z] = b; }
+  const bad = checkRanges(csRanges); if(bad) return msg(bad);
+  const ranges = cleanRanges(csRanges);
+  if(await saveSettingsRow('perfume', {calc: {box, bottle, ranges, round: Number($('csRound').value)}})){ $('csMsg').innerHTML = ''; toast('Calculator settings saved ✓'); renderCalcSet(); }
 });
+
+/* =====================================================================
+   PASSWORD RESET (from the login page) and CHANGE PASSWORD (Security)
+   The reset code only works when pasted into the owner's own Supabase
+   SQL Editor, so a stranger cannot use it. Nothing is sent or stored.
+   ===================================================================== */
+const ADMIN_EMAIL = () => `khayr96@${DOMAIN}`.toLowerCase();
+const sqlStr = v => "'" + String(v).replace(/'/g, "''") + "'";
+function pwProblem(a, b){
+  if(a.length < 10) return 'Use at least 10 characters.';
+  if(a.length > 72) return 'Use 72 characters or fewer.';
+  if(a !== b) return 'The two passwords are not the same.';
+  if(/^\s|\s$/.test(a)) return 'Do not start or end the password with a space.';
+  return '';
+}
+function resetSql(pw, alsoMfa){
+  const em = sqlStr(ADMIN_EMAIL()), pq = sqlStr(pw), uid = `(select id from auth.users where email = ${em})`;
+  return `-- KHAYR: reset the admin password (paste in Supabase > SQL Editor and press Run)
+update auth.users set encrypted_password = extensions.crypt(${pq}, extensions.gen_salt('bf', 10)), updated_at = now() where email = ${em};
+delete from auth.sessions where user_id = ${uid};
+${alsoMfa ? `delete from auth.mfa_factors where user_id = ${uid};\n` : ''}select case when exists (select 1 from auth.users where email = ${em} and encrypted_password = extensions.crypt(${pq}, encrypted_password))
+  then 'OK - password reset. Log in with username Khayr96 and the new password.'${alsoMfa ? " || ' Then set up your authenticator app again.'" : ''}
+  else 'PROBLEM - the admin user was not found. Send this screenshot.' end as result;`;
+}
+function sqlEditorUrl(){ const m = String(SBC.url || '').match(/^https:\/\/([a-z0-9]+)\.supabase\.co/i); return m ? `https://supabase.com/dashboard/project/${m[1]}/sql/new` : 'https://supabase.com/dashboard'; }
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; } catch(_){}
+  try { const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok; } catch(_){ return false; }
+}
+$('lForgot').onclick = () => {
+  $('loginForm').hidden = true; $('resetBox').hidden = false; $('loginTitle').textContent = 'Reset password'; $('loginMsg').innerHTML = '';
+  $('rPass1').value = ''; $('rPass2').value = ''; $('rMfa').checked = false; $('rOut').hidden = true; $('rSql').value = ''; $('rMsg').innerHTML = '';
+  setTimeout(() => $('rPass1').focus(), 50);
+};
+$('rBack').onclick = () => { $('rSql').value = ''; $('rPass1').value = ''; $('rPass2').value = ''; loginStep('credentials'); };
+$('rMake').onclick = () => {
+  const a = $('rPass1').value, b = $('rPass2').value, bad = pwProblem(a, b);
+  if(bad){ $('rMsg').innerHTML = `<div class="msg err">${esc(bad)}</div>`; $('rOut').hidden = true; return; }
+  $('rMsg').innerHTML = ''; $('rSql').value = resetSql(a, $('rMfa').checked); $('rSqlLink').href = sqlEditorUrl(); $('rOut').hidden = false;
+};
+$('rCopy').onclick = async () => toast(await copyText($('rSql').value) ? 'Reset code copied ✓ Now paste it in Supabase.' : 'Could not copy. Select the text and copy it.', false);
+$('cpSave').onclick = () => busy($('cpSave'), 'Saving…', async () => {
+  const a = $('cpNew1').value, b = $('cpNew2').value, bad = pwProblem(a, b), msg = (t, k) => { $('cpMsg').innerHTML = `<div class="msg ${k || 'err'}">${esc(t)}</div>`; };
+  if(bad) return msg(bad);
+  if(!await reauth()) return;
+  const {error} = await sb.auth.updateUser({password: a});
+  if(error) return msg(/same|different/i.test(error.message) ? 'The new password must be different from the old one.' : `Not changed: ${friendly(error)} You can also use "Forgot password" on the login page.`);
+  $('cpNew1').value = ''; $('cpNew2').value = ''; msg('Password changed ✓ Use the new password next time you log in.', 'ok');
+});
+
+/* =====================================================================
+   v8: SCENT FIELDS in the Edit dialog
+   ===================================================================== */
+const SCENTS8 = [['fresh', 'Fresh'], ['citrus', 'Citrus'], ['aquatic', 'Aquatic'], ['green', 'Green'], ['floral', 'Floral'], ['fruity', 'Fruity'], ['sweet', 'Sweet'], ['vanilla', 'Vanilla'],
+                 ['spicy', 'Spicy'], ['woody', 'Woody'], ['oud', 'Oud'], ['amber', 'Amber'], ['leather', 'Leather'], ['musky', 'Musky']];
+const OCC8 = [['day', 'Day'], ['night', 'Night'], ['office', 'Office'], ['party', 'Party'], ['date', 'Date night']];
+function paintScentInputs(p){
+  $('eScent').innerHTML = SCENTS8.map(([k, l]) => `<label class="chk"><input type="checkbox" data-sc="${k}" ${(p.scent || []).includes(k) ? 'checked' : ''}><span>${l}</span></label>`).join('');
+  $('eOcc').innerHTML = OCC8.map(([k, l]) => `<label class="chk"><input type="checkbox" data-oc="${k}" ${(p.occasions || []).includes(k) ? 'checked' : ''}><span>${l}</span></label>`).join('');
+  $('eNotes').value = p.notes || ''; $('eLong').value = p.longevity || ''; $('eStrength').value = p.strength || ''; $('eBadge').value = p.badge || '';
+}
+function scentRow(){
+  return {scent: [...document.querySelectorAll('#eScent [data-sc]:checked')].map(i => i.dataset.sc), notes: clean($('eNotes').value).slice(0, 300),
+          longevity: $('eLong').value, strength: $('eStrength').value, occasions: [...document.querySelectorAll('#eOcc [data-oc]:checked')].map(i => i.dataset.oc), badge: $('eBadge').value};
+}
+const needV8 = box => { box.innerHTML = '<div class="msg warn">This needs the version 8 database. Run <b>08-khayr-v8.sql</b> in the Supabase SQL Editor, then reload this page.</div>'; };
+
+/* =====================================================================
+   v8: COUPONS (table coupons, only the admin)
+   ===================================================================== */
+let coupons = [];
+async function loadCoupons(){
+  $('kValLbl').textContent = $('kKind').value === 'pct' ? '% off (1–50)' : 'Taka off';
+  const r = await sb.from('coupons').select('*').order('created_at', {ascending: false});
+  if(r.error){ if(/coupons/.test(r.error.message || '') || /42P01|PGRST20/.test(r.error.code || r.error.message || '')) needV8($('kList')); else $('kList').innerHTML = `<div class="msg err">${esc(friendly(r.error))}</div>`; return; }
+  coupons = r.data || []; paintCoupons();
+}
+function couponState(c){
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  if(!c.active) return 'Off';
+  if(c.ends_on && c.ends_on < today) return 'Ended';
+  if(c.max_uses && c.uses >= c.max_uses) return 'Used up';
+  return 'Active';
+}
+function paintCoupons(){
+  $('kList').innerHTML = coupons.length ? coupons.map(c => `<div class="krow" data-kc="${esc(c.code)}"><div><b class="kcode">${esc(c.code)}</b> <span class="pill ${couponState(c) === 'Active' ? '' : 'amber'}">${couponState(c)}</span>
+      <div class="help" style="margin:2px 0 0">${c.kind === 'pct' ? `${c.value}% off` : `${price(c.value)} tk off`}${c.min_subtotal ? ` · from ${price(c.min_subtotal)} tk` : ''} · used ${c.uses}${c.max_uses ? ` of ${c.max_uses}` : ''}${c.ends_on ? ` · until ${esc(c.ends_on)}` : ''}${c.note ? ` · ${esc(c.note)}` : ''}</div></div>
+      <div class="kbtn"><label><input type="checkbox" class="sw" data-kon ${c.active ? 'checked' : ''}> On</label><button class="btn sm" type="button" data-kdel>Delete</button></div></div>`).join('')
+    : '<p class="help">No coupons yet.</p>';
+}
+$('kKind').onchange = () => { $('kValLbl').textContent = $('kKind').value === 'pct' ? '% off (1–50)' : 'Taka off'; };
+$('kAdd').onclick = () => busy($('kAdd'), 'Saving…', async () => {
+  const msg = t => { $('kMsg').innerHTML = `<div class="msg err">${esc(t)}</div>`; };
+  const code = clean($('kCode').value).toUpperCase(), kind = $('kKind').value, value = Number($('kValue').value);
+  if(!/^[A-Z0-9_-]{3,30}$/.test(code)) return msg('Code: 3 to 30 letters or numbers, no spaces (e.g. EID100).');
+  if(!Number.isInteger(value) || value < 1 || (kind === 'pct' ? value > 50 : value > 100000)) return msg(kind === 'pct' ? 'Percent must be 1 to 50.' : 'Taka off must be 1 or more.');
+  const min = $('kMin').value === '' ? 0 : Number($('kMin').value), max = $('kMax').value === '' ? null : Number($('kMax').value);
+  if(!Number.isInteger(min) || min < 0) return msg('Minimum must be 0 or more.');
+  if(max !== null && (!Number.isInteger(max) || max < 1)) return msg('Max uses must be 1 or more, or empty.');
+  if(coupons.some(c => c.code === code)) return msg('This code already exists.');
+  const row = {code, kind, value, min_subtotal: min, max_uses: max, ends_on: $('kEnds').value || null, note: clean($('kNote').value).slice(0, 120), active: true};
+  if(!await run('Coupon', sb.from('coupons').insert(row))) return;
+  ['kCode', 'kValue', 'kMin', 'kMax', 'kEnds', 'kNote'].forEach(id => $(id).value = ''); $('kMsg').innerHTML = '';
+  toast(`Coupon ${code} added ✓`); loadCoupons();
+});
+$('kList').addEventListener('change', async e => {
+  const row = e.target.closest('[data-kc]'); if(!row || e.target.dataset.kon === undefined) return;
+  if(await run('Coupon', sb.from('coupons').update({active: e.target.checked}).eq('code', row.dataset.kc))) loadCoupons();
+});
+$('kList').addEventListener('click', async e => {
+  const row = e.target.closest('[data-kc]'); if(!row || !e.target.closest('[data-kdel]')) return;
+  if(!confirm(`Delete the coupon ${row.dataset.kc}? Customers can no longer use it. Old orders keep their discount.`)) return;
+  if(await run('Delete coupon', sb.from('coupons').delete().eq('code', row.dataset.kc))){ toast('Coupon deleted'); loadCoupons(); }
+});
+
+/* =====================================================================
+   v8: DISCOVERY SETS (settings.sets; the server applies the discount)
+   ===================================================================== */
+let stEdit = null, stItems = [];
+const setsOf = () => Array.isArray((setRows[1] || {}).sets) ? setRows[1].sets : [];
+function stProduct(id){ return allProducts.find(p => p.id === id); }
+function renderSets(){
+  if(!stEdit) fillSet(null);
+  $('stAll').innerHTML = setsOf().length ? setsOf().map(st => {
+    const full = st.items.reduce((t, x) => t + (Number((stProduct(x.id) || {prices: {}}).prices[x.size]) || 0), 0);
+    return `<div class="krow" data-st="${esc(st.id)}"><div><b>${esc(st.name)}</b> <span class="pill ${st.active === false ? 'amber' : ''}">${st.active === false ? 'Hidden' : 'On the website'}</span>
+      <div class="help" style="margin:2px 0 0">${st.items.map(x => `${esc((stProduct(x.id) || {name: x.id + ' (deleted)'}).name)} ${x.size} ml`).join(' + ')} · ${st.pct}% off · ${price(full)} → ${price(full - Math.round(full * st.pct / 100))} tk</div></div>
+      <div class="kbtn"><button class="btn sm" type="button" data-stedit>Edit</button><button class="btn sm" type="button" data-stdel>Delete</button></div></div>`;
+  }).join('') : '<p class="help">No sets yet.</p>';
+}
+function fillSet(st){
+  stEdit = st ? st.id : null; stItems = st ? st.items.map(x => ({id: x.id, size: Number(x.size)})) : [];
+  $('stTitle').textContent = st ? 'Edit set' : 'New set'; $('stCancel').classList.toggle('hidden', !st);
+  $('stName').value = st ? st.name : ''; $('stDesc').value = st ? (st.desc || '') : ''; $('stPct').value = st ? st.pct : ''; $('stActive').value = st && st.active === false ? '0' : '1';
+  $('stMsg').innerHTML = ''; $('stFind').value = ''; $('stList').innerHTML = ''; paintStItems();
+}
+function paintStItems(){
+  $('stItems').innerHTML = stItems.length ? stItems.map((x, k) => { const p = stProduct(x.id); const pr = p && Number(p.prices[x.size]); return `<div class="stitem"><span>${esc(p ? p.name : x.id)} · ${x.size} ml${pr ? ` · ${price(pr)} tk` : ' · <b>no price for this size</b>'}</span><button class="btn sm" type="button" data-strm="${k}">Remove</button></div>`; }).join('') : '<p class="help" style="margin:0">No perfumes yet. Search below and tap one.</p>';
+}
+$('stFind').addEventListener('input', () => {
+  const words = norm($('stFind').value).split(' ').filter(Boolean);
+  if(!words.length){ $('stList').innerHTML = ''; return; }
+  const list = allProducts.filter(p => p.product_type === 'perfume').filter(p => { const h = norm(`${p.name} ${p.house}`); return words.every(w => h.includes(w)); }).slice(0, 6);
+  $('stList').innerHTML = list.map(p => `<button type="button" data-stpick="${esc(p.id)}">${esc(p.name)}<small>${esc(p.house || 'Other')}</small></button>`).join('') || '<p class="help">No perfume found.</p>';
+});
+$('stList').addEventListener('click', e => {
+  const b = e.target.closest('[data-stpick]'); if(!b) return;
+  const size = Number($('stSize').value);
+  if(stItems.some(x => x.id === b.dataset.stpick && x.size === size)){ toast('Already in the set'); return; }
+  stItems.push({id: b.dataset.stpick, size}); $('stFind').value = ''; $('stList').innerHTML = ''; paintStItems();
+});
+$('stItems').addEventListener('click', e => { const b = e.target.closest('[data-strm]'); if(!b) return; stItems.splice(+b.dataset.strm, 1); paintStItems(); });
+$('stCancel').onclick = () => fillSet(null);
+$('stSave').onclick = () => busy($('stSave'), 'Saving…', async () => {
+  const msg = t => { $('stMsg').innerHTML = `<div class="msg err">${esc(t)}</div>`; };
+  const name = clean($('stName').value).slice(0, 60), pct = Number($('stPct').value);
+  if(!name) return msg('Type a name for the set.');
+  if(!Number.isInteger(pct) || pct < 1 || pct > 50) return msg('Discount must be 1 to 50 %.');
+  if(stItems.length < 2) return msg('A set needs at least 2 perfumes.');
+  const noPrice = stItems.find(x => !(Number((stProduct(x.id) || {prices: {}}).prices[x.size]) > 0));
+  if(noPrice) return msg(`${(stProduct(noPrice.id) || {}).name || noPrice.id} has no price for ${noPrice.size} ml.`);
+  const st = {id: stEdit || ('set-' + Date.now().toString(36)), name, desc: clean($('stDesc').value).slice(0, 120), pct, active: $('stActive').value === '1', items: stItems.map(x => ({id: x.id, size: x.size}))};
+  const next = setsOf().filter(x => x.id !== st.id); const at = setsOf().findIndex(x => x.id === st.id);
+  if(at > -1) next.splice(at, 0, st); else next.push(st);
+  if(await saveSettingsRow('perfume', {sets: next})){ toast(`Set "${name}" saved ✓`); fillSet(null); renderSets(); }
+});
+$('stAll').addEventListener('click', async e => {
+  const row = e.target.closest('[data-st]'); if(!row) return; const st = setsOf().find(x => x.id === row.dataset.st); if(!st) return;
+  if(e.target.closest('[data-stedit]')){ fillSet(st); $('stForm').scrollIntoView({block: 'start', behavior: 'smooth'}); return; }
+  if(e.target.closest('[data-stdel]')){ if(!confirm(`Delete the set "${st.name}"?`)) return; if(await saveSettingsRow('perfume', {sets: setsOf().filter(x => x.id !== st.id)})){ toast('Set deleted'); if(stEdit === st.id) fillSet(null); renderSets(); } }
+});
+
+/* =====================================================================
+   v8: REVIEWS & FAQ (settings.reviews / settings.faq, shown on the main page)
+   ===================================================================== */
+let rvDraft = [], fqDraft = [];
+function defaultFaqAdmin(){
+  const d = (setRows[1] || {}).delivery || {}, pay = (setRows[1] || {}).payment || {}, inS = d.insideSylhet ?? 50, outS = d.outsideSylhet ?? 100, free = d.freeOver ?? 3000, pp = 0;   // v9: full-payment discount removed
+  return [{q: 'Are your perfumes original?', a: 'Yes. Every decant is filled from an original, 100% authentic bottle.'},
+          {q: 'Which sizes can I buy?', a: '3, 6, 10, 15 and 30 ml. Every perfume shows its price for each size.'},
+          {q: 'How much is delivery?', a: `Inside Sylhet ${inS} tk, outside Sylhet ${outS} tk.${free > 0 ? ` Free delivery all over Bangladesh when your perfumes cost ${free} tk or more.` : ''}`},
+          {q: 'How do I order?', a: `Choose a size, tap Add to cart, open the cart, fill in your details and tap Order on WhatsApp${(((setRows[1] || {}).messenger || {}).on !== false) ? ' or Order on Messenger' : ''}. Then press send.`},
+          {q: 'How do I pay?', a: `After you order, we send you our bKash payment details on WhatsApp.${pp ? ` Pay the full amount now and get ${pp}% off the perfumes.` : ''}`}];
+}
+function renderSiteText(){
+  const s1 = setRows[1] || {};
+  rvDraft = (Array.isArray(s1.reviews) ? s1.reviews : []).map(r => ({name: r.name || '', place: r.place || '', text: r.text || ''}));
+  fqDraft = (Array.isArray(s1.faq) && s1.faq.length ? s1.faq : defaultFaqAdmin()).map(x => ({q: x.q || '', a: x.a || ''}));
+  tbDraft = (Array.isArray(s1.topbar) ? s1.topbar : TOPBAR_DEF).map(x => String(x || ''));
+  soDraft = (Array.isArray(s1.social) ? s1.social : SOCIAL_DEF).map(x => ({type: SOCIAL_TYPES[x && x.type] ? x.type : 'other', url: (x && x.url) || '', label: (x && x.label) || ''}));
+  $('retDays').value = Number.isInteger(Number(s1.returnDays)) && Number(s1.returnDays) > 0 ? Number(s1.returnDays) : '';
+  $('siteMsg').innerHTML = ''; paintSiteText(); paintRevPhotos();
+}
+function paintSiteText(){
+  $('rvList').innerHTML = rvDraft.length ? rvDraft.map((r, k) => `<div class="tcard" data-rv="${k}"><div class="g2"><label class="fl"><span>Name</span><input type="text" data-f="name" maxlength="40" value="${esc(r.name)}"></label><label class="fl"><span>Place (optional)</span><input type="text" data-f="place" maxlength="40" value="${esc(r.place)}" placeholder="e.g. Sylhet"></label></div>
+      <label class="fl"><span>What they said</span><textarea data-f="text" rows="2" maxlength="300">${esc(r.text)}</textarea></label><button class="btn sm" type="button" data-rvdel>Remove</button></div>`).join('') : '<p class="help">No reviews yet.</p>';
+  $('fqList').innerHTML = fqDraft.map((x, k) => `<div class="tcard" data-fq="${k}"><label class="fl"><span>Question</span><input type="text" data-f="q" maxlength="120" value="${esc(x.q)}"></label>
+      <label class="fl"><span>Answer</span><textarea data-f="a" rows="2" maxlength="500">${esc(x.a)}</textarea></label>
+      <div class="kbtn"><button class="btn sm" type="button" data-fqup ${k ? '' : 'disabled'}>↑</button><button class="btn sm" type="button" data-fqdown ${k < fqDraft.length - 1 ? '' : 'disabled'}>↓</button><button class="btn sm" type="button" data-fqdel>Remove</button></div></div>`).join('');
+  $('tbList').innerHTML = tbDraft.length ? tbDraft.map((t, k) => `<div class="trow" data-tb="${k}"><input type="text" maxlength="80" value="${esc(t)}" aria-label="Top bar message ${k + 1}"><button class="btn sm" type="button" data-tbdel>Remove</button></div>`).join('') : '<p class="help">No messages: the top bar is hidden.</p>';
+  $('soList').innerHTML = soDraft.length ? soDraft.map((x, k) => `<div class="trow so" data-so="${k}"><select data-f="type" aria-label="Platform">${Object.entries(SOCIAL_TYPES).map(([v, l]) => `<option value="${v}" ${x.type === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <input type="url" data-f="url" maxlength="300" inputmode="url" autocapitalize="none" placeholder="https://www.instagram.com/…" value="${esc(x.url)}" aria-label="Link">
+      ${x.type === 'other' ? `<input type="text" data-f="label" maxlength="30" placeholder="Name shown" value="${esc(x.label)}" aria-label="Name shown">` : ''}
+      <button class="btn sm" type="button" data-sodel>Remove</button></div>`).join('') : '<p class="help">No social links.</p>';
+}
+/* v10: top bar, social links, review photos */
+const TOPBAR_DEF = ['We fill your decant after you order', 'Money back if it is not original', 'Cash on delivery', 'Free replacement if a bottle leaks or breaks'];
+const SOCIAL_DEF = [{type: 'facebook', url: 'https://www.facebook.com/khayrbd'}];
+const SOCIAL_TYPES = {facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', whatsapp: 'WhatsApp', other: 'Other'};
+let tbDraft = [], soDraft = [];
+const okLink = u => { try { const x = new URL(String(u).trim()); return x.protocol === 'https:' && /\./.test(x.hostname); } catch(e){ return false; } };
+$('tbList').addEventListener('input', e => { const c = e.target.closest('[data-tb]'); if(c) tbDraft[+c.dataset.tb] = e.target.value; });
+$('tbList').addEventListener('click', e => { const c = e.target.closest('[data-tb]'); if(c && e.target.closest('[data-tbdel]')){ tbDraft.splice(+c.dataset.tb, 1); paintSiteText(); } });
+$('tbAdd').onclick = () => { if(tbDraft.length >= 8){ toast('8 messages at most.', true); return; } tbDraft.push(''); paintSiteText(); const l = $('tbList').querySelectorAll('input'); l[l.length - 1].focus(); };
+$('soList').addEventListener('input', e => { const c = e.target.closest('[data-so]'); if(c && e.target.dataset.f && e.target.tagName !== 'SELECT') soDraft[+c.dataset.so][e.target.dataset.f] = e.target.value; });
+$('soList').addEventListener('change', e => { const c = e.target.closest('[data-so]'); if(c && e.target.tagName === 'SELECT'){ soDraft[+c.dataset.so].type = e.target.value; paintSiteText(); } });
+$('soList').addEventListener('click', e => { const c = e.target.closest('[data-so]'); if(c && e.target.closest('[data-sodel]')){ soDraft.splice(+c.dataset.so, 1); paintSiteText(); } });
+$('soAdd').onclick = () => { if(soDraft.length >= 10){ toast('10 links at most.', true); return; } soDraft.push({type: soDraft.some(x => x.type === 'instagram') ? 'tiktok' : 'instagram', url: '', label: ''}); paintSiteText(); const l = $('soList').querySelectorAll('input[type=url]'); l[l.length - 1].focus(); };
+const revPhotosOf = () => (Array.isArray((setRows[1] || {}).reviewPhotos) ? setRows[1].reviewPhotos : []).map(x => ({...x}));
+function paintRevPhotos(){
+  const list = revPhotosOf();
+  $('rpList').innerHTML = list.length ? list.map((x, k) => `<div class="rpcard" data-rp="${esc(x.id)}"><img src="${esc(imgUrl(x.thumb_path || x.image_path))}" alt="Review photo ${k + 1}" loading="lazy">
+      <div class="kbtn"><button class="btn sm" type="button" data-rpup ${k ? '' : 'disabled'} aria-label="Move up">↑</button><button class="btn sm" type="button" data-rpdown ${k < list.length - 1 ? '' : 'disabled'} aria-label="Move down">↓</button><button class="btn sm danger" type="button" data-rpdel>Delete</button></div></div>`).join('')
+    : '<p class="help">No review photos yet.</p>';
+}
+$('rpAdd').onclick = () => $('rpFile').click();
+$('rpFile').addEventListener('change', async e => {
+  const files = [...e.target.files].slice(0, 10); e.target.value = ''; if(!files.length) return;
+  const btn = $('rpAdd'); btn.disabled = true; let added = 0;
+  for(const [k, f] of files.entries()){
+    $('rpMsg').innerHTML = `<p class="help">Uploading ${k + 1} of ${files.length}…</p>`;
+    try{
+      const prep = await prepareImage(f, {keepShape: true, full: 1400, fullKB: 350, thumbKB: 90});
+      const id = 'rv-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      const paths = await uploadImages(`reviews/${id}`, prep);
+      const next = revPhotosOf(); next.unshift({id, ...paths, w: prep.w, h: prep.h});
+      if(await saveSettingsRow('perfume', {reviewPhotos: next.slice(0, 40)})) added++;
+      else await dropFiles([paths.image_path, paths.thumb_path]);
+    }catch(err){ $('rpMsg').innerHTML = `<div class="msg err">${esc(friendly(err))}</div>`; btn.disabled = false; paintRevPhotos(); return; }
+  }
+  $('rpMsg').innerHTML = ''; btn.disabled = false; paintRevPhotos();
+  if(added) toast(`${added} review photo${added === 1 ? '' : 's'} added ✓ The website shows ${added === 1 ? 'it' : 'them'} now.`);
+});
+$('rpList').addEventListener('click', async e => {
+  const c = e.target.closest('[data-rp]'); if(!c) return;
+  const list = revPhotosOf(), k = list.findIndex(x => x.id === c.dataset.rp); if(k < 0) return;
+  if(e.target.closest('[data-rpdel]')){
+    if(!confirm('Delete this review photo? It will disappear from the website.')) return;
+    const [gone] = list.splice(k, 1);
+    if(await saveSettingsRow('perfume', {reviewPhotos: list})){ await dropFiles([gone.image_path, gone.thumb_path]); toast('Review photo deleted'); paintRevPhotos(); }
+    return;
+  }
+  const to = e.target.closest('[data-rpup]') ? k - 1 : e.target.closest('[data-rpdown]') ? k + 1 : -1;
+  if(to < 0 || to >= list.length) return;
+  [list[k], list[to]] = [list[to], list[k]];
+  if(await saveSettingsRow('perfume', {reviewPhotos: list})) paintRevPhotos();
+});
+$('rvList').addEventListener('input', e => { const c = e.target.closest('[data-rv]'); if(c && e.target.dataset.f) rvDraft[+c.dataset.rv][e.target.dataset.f] = e.target.value; });
+$('fqList').addEventListener('input', e => { const c = e.target.closest('[data-fq]'); if(c && e.target.dataset.f) fqDraft[+c.dataset.fq][e.target.dataset.f] = e.target.value; });
+$('rvList').addEventListener('click', e => { const c = e.target.closest('[data-rv]'); if(c && e.target.closest('[data-rvdel]')){ rvDraft.splice(+c.dataset.rv, 1); paintSiteText(); } });
+$('fqList').addEventListener('click', e => {
+  const c = e.target.closest('[data-fq]'); if(!c) return; const k = +c.dataset.fq;
+  if(e.target.closest('[data-fqdel]')) fqDraft.splice(k, 1);
+  else if(e.target.closest('[data-fqup]') && k > 0) [fqDraft[k - 1], fqDraft[k]] = [fqDraft[k], fqDraft[k - 1]];
+  else if(e.target.closest('[data-fqdown]') && k < fqDraft.length - 1) [fqDraft[k + 1], fqDraft[k]] = [fqDraft[k], fqDraft[k + 1]];
+  else return;
+  paintSiteText();
+});
+$('rvAdd').onclick = () => { rvDraft.push({name: '', place: '', text: ''}); paintSiteText(); const l = $('rvList').querySelectorAll('[data-rv]'); l[l.length - 1].querySelector('input').focus(); };
+$('fqAdd').onclick = () => { fqDraft.push({q: '', a: ''}); paintSiteText(); const l = $('fqList').querySelectorAll('[data-fq]'); l[l.length - 1].querySelector('input').focus(); };
+$('siteSave').onclick = () => busy($('siteSave'), 'Saving…', async () => {
+  const reviews = rvDraft.map(r => ({name: clean(r.name).slice(0, 40), place: clean(r.place).slice(0, 40), text: clean(r.text).slice(0, 300)})).filter(r => r.text);
+  const faq = fqDraft.map(x => ({q: clean(x.q).slice(0, 120), a: clean(x.a).slice(0, 500)})).filter(x => x.q && x.a);
+  if(reviews.some(r => !r.name)){ $('siteMsg').innerHTML = '<div class="msg err">Every review needs a name.</div>'; return; }
+  const topbar = tbDraft.map(t => clean(t).slice(0, 80)).filter(Boolean).slice(0, 8);
+  const social = soDraft.map(x => ({type: x.type, url: String(x.url || '').trim(), ...(x.type === 'other' ? {label: clean(x.label).slice(0, 30)} : {})})).filter(x => x.url);
+  const bad = social.find(x => !okLink(x.url));
+  if(bad){ $('siteMsg').innerHTML = `<div class="msg err">This link is not right: ${esc(bad.url)} — it must start with https://</div>`; return; }
+  const dv = $('retDays').value.trim(), returnDays = dv === '' ? '' : Number(dv);
+  if(returnDays !== '' && !(Number.isInteger(returnDays) && returnDays >= 1 && returnDays <= 60)){ $('siteMsg').innerHTML = '<div class="msg err">Days to report must be a whole number from 1 to 60, or empty.</div>'; return; }
+  if(await saveSettingsRow('perfume', {reviews, faq, topbar, social, returnDays})){ toast('Website text saved ✓ The website shows it now.'); renderSiteText(); }
+});
+
+/* =====================================================================
+   v8: NOTIFY ME REQUESTS (table stock_requests, only the admin)
+   ===================================================================== */
+let restock = [];
+async function loadRestock(){
+  const r = await sb.from('stock_requests').select('*').order('created_at', {ascending: false}).limit(500);
+  if(r.error){ if(/stock_requests/.test(r.error.message || '') || /42P01|PGRST20/.test(r.error.code || r.error.message || '')) needV8($('rsList')); else $('rsList').innerHTML = `<div class="msg err">${esc(friendly(r.error))}</div>`; return; }
+  restock = r.data || []; paintRestock();
+}
+function paintRestock(){
+  const list = restock.filter(x => $('rsDone').checked || !x.done);
+  const open = restock.filter(x => !x.done).length;
+  if($('moreRestock')) $('moreRestock').textContent = open ? `${open} waiting` : 'Customers waiting for Stock Out perfumes';
+  $('rsList').innerHTML = list.length ? list.map(x => {
+    const p = allProducts.find(q => q.id === x.product_id), name = p ? p.name : x.product_id;
+    const back = p && !p.stock_out && (!x.size || !(p.stock_out_sizes || {})[x.size]);
+    const text = `Assalamu alaikum${x.name ? ' ' + x.name : ''}! ${name}${x.size ? ' ' + x.size + 'ml' : ''} is back in stock at KHAYR. Order here: ${new URL('./', location.href).href}?product=${encodeURIComponent(x.product_id)}`;
+    return `<div class="krow ${x.done ? 'off' : ''}" data-rs="${esc(x.id)}"><div><b>${esc(name)}${x.size ? ' · ' + x.size + ' ml' : ''}</b> ${back ? '<span class="pill">Back in stock</span>' : '<span class="pill amber">Still Stock Out</span>'}${x.done ? ' <span class="pill">Done</span>' : ''}
+      <div class="help" style="margin:2px 0 0">${esc(x.name || 'No name')} · ${esc(x.phone)} · ${esc(new Date(x.created_at).toLocaleDateString())}</div></div>
+      <div class="kbtn"><a class="btn sm dark" href="https://wa.me/88${esc(x.phone)}?text=${encodeURIComponent(text)}" target="_blank" rel="noopener">WhatsApp</a>${x.done ? '' : '<button class="btn sm" type="button" data-rsdone>Done</button>'}<button class="btn sm" type="button" data-rsdel>Delete</button></div></div>`;
+  }).join('') : '<p class="help" style="margin:0">No requests right now.</p>';
+}
+$('rsDone').onchange = paintRestock;
+$('rsList').addEventListener('click', async e => {
+  const row = e.target.closest('[data-rs]'); if(!row) return;
+  if(e.target.closest('[data-rsdone]')){ if(await run('Request', sb.from('stock_requests').update({done: true}).eq('id', row.dataset.rs))){ toast('Marked done ✓'); loadRestock(); } }
+  else if(e.target.closest('[data-rsdel]')){ if(!confirm('Delete this request?')) return; if(await run('Delete', sb.from('stock_requests').delete().eq('id', row.dataset.rs))){ toast('Request deleted'); loadRestock(); } }
+});
+
+/* =====================================================================
+   SHARE LINKS (public collection pages on the website)
+   ===================================================================== */
+const SHARE_LINKS = [['summer', 'Summer perfumes', p => p.season === 'summer' || p.season === 'all'], ['winter', 'Winter perfumes', p => p.season === 'winter' || p.season === 'all'],
+  ['niche', 'Niche perfumes', p => p.category === 'niche'], ['designer', 'Designer perfumes', p => p.category === 'designer'], ['middle-eastern', 'Middle Eastern perfumes', p => p.category === 'middle_eastern']];
+const shopBase = () => new URL('./', location.href).href;
+function renderLinks(){
+  const live = allProducts.filter(p => p.product_type === 'perfume' && p.visible !== false);
+  $('lkList').innerHTML = [['', 'All perfumes', () => true], ...SHARE_LINKS].map(([slug, label, fn]) => {
+    const url = shopBase() + (slug ? `collections/${slug}/` : '');
+    return `<div class="lkrow" data-lk="${esc(url)}"><div><b>${esc(label)}</b> <span class="help" style="margin:0">· ${live.filter(fn).length} perfumes now</span><div class="lkurl">${esc(url)}</div></div>
+      <div class="lkbtn"><button class="btn sm dark" type="button" data-lkcopy>Copy link</button><a class="btn sm" href="${esc(url)}" target="_blank" rel="noopener">Open</a></div></div>`;
+  }).join('') + '<p class="help" style="margin-top:12px">"All season" perfumes are in both the Summer and the Winter link.</p>';
+}
+$('lkList').addEventListener('click', async e => { const b = e.target.closest('[data-lkcopy]'); if(!b) return; const url = b.closest('[data-lk]').dataset.lk; toast(await copyText(url) ? 'Link copied ✓' : url); });
 
 /* =====================================================================
    MY PURCHASES (admin only, table perfume_purchases, RLS = is_admin)
@@ -3157,6 +3805,7 @@ let buys = [], buysLoaded = false, buyEdit = null;
 const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 const intOr0 = v => { const n = Number(v); return v === '' || v === null || !Number.isFinite(n) ? 0 : Math.round(n); };
 const perMlOf = b => b.bottle_ml > 0 ? Math.round(b.total / b.bottle_ml * 10) / 10 : null;
+const per100Of = b => b && b.bottle_ml > 0 ? Math.round(b.total / b.bottle_ml * 100) : null;
 async function loadBuys(){
   const r = await sb.from('perfume_purchases').select('*').order('bought_on', {ascending: false}).limit(5000);
   if(r.error){ buysLoaded = false; if(current === 'buys') $('bList').innerHTML = `<div class="msg err">${esc(friendly(r.error))}</div>`; return false; }
@@ -3247,7 +3896,7 @@ $('bList').addEventListener('click', async e => {
     if(await run('Delete purchase', sb.from('perfume_purchases').delete().eq('id', b.id))){ if(buyEdit === b.id) fillBuyForm(null); toast('Purchase deleted'); await loadBuys(); }
     return;
   }
-  if(e.target.closest('[data-bcalc]')){ go('calc'); $('cPer').value = perMlOf(b); cPickId = b.product_id; renderCalc(); $('cPick').scrollIntoView({block: 'nearest'}); }
+  if(e.target.closest('[data-bcalc]')){ go('calc'); $('cBuy').value = per100Of(b); cPickId = b.product_id; renderCalc(); $('cPick').scrollIntoView({block: 'nearest'}); }
 });
 
 /* =====================================================================
