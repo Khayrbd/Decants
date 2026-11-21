@@ -505,6 +505,10 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 .rpcard .kbtn{justify-content:flex-start}
 .cnote{margin:6px 0 0;padding:6px 10px;border-radius:8px;background:#FFF7E0;border:1px solid #F0DCA0;font-size:.9rem}
 .prem-tag{font-weight:600;color:#8A5A00}
+
+/* v13: on a computer the top menu wraps onto 2 lines, so every page (Coupons, Inventory…) is visible */
+@media (min-width:900px){.nav .wrap{flex-wrap:wrap;overflow-x:visible}.nav button{height:40px}}
+.kbtn select{height:36px;border:1px solid var(--line);border-radius:8px;padding:0 6px;font-size:16px;background:#fff}
 </style>
 </head>
 <body>
@@ -910,6 +914,10 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         <button type="button" data-kind="decant" aria-pressed="true">DECANTS BOTTLE</button>
         <button type="button" data-kind="attar" aria-pressed="false">ATTAR BOTTLES</button>
       </div></div>
+      <div class="panel" id="pbPanel" hidden><h3>Premium bottles: in stock?</h3>
+        <p class="help">Switch a size OFF when you have no premium bottles left. On the Attar website it then shows in red as <b>Stock Out</b> and cannot be ticked. The server checks it too.</p>
+        <div class="gsizes" id="pbList" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div>
+      </div>
       <div class="actions" style="align-items:center">
         <input type="file" id="gFile" accept="image/webp,image/jpeg,image/png" multiple hidden>
         <button class="btn dark" type="button" id="gUpload">+ Upload photos</button>
@@ -952,7 +960,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <section class="view hidden" id="v-coupons">
       <button class="back" type="button" data-go="more">‹ More</button>
       <h2>Coupons</h2>
-      <p class="help" style="margin-top:0">Give a code to an influencer or put it in an ad (e.g. <code>EID100</code>). The customer types it in the cart. The server checks every code; the discount is only on the perfumes, never on delivery. Only you can see this list.</p>
+      <p class="help" style="margin-top:0">Give a code to an influencer or put it in an ad (e.g. <code>EID100</code>). The customer types it in the cart. The server checks every code. Choose if a code works on the Decants website, the Attar website or both. The discount is never on delivery. Only you can see this list.</p>
       <div class="panel"><h3>New coupon</h3>
         <div class="g2">
           <label class="fl"><span>Code (A–Z, 0–9)</span><input type="text" id="kCode" maxlength="30" autocapitalize="characters" autocomplete="off" placeholder="EID100"></label>
@@ -960,12 +968,13 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         </div>
         <div class="g2">
           <label class="fl"><span id="kValLbl">Taka off</span><input type="number" id="kValue" min="1" step="1" inputmode="numeric"></label>
-          <label class="fl"><span>Minimum perfumes (taka, optional)</span><input type="number" id="kMin" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+          <label class="fl"><span>Minimum order (taka, optional)</span><input type="number" id="kMin" min="0" step="1" inputmode="numeric" placeholder="0"></label>
         </div>
         <div class="g2">
           <label class="fl"><span>Max uses (optional)</span><input type="number" id="kMax" min="1" step="1" inputmode="numeric" placeholder="No limit"></label>
           <label class="fl"><span>Last day (optional)</span><input type="date" id="kEnds" class="datein"></label>
         </div>
+        <label class="fl"><span>Use on</span><select id="kFor"><option value="decant">Decants website</option><option value="attar">Attar website</option><option value="both">Both websites</option></select></label>
         <label class="fl"><span>Note (only for you)</span><input type="text" id="kNote" maxlength="120" placeholder="e.g. Instagram, Rafi"></label>
         <div id="kMsg"></div>
         <button class="btn dark" id="kAdd" type="button">Add coupon</button>
@@ -1824,7 +1833,7 @@ function renderDashboard(){
   $('dashTypes').innerHTML = ['perfume', 'attar'].map(type => {
     const x = typeStats(type);
     if(type === 'attar' && !x.total) return '';
-    return `<div class="tbox"><h3>${type === 'perfume' ? 'PERFUME DECANTS' : 'ATTAR <span class="pill grey">not on the website</span>'}</h3>
+    return `<div class="tbox"><h3>${type === 'perfume' ? 'PERFUME DECANTS' : 'ATTAR <span class="pill grey">Attar website</span>'}</h3>
       <div class="cards">
         <button class="stat" data-go="perfumes" data-type="${type}" data-filter="all"><b>${x.total}</b><span>Total</span></button>
         ${type === 'perfume' ? `<button class="stat ${x.total && !x.showing ? 'warn' : ''}" data-go="perfumes" data-type="${type}" data-filter="all"><b>${x.showing}</b><span>On the website</span></button>
@@ -2256,7 +2265,7 @@ function dlgTypeHTML(){
   $('eNameLbl').textContent = `${T.One} Name`;
   $('editTitle').textContent = editing ? `Edit ${T.one}` : `Add ${T.one}`;
   $('editNo').textContent = editing ? `Number ${p.number} (only you see it).${T.key === 'perfume' ? ' On the website it stays in its place inside its house.' : ''}`
-                                    : (T.key === 'perfume' ? 'A new perfume goes to the end of its house on the website.' : 'Attar is not on the website. It is only kept here.');
+                                    : (T.key === 'perfume' ? 'A new perfume goes to the end of its house on the website.' : 'A new attar shows on the Attar website (khayrbd.github.io/Attar/).');
   $('ePrices').innerHTML = T.sizes.map(s => `<tr><td>${s}ml${on(s) ? '' : '<div class="help" style="margin:0">OFF for all</div>'}${editing && autoOut(p, s) ? '<div class="help" style="margin:0;color:var(--red)">Auto out</div>' : ''}</td>
     <td><input type="number" min="0" step="1" inputmode="numeric" data-p="${s}" value="${esc(p.prices[s] ?? '')}" placeholder="No price" aria-label="${s}ml price"></td>
     <td class="c"><input type="checkbox" class="sw" data-s="${s}" ${p.sizes[s] !== false ? 'checked' : ''} aria-label="Show ${s}ml"></td>
@@ -3604,7 +3613,7 @@ function couponState(c){
 function paintCoupons(){
   $('kList').innerHTML = coupons.length ? coupons.map(c => `<div class="krow" data-kc="${esc(c.code)}"><div><b class="kcode">${esc(c.code)}</b> <span class="pill ${couponState(c) === 'Active' ? '' : 'amber'}">${couponState(c)}</span>
       <div class="help" style="margin:2px 0 0">${c.kind === 'pct' ? `${c.value}% off` : `${price(c.value)} tk off`}${c.min_subtotal ? ` · from ${price(c.min_subtotal)} tk` : ''} · used ${c.uses}${c.max_uses ? ` of ${c.max_uses}` : ''}${c.ends_on ? ` · until ${esc(c.ends_on)}` : ''}${c.note ? ` · ${esc(c.note)}` : ''}</div></div>
-      <div class="kbtn"><label><input type="checkbox" class="sw" data-kon ${c.active ? 'checked' : ''}> On</label><button class="btn sm" type="button" data-kdel>Delete</button></div></div>`).join('')
+      <div class="kbtn"><select data-kfor aria-label="Use ${esc(c.code)} on">${[['decant', 'Decants'], ['attar', 'Attar'], ['both', 'Both']].map(([v, l]) => `<option value="${v}" ${(c.applies_to || 'decant') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><label><input type="checkbox" class="sw" data-kon ${c.active ? 'checked' : ''}> On</label><button class="btn sm" type="button" data-kdel>Delete</button></div></div>`).join('')
     : '<p class="help">No coupons yet.</p>';
 }
 $('kKind').onchange = () => { $('kValLbl').textContent = $('kKind').value === 'pct' ? '% off (1–50)' : 'Taka off'; };
@@ -3618,12 +3627,15 @@ $('kAdd').onclick = () => busy($('kAdd'), 'Saving…', async () => {
   if(max !== null && (!Number.isInteger(max) || max < 1)) return msg('Max uses must be 1 or more, or empty.');
   if(coupons.some(c => c.code === code)) return msg('This code already exists.');
   const row = {code, kind, value, min_subtotal: min, max_uses: max, ends_on: $('kEnds').value || null, note: clean($('kNote').value).slice(0, 120), active: true};
+  if($('kFor').value !== 'decant' || coupons.some(c => 'applies_to' in c)) row.applies_to = $('kFor').value;   // v13 (Decants / Attar / both)
   if(!await run('Coupon', sb.from('coupons').insert(row))) return;
   ['kCode', 'kValue', 'kMin', 'kMax', 'kEnds', 'kNote'].forEach(id => $(id).value = ''); $('kMsg').innerHTML = '';
   toast(`Coupon ${code} added ✓`); loadCoupons();
 });
 $('kList').addEventListener('change', async e => {
-  const row = e.target.closest('[data-kc]'); if(!row || e.target.dataset.kon === undefined) return;
+  const row = e.target.closest('[data-kc]'); if(!row) return;
+  if(e.target.dataset.kfor !== undefined){ if(await run('Coupon', sb.from('coupons').update({applies_to: e.target.value}).eq('code', row.dataset.kc))){ toast(`${row.dataset.kc}: now for ${e.target.selectedOptions[0].textContent} ✓`); loadCoupons(); } return; }
+  if(e.target.dataset.kon === undefined) return;
   if(await run('Coupon', sb.from('coupons').update({active: e.target.checked}).eq('code', row.dataset.kc))) loadCoupons();
 });
 $('kList').addEventListener('click', async e => {
@@ -4122,7 +4134,8 @@ async function loadGallery(){
 }
 function renderGallery(){
   document.querySelectorAll('#gSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.kind === gKind));
-  $('gView').href = 'bottles.html';
+  $('gView').href = gKind === 'attar' ? '/Attar/bottles.html' : 'bottles.html';
+  paintPremiumStock();
   const list = gallery.filter(g => g.kind === gKind);
   $('gMsg').innerHTML = gKind === 'attar' ? '<div class="msg ok">These show on the Attar website\'s Bottle Photos page. Add your premium bottles here too.</div>' : '';
   $('gList').innerHTML = list.length ? list.map((g, i) => `<div class="gcard ${g.visible ? '' : 'off'}" data-gid="${esc(g.id)}">
@@ -4135,6 +4148,20 @@ function renderGallery(){
       </div>
     </div>`).join('') : `<div class="empty">No ${G_LABEL[gKind]} photos yet. Tap <b>+ Upload photos</b>.</div>`;
 }
+/* v13: premium bottle stock (attar 3 / 6 / 12 ml), kept in the attar settings */
+function paintPremiumStock(){
+  $('pbPanel').hidden = gKind !== 'attar';
+  if(gKind !== 'attar') return;
+  const st = setRows[2] || {}, prem = st.premium || {}, out = st.premiumOut || {};
+  $('pbList').innerHTML = [3, 6, 12].map(z => { const on = out[z] !== true;
+    return `<label class="gs ${on ? 'on' : ''}"><b>${z} ml</b><small style="display:block">+${price(prem[z] || 0)} tk</small><input type="checkbox" class="sw" data-pb="${z}" ${on ? 'checked' : ''} aria-label="${z} ml premium bottle in stock"><small>${on ? 'In stock' : 'STOCK OUT'}</small></label>`; }).join('');
+}
+$('pbList').addEventListener('change', async e => {
+  const z = e.target.dataset.pb; if(!z) return;
+  const out = {...((setRows[2] || {}).premiumOut || {}), [z]: !e.target.checked};
+  if(await saveSettingsRow('attar', {premiumOut: out})) toast(e.target.checked ? `${z} ml premium bottle: in stock ✓` : `${z} ml premium bottle: Stock Out`);
+  paintPremiumStock();
+});
 $('gSeg').addEventListener('click', e => { const b = e.target.closest('[data-kind]'); if(!b) return; gKind = b.dataset.kind; renderGallery(); });
 $('gUpload').onclick = () => $('gFile').click();
 $('gFile').addEventListener('change', async e => {

@@ -480,3 +480,17 @@ body.open .msfloat,body.lock .msfloat,body.menu .msfloat{display:none}
 .prem.on{border-color:var(--ink);background:var(--soft)}
 .prem.on .tick{background:var(--ink)}
 .prem.on .tick::after{content:'';width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+
+/* ===== v13: premium bottle box (attar), between "Your order" and "Your details" ===== */
+.premsec{margin:16px 0 4px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.premsec h4{margin:0 0 2px;font-size:1rem}
+.premsec h4 em{font-style:normal;font-weight:400;color:var(--graphite);font-size:.85rem}
+.premhelp{margin:0 0 10px;font-size:.85rem;color:var(--graphite)}
+.premrow{display:flex;align-items:center;gap:8px;margin:8px 0 0}
+.premrow .prem{flex:1;margin:0;min-width:0}
+.premrow .prem span{overflow:hidden;text-overflow:ellipsis}
+.premsize{flex:none;font-size:.85rem;font-weight:600;color:var(--ink);text-decoration:underline;white-space:nowrap;padding:10px 4px}
+.premsize.off{color:#9E9E9E;text-decoration:line-through}
+.premrow.out .prem{border-color:#F0B7BF;background:#FDF2F4;color:var(--red);cursor:not-allowed}
+.premrow.out .prem .tick{border-color:#E7A1AC;background:#fff}
+.pout{color:var(--red);font-weight:700}

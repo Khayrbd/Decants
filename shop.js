@@ -355,7 +355,7 @@ function applyData(data){
   const s = data.settings || {}, s2 = data.attarSettings || {};
   GEN = {...GEN_DEFAULTS, ...s, payment: {...GEN_DEFAULTS.payment, ...(s.payment || {})}, delivery: {...GEN_DEFAULTS.delivery, ...(s.delivery || {})},
          messenger: {...GEN_DEFAULTS.messenger, ...(s.messenger || {})}};
-  if(ATTAR){ GEN.sizesEnabled = s2.sizesEnabled || {}; GEN.premium = s2.premium || {}; }
+  if(ATTAR){ GEN.sizesEnabled = s2.sizesEnabled || {}; GEN.premium = s2.premium || {}; GEN.premiumOut = s2.premiumOut || {}; }
   ALL = (data.products || [])
     .filter(p => (p.product_type || 'perfume') === STORE && p.visible !== false)
     .map((p, i) => ({...p, no: Number(p.number) || (i + 1), prices: p.prices || {}, sizes: p.sizes || {}, category: normCat(p.category),
@@ -747,7 +747,7 @@ function loadCart(){
     const p = findP(i.id), size = Number(i.size);
     if(!p || !sizesFor(p).includes(size)){ dropped++; return; }          // a stock-out size stays, so the customer can change it
     const q = Math.max(1, Math.min(MAXQ, Math.round(Number(i.qty) || 1)));
-    const prem = !!i.premium && premOf(size) > 0;
+    const prem = !!i.premium && premSize(size);         // a Stock Out premium bottle is taken off (with a message) when the cart opens
     const same = out.find(x => x.id === p.id && x.size === size && !!x.premium === prem);
     if(same){ same.qty = Math.min(MAXQ, same.qty + q); return; }
     out.push({id: p.id, type: STORE, size, qty: q, ...(prem ? {premium: true} : {})});
@@ -758,7 +758,9 @@ function loadCart(){
 }
 const lineOk = i => canBuy(findP(i.id), i.size);
 /* v12 attar: premium bottle for 3 / 6 / 12 ml (price from Admin settings; the server checks it again) */
-const premOf = size => ATTAR && [3, 6, 12].includes(Number(size)) ? (Number((GEN.premium || {})[size]) || 0) : 0;
+const premSize = size => ATTAR && [3, 6, 12].includes(Number(size));
+const premOut = size => premSize(size) && (GEN.premiumOut || {})[size] === true;            // you switch this in Admin > Bottle Photos
+const premOf = size => premSize(size) && !premOut(size) ? (Number((GEN.premium || {})[size]) || 0) : 0;
 const unitOf = i => priceOf(findP(i.id), i.size) + (i.premium ? premOf(i.size) : 0);
 const subtotal = () => cart.reduce((t, i) => t + unitOf(i) * i.qty, 0);
 const itemCount = () => cart.reduce((t, i) => t + i.qty, 0);
@@ -1170,7 +1172,6 @@ function lineHTML(i, k){
         </div></div>
       <div class="lrow2">${p.house ? `<div class="m">${esc(p.house)}</div>` : '<div></div>'}<div class="lp">${price(unitOf(i) * i.qty)} tk</div></div>
       <label class="lsel"><span class="sr">Size of ${esc(p.name)}</span><select data-lsel="${k}">${opts}</select></label>
-      ${premOf(i.size) ? `<button type="button" class="prem ${i.premium ? 'on' : ''}" role="checkbox" aria-checked="${!!i.premium}" data-prem="${k}"><i class="tick" aria-hidden="true"></i><span><b>Premium bottle</b> +${price(premOf(i.size))} tk${i.qty > 1 ? ' each' : ''}</span></button>` : ''}
       ${ok ? '' : `<div class="lwarn">${i.size}ml is out of stock. Choose another size or remove it.</div>`}
       <button type="button" class="rm" data-rm="${k}" aria-label="Remove ${esc(p.name)} ${i.size}ml">Remove</button>
     </div>
@@ -1192,11 +1193,24 @@ function payHTML(){
       <div class="total"><span>${full ? 'Total to pay' : 'Total'}</span><span>${price(a.total)}</span></div>
       ${need > 0 ? `<p class="freehint">Add ${price(need)} tk more for <b>free delivery</b> all over Bangladesh.</p>` : free > 0 ? `<p class="freehint ok">You get <b>free delivery</b> ✓</p>` : ''}
     </div>
-    ${ATTAR ? '' : couponHTML(a)}
+    ${couponHTML(a)}
     ${full ? `<p class="paynote" id="payNote">Pay ${price(a.total)} tk by bKash. After you order, we send you our payment details on WhatsApp.</p>` : ''}
   </div>`;
 }
 let couponErr = '', couponBusy = false;
+/* v13 attar: one Premium bottle box between "Your order" and "Your details" */
+function premSectionHTML(){
+  const rows = cart.map((i, k) => ({i, k})).filter(x => premSize(x.i.size));
+  if(!rows.length) return '';
+  return `<div class="premsec" id="premSec"><h4>Premium bottle <em>(optional)</em></h4>
+    <p class="premhelp">Want your attar in a premium bottle? Tick it below. Tap the bottle size to see the bottles.</p>
+    ${rows.map(({i, k}) => { const p = findP(i.id), out = premOut(i.size), pr = premOf(i.size);
+      return `<div class="premrow ${out ? 'out' : ''}">
+        <button type="button" class="prem ${i.premium ? 'on' : ''}" role="checkbox" aria-checked="${!!i.premium}" data-prem="${k}" ${out ? 'disabled aria-disabled="true"' : ''}><i class="tick" aria-hidden="true"></i><span><b>${esc(p.name)}</b>${out ? ' · <span class="pout">Stock Out</span>' : ` · +${price(pr)} tk${i.qty > 1 ? ' each' : ''}`}</span></button>
+        ${out ? `<span class="premsize off" aria-disabled="true">${i.size} ml bottle</span>` : `<a class="premsize" href="bottles.html#premium">${i.size} ml bottle ↗</a>`}
+      </div>`; }).join('')}
+  </div>`;
+}
 function couponHTML(a){
   if(coupon && coupon.code){
     const short = a.sub < (Number(coupon.minSubtotal) || 0);
@@ -1209,7 +1223,7 @@ async function applyCoupon(){
   if(!code){ couponErr = 'Type a coupon code.'; renderDrawer(); return; }
   couponBusy = true; couponErr = ''; renderDrawer();
   let j = null;
-  try { const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'application/json', apikey: SB.anonKey}, body: JSON.stringify({action: 'check_coupon', code, subtotal: subtotal()})}); j = await r.json().catch(() => null); }
+  try { const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'application/json', apikey: SB.anonKey}, body: JSON.stringify({action: 'check_coupon', code, subtotal: subtotal(), store: ATTAR ? 'attar' : 'decant'})}); j = await r.json().catch(() => null); }
   catch(e){ j = {ok: false, error: 'Could not check the coupon. Check your internet.'}; }
   couponBusy = false;
   if(j && j.ok){ coupon = {code: j.code, kind: j.kind, value: j.value, minSubtotal: j.minSubtotal}; ls.set('khayr_coupon', coupon); saved.cpDraft = ''; ls.set('khayr_customer', saved); toast(`Coupon ${j.code} applied ✓`); px('ApplyCoupon', {coupon: j.code}, null, true); }
@@ -1230,7 +1244,10 @@ function renderDrawer(){
   }
   const d = details();
   const sameOrder = lastAction && lastAction.sig === sigNow();
-  body.innerHTML = cart.map(lineHTML).join('') + `
+  let premGone = [];
+  cart.forEach(i => { if(i.premium && !premOf(i.size)){ delete i.premium; premGone.push(`${findP(i.id).name} ${i.size}ml`); } });
+  if(premGone.length){ ls.set('khayr_cart', cart); notice = {kind: 'warn', title: 'Premium bottle out of stock', text: `The premium bottle for ${premGone.join(', ')} just went out of stock, so it was taken off. You can still order the attar.`}; }
+  body.innerHTML = cart.map(lineHTML).join('') + premSectionHTML() + `
     <div class="form" id="form">
       <h4>Your details</h4>
       <div class="field ${errs.name ? 'bad' : ''}"><span><label for="cName">Name</label></span><input id="cName" autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="80" value="${esc(saved.name || '')}" aria-describedby="eName" aria-invalid="${!!errs.name}"><div class="err" id="eName">${esc(errs.name || '')}</div></div>
@@ -1271,7 +1288,7 @@ $('dbody').addEventListener('click', e => {
   const t = e.target.closest('button'); if(!t) return;
   if(t.dataset.rm !== undefined){ notice = null; removeFromCart(+t.dataset.rm); }
   else if(t.dataset.q){ changeQty(+t.dataset.li, Number(t.dataset.q)); }
-  else if(t.dataset.prem !== undefined){ togglePremium(+t.dataset.prem); }
+  else if(t.dataset.prem !== undefined){ if(!t.disabled) togglePremium(+t.dataset.prem); }
   else if(t.dataset.area){ saved.area = t.dataset.area; ls.set('khayr_customer', saved); delete errs.area; renderDrawer(); }
   else if(t.dataset.pay){ saved.pay = t.dataset.pay; ls.set('khayr_customer', saved); renderDrawer(); }
   else if(t.dataset.qr !== undefined){ openQr(+t.dataset.qr); }
