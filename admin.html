@@ -580,7 +580,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <button data-go="import">CSV Import</button>
     <button data-go="bottles">Bottle Photos</button>
     <button data-go="dashboard">Dashboard</button>
-    <button data-go="buys">My Purchases</button>
+    <button data-go="buys">Inventory</button>
     <button data-go="sets">Sets</button>
     <button data-go="coupons">Coupons</button>
     <button data-go="restock">Notify me</button>
@@ -758,24 +758,26 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <!-- My purchases (admin only) -->
     <section class="view hidden" id="v-buys">
       <button class="back" type="button" data-go="more">‹ More</button>
-      <h2>My Purchases</h2>
+      <h2>Inventory</h2>
       <p class="help" style="margin-top:0">What you paid for each full bottle. <b>Only you can see this</b> (after logging in with your authenticator code). Customers and the website never see it.</p>
       <div class="panel" id="bForm"><h3 id="bTitle">Add a purchase</h3>
         <label class="fl"><span>Perfume</span><input id="bName" list="bNames" maxlength="120" placeholder="Start typing, e.g. Hawas Ice" autocomplete="off"></label>
         <datalist id="bNames"></datalist>
         <div class="g2">
-          <label class="fl"><span>Date bought</span><input type="date" id="bDate"></label>
+          <label class="fl"><span>Purchase date</span><input type="date" id="bDate"></label>
           <label class="fl"><span>Bottle size (ml)</span><input type="number" id="bMl" min="0" max="10000" step="0.5" inputmode="decimal" placeholder="e.g. 100"></label>
         </div>
         <div class="g2">
-          <label class="fl"><span>1. Purchase price (taka)</span><input type="number" id="bBuy" min="0" step="1" inputmode="numeric" placeholder="e.g. 2800"></label>
-          <label class="fl"><span>2. Delivery cost (taka)</span><input type="number" id="bDel" min="0" step="1" inputmode="numeric" placeholder="e.g. 100"></label>
+          <label class="fl"><span>1. Buying price (taka)</span><input type="number" id="bBuy" min="0" step="1" inputmode="numeric" placeholder="e.g. 2800"></label>
+          <label class="fl"><span>2. Delivery charge (taka)</span><input type="number" id="bDel" min="0" step="1" inputmode="numeric" placeholder="e.g. 100"></label>
         </div>
         <div class="g2">
           <label class="fl"><span>Market price (optional)</span><input type="number" id="bMkt" min="0" step="1" inputmode="numeric" placeholder="e.g. 3000"></label>
-          <label class="fl"><span>3. Bought below market (taka)</span><input type="number" id="bBelow" min="0" step="1" inputmode="numeric" placeholder="e.g. 200"></label>
+          <label class="fl"><span>3. Market Extra PP (taka)</span><input type="number" id="bBelow" min="0" step="1" inputmode="numeric" placeholder="e.g. 200"></label>
         </div>
-        <p class="help" style="margin-top:0">"Bought below market" = how much cheaper than the market you bought it. Type the market price and it is filled in by itself (3000 − 2800 = 200).</p>
+        <p class="help" style="margin-top:0">"Market Extra PP" = how much cheaper than the market you bought it. Type the market price and it is filled in by itself (3000 − 2800 = 200). Total buying = 1 + 2 + 3.</p>
+        <label class="fl"><span>Bought from (who)</span><input id="bFrom" list="bFroms" maxlength="120" placeholder="e.g. Dubai seller, Rahim Bhai" autocomplete="off"></label>
+        <datalist id="bFroms"></datalist>
         <label class="fl"><span>Note (optional)</span><input id="bNote" maxlength="200" placeholder="e.g. from Dubai seller"></label>
         <div class="btot" id="bTotal"></div>
         <button class="btn dark block" id="bSave" type="button">Save purchase</button>
@@ -1027,7 +1029,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         <button class="mi" type="button" data-go="houses"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span><span class="tx">Houses<small>Group perfumes by house, set the order</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="payment"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7v-3"/></svg></span><span class="tx">Payment<small>Full payment discount, delivery charge</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="calc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2M16 16h0"/></svg></span><span class="tx">Calculator<small>Decant prices from the 100 ml buying price</small></span><span class="chev">›</span></button>
-        <button class="mi" type="button" data-go="buys"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><span class="tx">My Purchases<small>What you paid for each bottle (only you see it)</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="buys"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><span class="tx">Inventory<small>What you paid for each bottle (only you see it)</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="calcset"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></span><span class="tx">Calculator settings<small>Bottle, box and profit by price range</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="sizes"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span><span class="tx">ML Settings<small>Sizes, automatic Stock Out, WhatsApp number</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="notify"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="tx">Notifications<small id="moreNotify">New order alerts on this phone</small></span><span class="chev">›</span></button>
@@ -1690,7 +1692,7 @@ $('impSeg').addEventListener('click', e => { const b = e.target.closest('[data-s
    NAVIGATION (tab bar on a phone, top menu on a computer)
    ===================================================================== */
 const VIEWS = ['orders', 'sale', 'perfumes', 'more', 'houses', 'payment', 'calc', 'calcset', 'buys', 'links', 'coupons', 'sets', 'site', 'restock', 'sizes', 'notify', 'import', 'bottles', 'dashboard', 'security'];
-const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', calc: 'Calculator', calcset: 'Calculator settings', buys: 'My Purchases', links: 'Share links', coupons: 'Coupons', sets: 'Discovery sets', site: 'Website text', restock: 'Notify me requests', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
+const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', calc: 'Calculator', calcset: 'Calculator settings', buys: 'Inventory', links: 'Share links', coupons: 'Coupons', sets: 'Discovery sets', site: 'Website text', restock: 'Notify me requests', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
 function go(view, opt){
   if(view === 'add'){ if(current !== 'perfumes') go('perfumes'); openEdit(null); return; }
   if(!VIEWS.includes(view)) view = 'orders';
@@ -3823,8 +3825,8 @@ function buyForm(){
 }
 function paintBuyTotal(){
   const f = buyForm();
-  $('bTotal').innerHTML = `${price(f.buy)} + ${price(f.del)} + ${price(f.below)} = <b>Perfume Price</b> <b class="big" id="bTot">${price(f.total)}</b> taka`
-    + (f.ml > 0 ? `<br><span class="help" style="margin:0">Cost per ml: <b id="bPer">${Math.round(f.total / f.ml * 10) / 10}</b> taka (Perfume Price ÷ ${f.ml} ml)</span>` : '');
+  $('bTotal').innerHTML = `${price(f.buy)} + ${price(f.del)} + ${price(f.below)} = <b>Total buying</b> <b class="big" id="bTot">${price(f.total)}</b> taka`
+    + (f.ml > 0 ? `<br><span class="help" style="margin:0">Cost per ml: <b id="bPer">${Math.round(f.total / f.ml * 10) / 10}</b> taka (Total buying ÷ ${f.ml} ml)</span>` : '');
 }
 function fillBuyForm(b){
   buyEdit = b ? b.id : null;
@@ -3835,7 +3837,7 @@ function fillBuyForm(b){
   $('bMl').value = b && b.bottle_ml !== null ? b.bottle_ml : '';
   $('bBuy').value = b ? b.purchase_price : ''; $('bDel').value = b ? b.delivery_cost : '';
   $('bMkt').value = b && b.market_price !== null ? b.market_price : ''; $('bBelow').value = b ? b.below_market : '';
-  $('bNote').value = b ? b.note : ''; $('bMsg').innerHTML = '';
+  $('bNote').value = b ? b.note : ''; $('bFrom').value = b ? (b.bought_from || '') : ''; $('bMsg').innerHTML = '';
   paintBuyTotal();
 }
 function renderBuys(){
@@ -3847,18 +3849,19 @@ function renderBuys(){
 function renderBuyList(){
   if(!buysLoaded){ $('bSum').innerHTML = ''; if(!$('bList').querySelector('.msg')) $('bList').innerHTML = '<p class="help">Loading…</p>'; return; }
   const words = norm($('bFind').value).split(' ').filter(Boolean);
-  const list = buys.filter(b => words.every(w => norm(`${b.product_name} ${b.note}`).includes(w)));
+  const list = buys.filter(b => words.every(w => norm(`${b.product_name} ${b.note} ${b.bought_from || ''}`).includes(w)));
+  $('bFroms').innerHTML = [...new Set(buys.map(b => clean(b.bought_from || '')).filter(Boolean))].map(x => `<option value="${esc(x)}">`).join('');
   const sum = k => list.reduce((a, b) => a + (Number(b[k]) || 0), 0);
   $('bSum').innerHTML = list.length ? `<div class="bsum">
     <div><small>Bottles</small><b id="bsN">${list.length}</b></div>
-    <div><small>Purchase price</small><b id="bsBuy">${price(sum('purchase_price'))}</b></div>
-    <div><small>Delivery cost</small><b>${price(sum('delivery_cost'))}</b></div>
-    <div><small>Below market</small><b>${price(sum('below_market'))}</b></div>
-    <div><small>Perfume Price</small><b id="bsTot">${price(sum('total'))}</b></div></div>
-    <p class="help" style="margin:0">Money you actually paid (purchase + delivery): <b id="bsPaid">${price(sum('purchase_price') + sum('delivery_cost'))}</b> taka.</p>` : '';
+    <div><small>Buying price</small><b id="bsBuy">${price(sum('purchase_price'))}</b></div>
+    <div><small>Delivery charge</small><b>${price(sum('delivery_cost'))}</b></div>
+    <div><small>Market Extra PP</small><b>${price(sum('below_market'))}</b></div>
+    <div><small>Total buying</small><b id="bsTot">${price(sum('total'))}</b></div></div>
+    <p class="help" style="margin:0">Money you actually paid (buying + delivery): <b id="bsPaid">${price(sum('purchase_price') + sum('delivery_cost'))}</b> taka.</p>` : '';
   $('bList').innerHTML = list.length ? list.map(b => { const pm = perMlOf(b); return `<div class="brow" data-bid="${esc(b.id)}">
     <div class="bh"><b>${esc(b.product_name)}</b><span class="bp">${price(b.total)} tk</span></div>
-    <div class="bd">${esc(b.bought_on)}${b.bottle_ml ? ` · ${b.bottle_ml} ml` : ''} · bought ${price(b.purchase_price)} + delivery ${price(b.delivery_cost)} + below market ${price(b.below_market)}${b.market_price !== null ? ` (market ${price(b.market_price)})` : ''}${pm !== null ? ` · <b>${pm} tk per ml</b>` : ''}${b.product_id ? '' : ' · not in your shop list'}</div>
+    <div class="bd">${esc(b.bought_on)}${b.bought_from ? ` · from <b>${esc(b.bought_from)}</b>` : ''}${b.bottle_ml ? ` · ${b.bottle_ml} ml` : ''} · buying ${price(b.purchase_price)} + delivery ${price(b.delivery_cost)} + market extra ${price(b.below_market)}${b.market_price !== null ? ` (market ${price(b.market_price)})` : ''}${pm !== null ? ` · <b>${pm} tk per ml</b>` : ''}${b.product_id ? '' : ' · not in your shop list'}</div>
     ${b.note ? `<div class="bd">${esc(b.note)}</div>` : ''}
     <div class="bb"><button class="btn sm" type="button" data-bedit>Edit</button>${pm !== null && b.product_id ? `<button class="btn sm" type="button" data-bcalc>Prices from this cost</button>` : ''}<button class="btn sm" type="button" data-bdel>Delete</button></div>
   </div>`; }).join('') : `<p class="help">${buys.length ? 'Nothing found.' : 'No purchases yet. Add your first bottle above.'}</p>`;
@@ -3874,17 +3877,19 @@ $('bCancel').onclick = () => fillBuyForm(null);
 $('bSave').onclick = () => busy($('bSave'), 'Saving…', async () => {
   const name = clean($('bName').value), f = buyForm(), msg = t => { $('bMsg').innerHTML = `<div class="msg err">${esc(t)}</div>`; };
   if(!name) return msg('Type the perfume name.');
-  const nums = [['Purchase price', $('bBuy').value, 10000000], ['Delivery cost', $('bDel').value, 1000000], ['Bought below market', $('bBelow').value, 10000000], ['Market price', $('bMkt').value, 10000000]];
+  const nums = [['Buying price', $('bBuy').value, 10000000], ['Delivery charge', $('bDel').value, 1000000], ['Market Extra PP', $('bBelow').value, 10000000], ['Market price', $('bMkt').value, 10000000]];
   for(const [l, v, max] of nums){ if(v !== '' && !(Number(v) >= 0 && Number(v) <= max)) return msg(`${l} is not a valid amount.`); }
-  if(!($('bBuy').value !== '')) return msg('Type the purchase price.');
+  if(!($('bBuy').value !== '')) return msg('Type the buying price.');
   if(f.ml !== null && !(f.ml > 0 && f.ml <= 10000)) return msg('Bottle size must be more than 0 ml.');
   if(!/^\d{4}-\d{2}-\d{2}$/.test($('bDate').value)) return msg('Choose the date.');
   const p = allProducts.find(x => x.product_type === 'perfume' && keyOf(x.name) === keyOf(name));
   const row = {product_id: p ? p.id : null, product_name: p ? p.name : name.slice(0, 120), bought_on: $('bDate').value, bottle_ml: f.ml,
                purchase_price: f.buy, delivery_cost: f.del, below_market: f.below, market_price: $('bMkt').value === '' ? null : intOr0($('bMkt').value), note: clean($('bNote').value).slice(0, 200)};
+  const from = clean($('bFrom').value).slice(0, 120);
+  if(from || buys.some(b => 'bought_from' in b)) row.bought_from = from;   // works before and after the v11 SQL
   const ok = buyEdit ? await run('Purchase', sb.from('perfume_purchases').update(row).eq('id', buyEdit)) : await run('Purchase', sb.from('perfume_purchases').insert(row));
   if(!ok) return;
-  toast(`${buyEdit ? 'Purchase updated' : 'Purchase saved'} ✓ Perfume Price ${price(f.total)} taka`);
+  toast(`${buyEdit ? 'Purchase updated' : 'Purchase saved'} ✓ Total buying ${price(f.total)} taka`);
   fillBuyForm(null); await loadBuys();
 });
 $('bList').addEventListener('click', async e => {

@@ -190,7 +190,7 @@ window.__khayrEvents = window.__khayrEvents || [];
 /* v9: "advanced matching" like Shopify/WordPress. Details the customer typed before (saved on this phone only)
    are turned into one-way codes (SHA-256) here, so Meta can match the visitor to a Facebook account.
    The real name, phone or email never leaves the phone in plain text for these events. */
-const SERVER_EVENTS = ['ViewContent', 'AddToCart', 'AddToWishlist', 'InitiateCheckout', 'Search', 'Contact'];
+const SERVER_EVENTS = ['ViewContent', 'AddToCart', 'InitiateCheckout', 'Search', 'Contact'];
 let pxReady = false, pxWait = [], pxUD = {};
 async function sha(v){
   try { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
@@ -392,7 +392,7 @@ async function load(){
 /* ================= PERFUME LIST ================= */
 const PRESET = (() => { const p = window.KHAYR_PRESET || {}; const o = {}; if(['summer', 'winter'].includes(p.season)) o.season = p.season; if(['niche', 'designer', 'middle_eastern'].includes(p.cat)) o.cat = p.cat; return Object.keys(o).length ? o : null; })();
 const PCAT = () => (PRESET && PRESET.cat) || 'all', PSEASON = () => (PRESET && PRESET.season) || 'all';
-const state = {q:'', size:'all', cat:PCAT(), house:'all', gender:'all', season:PSEASON(), smell:'all', saved:false, sort:'number', sel:{}, touched:{}};
+const state = {q:'', size:'all', cat:PCAT(), house:'all', gender:'all', season:PSEASON(), smell:'all', sort:'number', sel:{}, touched:{}};
 function houseRanks(){
   const order = (GEN.houseOrder || []).map(houseKey);
   const names = [...new Set(products.map(p => p.house).filter(Boolean))];
@@ -486,7 +486,7 @@ function syncUrl(){
   }catch(e){}
 }
 function clearFilters(){
-  state.q = ''; state.size = 'all'; state.cat = PCAT(); state.house = 'all'; state.gender = 'all'; state.season = PSEASON(); state.smell = 'all'; state.saved = false; state.touched = {};
+  state.q = ''; state.size = 'all'; state.cat = PCAT(); state.house = 'all'; state.gender = 'all'; state.season = PSEASON(); state.smell = 'all'; state.touched = {};
   $('q').value = ''; $('searchBox').classList.remove('has');
   buildFilters(); render(); syncUrl();
 }
@@ -526,11 +526,8 @@ function bindShop(){
   $('clearQ').addEventListener('click', e => { e.preventDefault(); $('q').value = ''; state.q = ''; $('searchBox').classList.remove('has'); render(); syncUrl(); $('q').focus(); });
   $('sort').addEventListener('change', e => { state.sort = e.target.value; render(); });
   $('clearF').addEventListener('click', clearFilters);
-  if($('savedF')) $('savedF').addEventListener('click', () => { state.saved = !state.saved; render(); if(state.saved) $('grid').scrollIntoView({block: 'start', behavior: 'smooth'}); });
   const grid = $('grid');
   grid.addEventListener('click', e => {
-    const wb = e.target.closest('[data-wish]');
-    if(wb){ toggleWish(wb.dataset.wish); return; }
     const z = e.target.closest('[data-pm]');
     if(z){ openPM(z.dataset.pm, !!z.dataset.notify); return; }
     const v = e.target.closest('.box[data-size]');
@@ -589,7 +586,6 @@ function visibleList(){
     if(state.gender !== 'all' && p.gender !== state.gender) return false;
     if(state.season !== 'all' && !(p.season === state.season || p.season === 'all')) return false;
     if(state.smell !== 'all' && !p.scent.includes(state.smell)) return false;
-    if(state.saved && !isWished(p.id)) return false;
     return true;
   });
   const ref = p => { const s = state.size !== 'all' ? [state.size] : (buySizes(p).length ? buySizes(p) : sizesFor(p)); return Math.min(...s.map(z => priceOf(p, z))); };
@@ -616,7 +612,7 @@ function cardHTML(p){
   }).join('');
   const cat = catLabel(p.category), tags = [cat, sLabel(p.season), ...p.scent.slice(0, 2).map(scLabel)].filter(Boolean);
   return `<article class="card ${out ? 'is-out' : ''}" data-card="${esc(p.id)}" id="p-${esc(p.id)}">
-    ${pic}${wishBtn(p)}
+    ${pic}
     <div class="info">
       <div class="head">
         <div>${p.house ? `<div class="no">${esc(p.house)}</div>` : ''}<h2><button class="pname" type="button" data-pm="${esc(p.id)}">${esc(p.name)}</button></h2>${p.similar_to ? `<div class="brand">Similar to ${esc(p.similar_to)}</div>` : ''}${tags.map(t => `<span class="tag">${esc(t)}</span>`).join(' ')}</div>
@@ -630,16 +626,10 @@ function cardHTML(p){
 }
 function render(){
   const list = visibleList();
-  const filtered = !!clean(state.q) || state.size !== 'all' || state.cat !== PCAT() || state.house !== 'all' || state.gender !== 'all' || state.season !== PSEASON() || state.smell !== 'all' || state.saved;
+  const filtered = !!clean(state.q) || state.size !== 'all' || state.cat !== PCAT() || state.house !== 'all' || state.gender !== 'all' || state.season !== PSEASON() || state.smell !== 'all';
   renderExtras(filtered);
-  paintSavedBtn();
   $('clearF').hidden = !filtered;
   $('count').textContent = `${list.length} ${list.length === 1 ? 'perfume' : 'perfumes'}`;
-  if(!list.length && state.saved){
-    $('grid').innerHTML = `<div class="empty"><strong>No saved perfumes yet.</strong><p>Tap the ♥ on a perfume to save it here.</p><button type="button" data-clear>Show all perfumes</button></div>`;
-    const cb = $('grid').querySelector('[data-clear]'); if(cb) cb.onclick = clearFilters;
-    return;
-  }
   if(!list.length){
     $('grid').innerHTML = PRESET && !clean(state.q) && state.size === 'all' ? `<div class="empty"><strong>No perfumes here right now.</strong><p>Please check back soon, or see all our perfumes.</p><a href="${esc(new URL('../../', location.href).href)}">See all perfumes</a></div>` : `<div class="empty"><strong>No products found.</strong><p>${clean(state.q) ? 'Try a shorter name or the house name.' : 'Nothing matches these filters right now.'}</p><button type="button" data-clear>Clear Filters</button></div>`;
     const cb = $('grid').querySelector('[data-clear]'); if(cb) cb.onclick = clearFilters;
@@ -688,7 +678,6 @@ function openPM(id, wantNotify){
   $('pmImg').innerHTML = full ? `<img src="${esc(full)}" alt="${esc(p.name)}">` : '<div class="ph"></div>';
   $('pmHouse').textContent = p.house || '';
   $('pmName').textContent = p.name;
-  if($('pmWish')) paintPmWish();
   $('pmSim').textContent = p.similar_to ? 'Similar to ' + p.similar_to : '';
   $('pmTags').innerHTML = [catLabel(p.category), sLabel(p.season)].filter(Boolean).map(t => `<span class="tag">${esc(t)}</span>`).join(' ');
   $('pmGrid').style.gridTemplateColumns = `repeat(${Math.max(1, sizesFor(p).length)},minmax(0,1fr))`;
@@ -712,7 +701,6 @@ if($('pm')){
     const nb = e.target.closest('[data-pmnotify]');
     if(nb && pmId){ showNotify(findP(pmId), Number(nb.dataset.pmnotify) || null); return; }
     if(e.target.closest('#nmSend')){ sendNotify(); return; }
-    if(e.target.closest('#pmWish') && pmId){ toggleWish(pmId); paintPmWish(); return; }
     const b = e.target.closest('[data-pmadd]'); if(!b || b.disabled || !pmId) return;
     addToCart(pmId, Number(b.dataset.pmadd));
     const p = findP(pmId); if(p) $('pmGrid').innerHTML = pmHTML(p);
@@ -1463,37 +1451,14 @@ function renderInfo(){
       + rv.slice(0, 20).map(r => `<figure class="review"><blockquote>“${esc(clean(r.text))}”</blockquote><figcaption>${esc(clean(r.name) || 'Customer')}${clean(r.place) ? ', ' + esc(clean(r.place)) : ''}</figcaption></figure>`).join('') + '</div>' : '';
     $('reviews').onclick = e => { const b = e.target.closest('[data-rvp]'); if(!b) return; const x = rp[Number(b.dataset.rvp)]; if(x) openPhoto(imgUrl(x.image_path || x.thumb_path), 'Customer review'); };
   }
-  const fq2 = (Array.isArray(GEN.faq) && GEN.faq.length ? GEN.faq : defaultFaq()).filter(x => x && clean(x.q) && clean(x.a));
+  // the delivery answer always shows today's charges (Admin > Payment), even if the FAQ was saved earlier
+  const liveDel = defaultFaq().find(x => x.q === 'How much is delivery?');
+  const fq2 = (Array.isArray(GEN.faq) && GEN.faq.length ? GEN.faq : defaultFaq()).filter(x => x && clean(x.q) && clean(x.a))
+    .map(x => /^Inside Sylhet \d+ tk, outside Sylhet \d+ tk\./.test(clean(x.a)) ? {q: x.q, a: liveDel.a} : x);
   if($('faq')) $('faq').innerHTML = `<h2 class="rowh">Questions</h2>` + fq2.map(x => `<details><summary>${esc(clean(x.q))}</summary><p>${esc(clean(x.a))}</p></details>`).join('');
 }
 
-/* ================= v10: wishlist, top bar, social links, returns page, review photos ================= */
-let wish = (() => { const w = ls.get('khayr_wish', []); return Array.isArray(w) ? w.filter(x => typeof x === 'string').slice(0, 200) : []; })();
-const isWished = id => wish.includes(id);
-const HEART = on => `<svg width="18" height="18" viewBox="0 0 24 24" fill="${on ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 3 4.5 6.9 4.5c2.1 0 3.6 1.2 5.1 3 1.5-1.8 3-3 5.1-3 3.9 0 6 4.1 4.5 7.4C19.5 16.4 12 21 12 21Z"/></svg>`;
-function wishBtn(p){ const on = isWished(p.id); return `<button class="wish ${on ? 'on' : ''}" type="button" data-wish="${esc(p.id)}" aria-pressed="${on}" aria-label="${on ? 'Remove from saved' : 'Save'} ${esc(p.name)}">${HEART(on)}</button>`; }
-function toggleWish(id){
-  const p = findP(id); if(!p) return;
-  if(isWished(id)) wish = wish.filter(x => x !== id);
-  else { wish.unshift(id); px('AddToWishlist', {content_ids: [p.id], content_type: 'product', content_name: p.name, value: Math.min(...(sizesFor(p).map(z => priceOf(p, z)).concat([0]).filter(Boolean)), 0) || 0, currency: 'BDT'}); }
-  ls.set('khayr_wish', wish);
-  const on = isWished(id);
-  document.querySelectorAll(`[data-wish="${CSS.escape(id)}"]`).forEach(b => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.innerHTML = HEART(on); b.setAttribute('aria-label', `${on ? 'Remove from saved' : 'Save'} ${p.name}`); });
-  toast(on ? 'Saved ♥' : 'Removed from saved');
-  if(state.saved) render(); else paintSavedBtn();
-}
-function paintSavedBtn(){
-  const b = $('savedF'); if(!b) return;
-  const n = wish.filter(id => findP(id)).length;
-  b.hidden = !n && !state.saved;
-  b.setAttribute('aria-pressed', state.saved);
-  b.innerHTML = `${HEART(true)}<span>Saved (${n})</span>`;
-}
-function paintPmWish(){
-  const b = $('pmWish'), on = pmId && isWished(pmId); if(!b) return;
-  b.classList.toggle('on', !!on); b.setAttribute('aria-pressed', !!on);
-  b.innerHTML = `${HEART(on)}<span>${on ? 'Saved' : 'Save'}</span>`;
-}
+/* ================= v10: top bar, social links, returns page, review photos ================= */
 function renderTopbar(){
   const bar = $('topbar'); if(!bar) return;
   const msgs = (Array.isArray(GEN.topbar) ? GEN.topbar : []).map(clean).filter(Boolean).slice(0, 8);

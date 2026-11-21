@@ -449,15 +449,6 @@ body.bn{font-family:var(--sans),'Noto Sans Bengali','Hind Siliguri',sans-serif}
 .topbar:hover .tb-track{animation-play-state:paused}
 @keyframes tbscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){.tb-track{animation:none}.topbar{overflow-x:auto}}
-.card{position:relative}
-.wish{position:absolute;left:74px;top:74px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:var(--ink);display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.18);padding:0;z-index:2}
-.wish.on{color:#C2185B}
-.savedf{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);color:#C2185B;border-radius:999px;min-height:36px;padding:0 12px;font-size:.88rem;font-weight:600;margin-left:8px}
-.savedf span{color:var(--ink)}
-.savedf[aria-pressed="true"]{background:#C2185B;border-color:#C2185B;color:#fff}
-.savedf[aria-pressed="true"] span{color:#fff}
-.pmwish{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;min-height:36px;padding:0 14px;font-size:.88rem;font-weight:600;margin:2px 0 8px}
-.pmwish.on{color:#C2185B;border-color:#F0C3D4;background:#FDF3F7}
 .rvphoto{flex:none;width:220px;height:280px;border:1px solid var(--line);border-radius:14px;padding:0;background:var(--soft);overflow:hidden;scroll-snap-align:start}
 .rvphoto img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
 .btn-ms{height:52px;border-radius:var(--r);font-weight:600;font-size:1rem;display:flex;align-items:center;justify-content:center;gap:10px;border:0;background:#0866FF;color:#fff}
