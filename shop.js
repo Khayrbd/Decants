@@ -10,16 +10,20 @@ const SITE = window.SITE_CONFIG || {};
 const SB = CFG.supabase || {};
 const SHOP = CFG.shopName || 'KHAYR';
 const PAGE = document.body.dataset.page || 'perfume';
+/* v12: the same script runs the ATTAR website (khayrbd.github.io/Attar/) when the page sets window.KHAYR_STORE = 'attar' */
+const STORE = window.KHAYR_STORE === 'attar' ? 'attar' : 'perfume';
+const ATTAR = STORE === 'attar';
 const BUCKET = SB.imageBucket || 'perfume-images';
 const SB_URL = String(SB.url || '').replace(/\/$/, '');
 const sbReady = () => !!(SB_URL && SB.anonKey && !/PASTE-|YOUR-/.test(SB_URL + SB.anonKey));
 const API = SB_URL ? SB_URL + '/functions/v1/khayr-api' : '';
-const SIZES = [3, 6, 10, 15, 30];
-const CATS = [['niche', 'Niche'], ['designer', 'Designer'], ['middle_eastern', 'Middle Eastern']];
+const SIZES = ATTAR ? [1.5, 3, 6, 12] : [3, 6, 10, 15, 30];
+const CATS = ATTAR ? [['natural', 'Natural'], ['semi_natural', 'Semi-Natural'], ['synthetic', 'Synthetic']] : [['niche', 'Niche'], ['designer', 'Designer'], ['middle_eastern', 'Middle Eastern']];
 const GENDERS = [['male', 'Male'], ['female', 'Female'], ['unisex', 'Unisex']];
 const SEASONS = [['summer', 'Summer'], ['winter', 'Winter'], ['all', 'All season']];
 const SCENTS = [['fresh', 'Fresh'], ['citrus', 'Citrus'], ['aquatic', 'Aquatic'], ['green', 'Green'], ['floral', 'Floral'], ['fruity', 'Fruity'], ['sweet', 'Sweet'], ['vanilla', 'Vanilla'],
-                ['spicy', 'Spicy'], ['woody', 'Woody'], ['oud', 'Oud'], ['amber', 'Amber'], ['leather', 'Leather'], ['musky', 'Musky']];
+                ['spicy', 'Spicy'], ['woody', 'Woody'], ['oud', 'Oud'], ['amber', 'Amber'], ['leather', 'Leather'], ['musky', 'Musky'],
+                ['rose', 'Rose'], ['jasmine', 'Jasmine'], ['sandalwood', 'Sandalwood'], ['saffron', 'Saffron'], ['incense', 'Incense']];
 const LONGEVITY = {light: 'Light', moderate: 'Moderate', long: 'Long-lasting', very_long: 'Very long-lasting'};
 const STRENGTH = {soft: 'Soft', moderate: 'Moderate', strong: 'Strong'};
 const OCCASIONS = {day: 'Day', night: 'Night', office: 'Office', party: 'Party', date: 'Date night'};
@@ -32,10 +36,14 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const price = n => String(Math.round(Number(n) || 0));            // 1500  (no commas, no currency)
 const clean = s => String(s || '').replace(/\s+/g, ' ').trim();
+/* Both websites live on khayrbd.github.io, so they share this phone's storage. The attar site keeps its own cart,
+   order and coupon (keys "khayr_at_…"); the customer's details, ad settings and visitor id are shared. */
+const SHARED_KEYS = ['khayr_customer', 'khayr_ads_off', 'khayr_vid', 'khayr_attr', 'khayr_fbc', 'khayr_lang'];
+const lk = k => ATTAR && !SHARED_KEYS.includes(k) ? 'khayr_at_' + k.replace(/^khayr_/, '') : k;
 const ls = {
-  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
-  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+  get(k, d){ try { const v = localStorage.getItem(lk(k)); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(lk(k), JSON.stringify(v)); } catch(e){} },
+  del(k){ try { localStorage.removeItem(lk(k)); } catch(e){} }
 };
 const ss = {
   get(k, d){ try { const v = sessionStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
@@ -257,7 +265,7 @@ function sendServerEvent(name, data, eventId){
     fetch(API, {method: 'POST', headers: {'Content-Type': 'application/json', apikey: SB.anonKey}, body: s, keepalive: s.length < 60000}).catch(() => {});
   } catch(e){}
 }
-const pxItem = (p, size, qty) => ({id: p.id, quantity: qty || 1, item_price: priceOf(p, size)});
+const pxItem = (p, size, qty, prem) => ({id: p.id, quantity: qty || 1, item_price: priceOf(p, size) + (prem ? premOf(size) : 0)});
 
 /* ---------- where the visitor came from (kept 7 days, sent with the order) ---------- */
 function cookie(name){ const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; }
@@ -325,14 +333,15 @@ async function fetchData(){
       const v5 = 'id,product_type,number,name,brand,house,category,prices,sizes,visible,image_path,thumb_path,stock_out,stock_out_sizes,auto_out';
       const v4 = 'id,product_type,number,name,brand,category,prices,sizes,visible,image_path,thumb_path';
       const get = c => fetch(base + 'products?select=' + c + '&visible=eq.true&order=number.asc', {headers: h, cache: 'no-store'});
-      const [pr0, st] = await Promise.all([get(v8), fetch(base + 'settings?select=id,data&id=eq.1', {headers: h, cache: 'no-store'})]);
+      const [pr0, st] = await Promise.all([get(v8), fetch(base + 'settings?select=id,data&id=' + (ATTAR ? 'in.(1,2)' : 'eq.1'), {headers: h, cache: 'no-store'})]);
       let pr = pr0;
       if(pr.status === 400) pr = await get(v6);                                   // database not upgraded yet
       if(pr.status === 400) pr = await get(v5);
       if(pr.status === 400) pr = await get(v4);
       if(pr.ok && st.ok){
         const list = await pr.json(), rows = await st.json();
-        if(list.length) return {settings: (rows[0] && rows[0].data) || {}, products: list};
+        const r1 = rows.find(r => Number(r.id) === 1) || rows[0], r2 = rows.find(r => Number(r.id) === 2);
+        if(list.length) return {settings: (r1 && r1.data) || {}, attarSettings: (r2 && r2.data) || {}, products: list};
       }
     }catch(e){ /* use the backup list below */ }
   }
@@ -343,11 +352,12 @@ async function fetchData(){
   return j;
 }
 function applyData(data){
-  const s = data.settings || {};
+  const s = data.settings || {}, s2 = data.attarSettings || {};
   GEN = {...GEN_DEFAULTS, ...s, payment: {...GEN_DEFAULTS.payment, ...(s.payment || {})}, delivery: {...GEN_DEFAULTS.delivery, ...(s.delivery || {})},
          messenger: {...GEN_DEFAULTS.messenger, ...(s.messenger || {})}};
+  if(ATTAR){ GEN.sizesEnabled = s2.sizesEnabled || {}; GEN.premium = s2.premium || {}; }
   ALL = (data.products || [])
-    .filter(p => (p.product_type || 'perfume') === 'perfume' && p.visible !== false)
+    .filter(p => (p.product_type || 'perfume') === STORE && p.visible !== false)
     .map((p, i) => ({...p, no: Number(p.number) || (i + 1), prices: p.prices || {}, sizes: p.sizes || {}, category: normCat(p.category),
                      house: clean(p.house), gender: p.gender || '', season: p.season || '', similar_to: clean(p.similar_to), fragrantica_url: /^https:\/\//.test(p.fragrantica_url || '') ? p.fragrantica_url : '',
                      scent: Array.isArray(p.scent) ? p.scent.filter(scLabel) : [], notes: clean(p.notes), longevity: LONGEVITY[p.longevity] ? p.longevity : '',
@@ -361,7 +371,7 @@ function applyData(data){
 async function fetchGallery(){
   if(!sbReady()) return [];
   try{
-    const r = await fetch(SB_URL + '/rest/v1/gallery_photos?select=id,kind,image_path,thumb_path,caption,sort_order&kind=eq.decant&visible=eq.true&order=sort_order.asc,created_at.asc',
+    const r = await fetch(SB_URL + '/rest/v1/gallery_photos?select=id,kind,image_path,thumb_path,caption,sort_order&kind=eq.' + (ATTAR ? 'attar' : 'decant') + '&visible=eq.true&order=sort_order.asc,created_at.asc',
       {headers: {apikey: SB.anonKey, Authorization: 'Bearer ' + SB.anonKey}, cache: 'no-store'});
     if(!r.ok) return [];
     const list = await r.json();
@@ -442,7 +452,7 @@ function showProduct(p){
 }
 function viewContent(p){
   const sizes = buySizes(p);
-  px('ViewContent', {content_ids: [p.id], content_type: 'product', content_name: p.name, content_category: p.house || 'perfume',
+  px('ViewContent', {content_ids: [p.id], content_type: 'product', content_name: p.name, content_category: p.house || STORE,
     value: sizes.length ? Math.min(...sizes.map(s => priceOf(p, s))) : 0, currency: 'BDT'});
 }
 function buildFilters(){
@@ -450,9 +460,9 @@ function buildFilters(){
   if(state.size !== 'all' && !sizes.includes(state.size)) state.size = 'all';
   $('sizeFilter').innerHTML = ['all', ...sizes].map(s =>
     `<button class="chip" type="button" data-size="${s}" aria-pressed="${s === state.size}">${s === 'all' ? 'All sizes' : s + 'ml'}</button>`).join('');
-  const cats = CATS.filter(([c]) => products.some(p => p.category === c) || state.cat === c);
+  const cats = CATS.filter(([c]) => ATTAR || products.some(p => p.category === c) || state.cat === c);   // attar: always Natural, Semi-Natural, Synthetic
   $('catFilter').hidden = !cats.length || !!(PRESET && PRESET.cat);
-  $('catFilter').innerHTML = [['all', 'All Perfumes'], ...cats].map(([c, label]) =>
+  $('catFilter').innerHTML = [['all', ATTAR ? 'All Attar' : 'All Perfumes'], ...cats].map(([c, label]) =>
     `<button class="chip" type="button" data-cat="${c}" aria-pressed="${c === state.cat}">${esc(label)}</button>`).join('');
   const gs = [...SEASONS.filter(([v]) => v !== 'all' && products.some(p => p.season === v)).map(([v, l]) => ['s:' + v, l])];
   $('gsFilter').hidden = !gs.length || !!(PRESET && PRESET.season);
@@ -565,7 +575,7 @@ function searchEvent(v){
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => {
     const q = clean(v);
-    if(q.length >= 2 && q !== lastSearch){ lastSearch = q; px('Search', {search_string: q, content_category: 'perfume'}); }
+    if(q.length >= 2 && q !== lastSearch){ lastSearch = q; px('Search', {search_string: q, content_category: STORE}); }
   }, 1500);
 }
 function searchList(list, raw){
@@ -628,7 +638,7 @@ function render(){
   const filtered = !!clean(state.q) || state.size !== 'all' || state.cat !== PCAT() || state.house !== 'all' || state.gender !== 'all' || state.season !== PSEASON() || state.smell !== 'all';
   renderExtras(filtered);
   $('clearF').hidden = !filtered;
-  $('count').textContent = `${list.length} ${list.length === 1 ? 'perfume' : 'perfumes'}`;
+  $('count').textContent = `${list.length} ${ATTAR ? (list.length === 1 ? 'attar' : 'attars') : (list.length === 1 ? 'perfume' : 'perfumes')}`;
   if(!list.length){
     $('grid').innerHTML = PRESET && !clean(state.q) && state.size === 'all' ? `<div class="empty"><strong>No perfumes here right now.</strong><p>Please check back soon, or see all our perfumes.</p><a href="${esc(new URL('../../', location.href).href)}">See all perfumes</a></div>` : `<div class="empty"><strong>No products found.</strong><p>${clean(state.q) ? 'Try a shorter name or the house name.' : 'Nothing matches these filters right now.'}</p><button type="button" data-clear>Clear Filters</button></div>`;
     const cb = $('grid').querySelector('[data-clear]'); if(cb) cb.onclick = clearFilters;
@@ -728,25 +738,29 @@ let cart = [];                                       // [{id, type:'perfume', si
 function loadCart(){
   let raw = ls.get('khayr_cart', []);
   if(!Array.isArray(raw)) raw = [];
-  const oldAttar = ls.get('khayr_attar_cart', null);
-  ls.del('khayr_attar_cart');
-  const out = []; let dropped = 0, attar = (Array.isArray(oldAttar) ? oldAttar.length : 0);
+  let attar = 0;
+  if(!ATTAR){ const oldAttar = ls.get('khayr_attar_cart', null); ls.del('khayr_attar_cart'); attar = Array.isArray(oldAttar) ? oldAttar.length : 0; }
+  const out = []; let dropped = 0;
   raw.forEach(i => {
     if(!i || !i.id) return;
-    if(i.type === 'attar' || String(i.id).startsWith('attar-')){ attar++; return; }
+    if(!ATTAR && (i.type === 'attar' || String(i.id).startsWith('attar-'))){ attar++; return; }
     const p = findP(i.id), size = Number(i.size);
     if(!p || !sizesFor(p).includes(size)){ dropped++; return; }          // a stock-out size stays, so the customer can change it
     const q = Math.max(1, Math.min(MAXQ, Math.round(Number(i.qty) || 1)));
-    const same = out.find(x => x.id === p.id && x.size === size);
+    const prem = !!i.premium && premOf(size) > 0;
+    const same = out.find(x => x.id === p.id && x.size === size && !!x.premium === prem);
     if(same){ same.qty = Math.min(MAXQ, same.qty + q); return; }
-    out.push({id: p.id, type: 'perfume', size, qty: q});
+    out.push({id: p.id, type: STORE, size, qty: q, ...(prem ? {premium: true} : {})});
   });
   cart = out;
   if(attar) setTimeout(() => toast('Attar is no longer sold on the website, so it was removed from your cart.'), 300);
   else if(dropped) setTimeout(() => toast('Some items in your cart are no longer available and were removed.'), 300);
 }
 const lineOk = i => canBuy(findP(i.id), i.size);
-const subtotal = () => cart.reduce((t, i) => t + priceOf(findP(i.id), i.size) * i.qty, 0);
+/* v12 attar: premium bottle for 3 / 6 / 12 ml (price from Admin settings; the server checks it again) */
+const premOf = size => ATTAR && [3, 6, 12].includes(Number(size)) ? (Number((GEN.premium || {})[size]) || 0) : 0;
+const unitOf = i => priceOf(findP(i.id), i.size) + (i.premium ? premOf(i.size) : 0);
+const subtotal = () => cart.reduce((t, i) => t + unitOf(i) * i.qty, 0);
 const itemCount = () => cart.reduce((t, i) => t + i.qty, 0);
 /* Discovery sets: the same rule as the server (each bottle counts for one set only). */
 const activeSets = () => (Array.isArray(GEN.sets) ? GEN.sets : []).filter(x => x && x.active !== false && Array.isArray(x.items) && x.items.length >= 2 && Number(x.pct) > 0 && Number(x.pct) <= 50);
@@ -787,14 +801,14 @@ function updateCartUI(){
 function addToCart(id, size){
   const p = findP(id);
   if(!canBuy(p, size)){ toast('This size is out of stock.'); return; }
-  const have = cart.find(i => i.id === id && i.size === size);
+  const have = cart.find(i => i.id === id && i.size === size && !i.premium);
   if(have){
     if(have.qty >= MAXQ){ toast(`You can order up to ${MAXQ} of one size.`); return; }
     have.qty++;
-  } else cart.push({id, type: 'perfume', size, qty: 1});
+  } else cart.push({id, type: STORE, size, qty: 1});
   updateCartUI(); refreshCard(id);
   toast(have ? `Added ✓ ${p.name}, ${size}ml × ${have.qty}` : `Added ✓ ${p.name}, ${size}ml`);
-  px('AddToCart', {content_ids: [p.id], content_type: 'product', content_name: p.name, content_category: p.house || 'perfume', contents: [pxItem(p, size)], value: priceOf(p, size), currency: 'BDT'});
+  px('AddToCart', {content_ids: [p.id], content_type: 'product', content_name: p.name, content_category: p.house || STORE, contents: [pxItem(p, size)], value: priceOf(p, size), currency: 'BDT'});
   if(document.body.classList.contains('open')) renderDrawer();
 }
 function removeFromCart(idx){
@@ -806,7 +820,8 @@ function changeSize(idx, size){
   const it = cart[idx], p = findP(it.id);
   if(!p || it.size === size) return;
   if(!canBuy(p, size)){ toast(`${size}ml is out of stock.`); return; }
-  const other = cart.findIndex((x, k) => k !== idx && x.id === it.id && x.size === size);
+  if(it.premium && !premOf(size)) delete it.premium;                 // no premium bottle for 1.5 ml
+  const other = cart.findIndex((x, k) => k !== idx && x.id === it.id && x.size === size && !!x.premium === !!it.premium);
   if(other > -1){                                    // that size is already in the cart: put them together
     cart[other].qty = Math.min(MAXQ, cart[other].qty + it.qty); cart.splice(idx, 1);
     toast(`${p.name} ${size}ml: quantity ${cart[other > idx ? other - 1 : other].qty}`);
@@ -816,6 +831,16 @@ function changeSize(idx, size){
   renderDrawer();
 }
 
+function togglePremium(idx){
+  const it = cart[idx], p = it && findP(it.id); if(!p || !premOf(it.size)) return;
+  const want = !it.premium;
+  const other = cart.findIndex((x, k) => k !== idx && x.id === it.id && x.size === it.size && !!x.premium === want);
+  if(other > -1){ cart[other].qty = Math.min(MAXQ, cart[other].qty + it.qty); cart.splice(idx, 1); }
+  else if(want) it.premium = true; else delete it.premium;
+  notice = null;
+  updateCartUI(); renderDrawer();
+  if(want) toast(`Premium bottle added ✓ +${price(premOf(it.size))} tk each`);
+}
 function changeQty(idx, d){
   const it = cart[idx]; if(!it) return;
   const q = it.qty + d;
@@ -868,7 +893,7 @@ function currentDraft(){
 const saveDraft = () => ls.set('khayr_order_v5', draft);
 function orderText(orderId){
   const d = details(), a = (draft && draft.amounts) || amounts();
-  const lines = cart.map(i => { const p = findP(i.id), u = priceOf(p, i.size); return `${p.name}\n${i.size}ml${i.qty > 1 ? ` × ${i.qty}` : ''} — ${price(u * i.qty)}`; });
+  const lines = cart.map(i => { const p = findP(i.id), u = unitOf(i); return `${p.name}\n${i.size}ml${i.premium ? ' + Premium bottle' : ''}${i.qty > 1 ? ` × ${i.qty}` : ''} — ${price(u * i.qty)}`; });
   const fee = a.fee === undefined ? deliveryFee(d.area, a.sub) : a.fee;
   const lv = draft && draft.amounts ? amounts() : a;
   const pay = [`Subtotal: ${price(a.sub)}`,
@@ -880,7 +905,7 @@ function orderText(orderId){
     `Total: ${price(a.total)}`,
     a.full ? `Payment: Full payment by bKash` : null].filter(Boolean);
   return [
-    SHOP + ' ORDER', '',
+    SHOP + (ATTAR ? ' ATTAR ORDER' : ' ORDER'), '',
     orderId ? `Order ID: ${orderId}` : null, orderId ? '' : null,
     `Name: ${d.name}`,
     `Phone: ${d.phone}`,
@@ -893,7 +918,7 @@ function orderText(orderId){
   ].filter(l => l !== null).join('\n');
 }
 function pxContents(value){
-  return {content_ids: cart.map(i => i.id), contents: cart.map(i => pxItem(findP(i.id), i.size, i.qty)), content_type: 'product', num_items: itemCount(),
+  return {content_ids: cart.map(i => i.id), contents: cart.map(i => pxItem(findP(i.id), i.size, i.qty, i.premium)), content_type: 'product', num_items: itemCount(),
           value: value ?? subtotal(), currency: 'BDT'};
 }
 async function refreshData(){
@@ -905,7 +930,7 @@ async function submit(method, retried){
   const dr = currentDraft();
   const body = {
     action: 'create_order', clientRef: dr.ref, method, paymentChoice: 'advance',
-    customer: details(), items: cart.map(i => ({id: i.id, type: 'perfume', size: i.size, qty: i.qty})), expectedTotal: subtotal(), coupon: coupon ? coupon.code : '', note: clean(saved.note).slice(0, 300),
+    customer: details(), items: cart.map(i => ({id: i.id, type: STORE, size: i.size, qty: i.qty, ...(i.premium ? {premium: true} : {})})), expectedTotal: subtotal(), coupon: coupon ? coupon.code : '', note: clean(saved.note).slice(0, 300),
     marketingOk: !adsOff(), attribution: ATTR, fbp: cookie('_fbp'), fbc: fbcValue(), pageUrl: location.href
   };
   let r, j = null;
@@ -1143,8 +1168,9 @@ function lineHTML(i, k){
         <div class="qty" role="group" aria-label="Quantity of ${esc(p.name)} ${i.size}ml">
           <button type="button" data-q="-1" data-li="${k}" aria-label="One less">−</button><span aria-live="polite">${i.qty}</span><button type="button" data-q="1" data-li="${k}" aria-label="One more" ${i.qty >= MAXQ ? 'disabled' : ''}>+</button>
         </div></div>
-      <div class="lrow2">${p.house ? `<div class="m">${esc(p.house)}</div>` : '<div></div>'}<div class="lp">${price(priceOf(p, i.size) * i.qty)} tk</div></div>
+      <div class="lrow2">${p.house ? `<div class="m">${esc(p.house)}</div>` : '<div></div>'}<div class="lp">${price(unitOf(i) * i.qty)} tk</div></div>
       <label class="lsel"><span class="sr">Size of ${esc(p.name)}</span><select data-lsel="${k}">${opts}</select></label>
+      ${premOf(i.size) ? `<button type="button" class="prem ${i.premium ? 'on' : ''}" role="checkbox" aria-checked="${!!i.premium}" data-prem="${k}"><i class="tick" aria-hidden="true"></i><span><b>Premium bottle</b> +${price(premOf(i.size))} tk${i.qty > 1 ? ' each' : ''}</span></button>` : ''}
       ${ok ? '' : `<div class="lwarn">${i.size}ml is out of stock. Choose another size or remove it.</div>`}
       <button type="button" class="rm" data-rm="${k}" aria-label="Remove ${esc(p.name)} ${i.size}ml">Remove</button>
     </div>
@@ -1166,7 +1192,7 @@ function payHTML(){
       <div class="total"><span>${full ? 'Total to pay' : 'Total'}</span><span>${price(a.total)}</span></div>
       ${need > 0 ? `<p class="freehint">Add ${price(need)} tk more for <b>free delivery</b> all over Bangladesh.</p>` : free > 0 ? `<p class="freehint ok">You get <b>free delivery</b> ✓</p>` : ''}
     </div>
-    ${couponHTML(a)}
+    ${ATTAR ? '' : couponHTML(a)}
     ${full ? `<p class="paynote" id="payNote">Pay ${price(a.total)} tk by bKash. After you order, we send you our payment details on WhatsApp.</p>` : ''}
   </div>`;
 }
@@ -1245,6 +1271,7 @@ $('dbody').addEventListener('click', e => {
   const t = e.target.closest('button'); if(!t) return;
   if(t.dataset.rm !== undefined){ notice = null; removeFromCart(+t.dataset.rm); }
   else if(t.dataset.q){ changeQty(+t.dataset.li, Number(t.dataset.q)); }
+  else if(t.dataset.prem !== undefined){ togglePremium(+t.dataset.prem); }
   else if(t.dataset.area){ saved.area = t.dataset.area; ls.set('khayr_customer', saved); delete errs.area; renderDrawer(); }
   else if(t.dataset.pay){ saved.pay = t.dataset.pay; ls.set('khayr_customer', saved); renderDrawer(); }
   else if(t.dataset.qr !== undefined){ openQr(+t.dataset.qr); }
@@ -1252,7 +1279,7 @@ $('dbody').addEventListener('click', e => {
   else if(t.id === 'cpRemove'){ coupon = null; couponErr = ''; ls.del('khayr_coupon'); notice = null; renderDrawer(); }
   else if(t.id === 'orderAgain'){
     const lo = ls.get('khayr_lastorder', null) || {}; let n = 0;
-    (lo.items || []).forEach(i => { const p = findP(i.id), z = Number(i.size); if(!canBuy(p, z)) return; const have = cart.find(x => x.id === p.id && x.size === z); if(have) have.qty = Math.min(MAXQ, have.qty + (i.qty || 1)); else cart.push({id: p.id, type: 'perfume', size: z, qty: Math.min(MAXQ, i.qty || 1)}); n++; });
+    (lo.items || []).forEach(i => { const p = findP(i.id), z = Number(i.size); if(!canBuy(p, z)) return; const have = cart.find(x => x.id === p.id && x.size === z && !x.premium); if(have) have.qty = Math.min(MAXQ, have.qty + (i.qty || 1)); else cart.push({id: p.id, type: STORE, size: z, qty: Math.min(MAXQ, i.qty || 1)}); n++; });
     updateCartUI(); if(PAGE === 'perfume') render(); renderDrawer(); toast(n ? 'Added your last order ✓' : 'Those perfumes are not available right now.');
   }
   else if(t.id === 'newOrder'){

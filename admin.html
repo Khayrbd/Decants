@@ -504,6 +504,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
 .rpcard img{width:100%;height:200px;object-fit:cover;object-position:top;border-radius:8px;background:#f4f4f4}
 .rpcard .kbtn{justify-content:flex-start}
 .cnote{margin:6px 0 0;padding:6px 10px;border-radius:8px;background:#FFF7E0;border:1px solid #F0DCA0;font-size:.9rem}
+.prem-tag{font-weight:600;color:#8A5A00}
 </style>
 </head>
 <body>
@@ -574,13 +575,15 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <button data-go="perfumes">Products</button>
     <button data-go="houses">Houses</button>
     <button data-go="payment">Payment</button>
-    <button data-go="calc">Calculator</button>
+    <button data-go="calc">Decanting Calculator</button>
+    <button data-go="acalc">Attar Calculator</button>
     <button data-go="sizes">ML Settings</button>
     <button data-go="notify">Notifications</button>
     <button data-go="import">CSV Import</button>
     <button data-go="bottles">Bottle Photos</button>
     <button data-go="dashboard">Dashboard</button>
-    <button data-go="buys">Inventory</button>
+    <button data-go="buys">Decanting Inventory</button>
+    <button data-go="abuys">Attar Inventory</button>
     <button data-go="sets">Sets</button>
     <button data-go="coupons">Coupons</button>
     <button data-go="restock">Notify me</button>
@@ -739,7 +742,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <!-- Price calculator (v7: from the 100 ml buying price) -->
     <section class="view hidden" id="v-calc">
       <button class="back" type="button" data-go="more">‹ More</button>
-      <div class="vh"><h2>Calculator</h2><button class="btn sm" type="button" data-go="calcset">Settings</button></div>
+      <div class="vh"><h2>Decanting Calculator</h2><button class="btn sm" type="button" data-go="calcset">Settings</button></div>
       <div class="panel">
         <label class="fl" style="max-width:340px"><span>Buying price of the 100 ml bottle (taka)</span><input type="number" id="cBuy" min="0" step="1" inputmode="numeric" placeholder="e.g. 3200"></label>
         <p class="help" id="cPerMl" style="margin-top:-4px"></p>
@@ -759,10 +762,36 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       </div>
     </section>
 
+
+    <!-- v12: Attar calculator -->
+    <section class="view hidden" id="v-acalc">
+      <button class="back" type="button" data-go="more">‹ More</button>
+      <h2>Attar Calculator</h2>
+      <div class="panel">
+        <label class="fl" style="max-width:340px"><span>Your price of 1 ml (taka)</span><input type="number" id="aPerMl" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 45"></label>
+        <p class="help" style="margin-top:-4px">3, 6 and 12 ml = attar (ml × price of 1 ml) + 120% profit + bottle 40 + packaging 40, then down to the round 10. <b>1.5 ml = half of the 3 ml price.</b></p>
+        <div style="overflow-x:auto"><div id="aTable"></div></div>
+        <p class="help" id="aHow"></p>
+      </div>
+      <div class="panel"><h3>Add a new attar with these prices</h3>
+        <p class="help">Opens the Add attar form with these 4 prices filled in. Type the name, then Save.</p>
+        <button class="btn dark" type="button" id="aNew" disabled>+ New attar with these prices</button>
+      </div>
+      <div class="panel"><h3>Use these prices for an existing attar</h3>
+        <input type="search" id="aFind" placeholder="Search attar" aria-label="Search attar">
+        <div class="clist" id="aList"></div>
+        <div id="aPick"></div>
+      </div>
+    </section>
+
     <!-- My purchases (admin only) -->
     <section class="view hidden" id="v-buys">
       <button class="back" type="button" data-go="more">‹ More</button>
-      <h2>Inventory</h2>
+      <h2 id="bHead">Decanting Inventory</h2>
+      <div class="segrow"><div class="seg" id="bSeg" role="group" aria-label="Inventory type">
+        <button type="button" data-bkind="decant" aria-pressed="true">DECANTING</button>
+        <button type="button" data-bkind="attar" aria-pressed="false">ATTAR</button>
+      </div></div>
       <p class="help" style="margin-top:0">What you paid for each full bottle. <b>Only you can see this</b> (after logging in with your authenticator code). Customers and the website never see it.</p>
       <div class="panel" id="bForm"><h3 id="bTitle">Add a purchase</h3>
         <label class="fl"><span>Perfume</span><input id="bName" list="bNames" maxlength="120" placeholder="Start typing, e.g. Hawas Ice" autocomplete="off"></label>
@@ -804,8 +833,8 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         <label class="fl" style="max-width:320px"><span>Box and packaging (taka, every size)</span><input type="number" id="csBox" min="0" step="1" inputmode="numeric"></label>
         <div style="overflow-x:auto"><table class="htab" id="csTab"></table></div>
       </div>
-      <div class="panel"><h3>Profit by buying price (100 ml bottle)</h3>
-        <p class="help">Each row is one price range (from and to are included). The calculator never guesses: a buying price outside every range shows a warning until you add a range for it.</p>
+      <div class="panel"><h3>Profit per ml, by buying price (100 ml bottle)</h3>
+        <p class="help">The profit you type is <b>per ml</b>: it is multiplied by the size (3 ml × 20 = 60 tk, 10 ml × 12 = 120 tk). Each row is one price range (from and to are included). The calculator never guesses: a buying price outside every range shows a warning until you add a range for it.</p>
         <div id="csRanges"></div>
         <button class="btn sm" id="csAddRange" type="button">+ Add range</button>
         <div id="csGaps"></div>
@@ -838,7 +867,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
         <label class="fl"><span>Facebook Page username (the part after facebook.com/)</span><input type="text" id="sMsPage" maxlength="80" autocapitalize="none" placeholder="khayrbd"></label>
         <button class="btn dark" id="saveSettings" type="button">Save settings</button>
       </div>
-      <details class="panel"><summary style="margin:0">Attar sizes (attar is not on the website)</summary>
+      <details class="panel"><summary style="margin:0">Attar sizes (Attar website: 1.5, 3, 6, 12 ml)</summary>
         <div class="gsizes" id="gsizes-attar" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div>
         <label class="fl" style="margin:12px 0 0;max-width:320px"><span>Low juice alert for attars (ml left or less)</span><input type="number" id="sLow-attar" min="0" inputmode="numeric"></label>
       </details>
@@ -876,10 +905,10 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
     <section class="view hidden" id="v-bottles">
       <button class="back" type="button" data-go="more">‹ More</button>
       <h2>Bottle Photos</h2>
-      <p class="help" style="margin-top:0">Photos of your decant bottles for the website's <b>Bottle Photos</b> page.</p>
+      <p class="help" style="margin-top:0">Photos for the <b>Bottle Photos</b> page: decant bottles on the Decants website, attar bottles (and premium bottles) on the Attar website.</p>
       <div class="segrow"><div class="seg" id="gSeg" role="group" aria-label="Bottle type">
         <button type="button" data-kind="decant" aria-pressed="true">DECANTS BOTTLE</button>
-        <button type="button" data-kind="attar" aria-pressed="false">ATTAR (hidden)</button>
+        <button type="button" data-kind="attar" aria-pressed="false">ATTAR BOTTLES</button>
       </div></div>
       <div class="actions" style="align-items:center">
         <input type="file" id="gFile" accept="image/webp,image/jpeg,image/png" multiple hidden>
@@ -1031,8 +1060,10 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.88em}
       <div class="group">
         <button class="mi" type="button" data-go="houses"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span><span class="tx">Houses<small>Group perfumes by house, set the order</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="payment"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7v-3"/></svg></span><span class="tx">Payment<small>Full payment discount, delivery charge</small></span><span class="chev">›</span></button>
-        <button class="mi" type="button" data-go="calc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2M16 16h0"/></svg></span><span class="tx">Calculator<small>Decant prices from the 100 ml buying price</small></span><span class="chev">›</span></button>
-        <button class="mi" type="button" data-go="buys"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><span class="tx">Inventory<small>What you paid for each bottle (only you see it)</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="calc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2M16 16h0"/></svg></span><span class="tx">Decanting Calculator<small>Decant prices from the 100 ml buying price</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="acalc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/></svg></span><span class="tx">Attar Calculator<small>Attar prices from your price of 1 ml</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="buys"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><span class="tx">Decanting Inventory<small>What you paid for each perfume bottle (only you see it)</small></span><span class="chev">›</span></button>
+        <button class="mi" type="button" data-go="abuys"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span><span class="tx">Attar Inventory<small>What you paid for your attar (only you see it)</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="calcset"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></span><span class="tx">Calculator settings<small>Bottle, box and profit by price range</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="sizes"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span><span class="tx">ML Settings<small>Sizes, automatic Stock Out, WhatsApp number</small></span><span class="chev">›</span></button>
         <button class="mi" type="button" data-go="notify"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="tx">Notifications<small id="moreNotify">New order alerts on this phone</small></span><span class="chev">›</span></button>
@@ -1185,7 +1216,7 @@ const SBC = CFG.supabase || {};
 const STORES = {
   perfume: {key: 'perfume', label: 'PERFUME', one: 'perfume', One: 'Perfume', table: 'products', juice: 'juice_levels', settingsId: 1, sizes: [3,6,10,15,30], idPrefix: '',       lowJuice: 15,
             cats: [['niche','Niche'],['designer','Designer'],['middle_eastern','Middle Eastern']]},
-  attar:   {key: 'attar',   label: 'ATTAR',   one: 'attar',   One: 'Attar',   table: 'products', juice: 'juice_levels', settingsId: 2, sizes: [1,3,6,12],      idPrefix: 'attar-', lowJuice: 10,
+  attar:   {key: 'attar',   label: 'ATTAR',   one: 'attar',   One: 'Attar',   table: 'products', juice: 'juice_levels', settingsId: 2, sizes: [1.5,3,6,12],    idPrefix: 'attar-', lowJuice: 10,
             cats: [['natural','Natural'],['semi_natural','Semi-Natural'],['synthetic','Synthetic']]}
 };
 let F = STORES.perfume;
@@ -1676,7 +1707,7 @@ function relabel(){
   $('q').placeholder = F.key === 'perfume' ? 'Search name, house or number' : 'Search attar name or number';
   $('impSizes').textContent = SIZES.map(z => z + 'ml').join(', ');
   $('impCats').textContent = F.cats.map(c => c[1]).join(', ');
-  $('attarNote').innerHTML = F.key === 'attar' ? '<div class="msg warn">Attar is <b>not on the website</b> any more (decants only). Your attar data is kept safe here, and you can still edit it.</div>' : '';
+  $('attarNote').innerHTML = F.key === 'attar' ? '<div class="msg ok">Attar is on its own website: <b>khayrbd.github.io/Attar/</b></div>' : '';
   buildFilters();
 }
 function switchFolder(key){
@@ -1694,10 +1725,11 @@ $('impSeg').addEventListener('click', e => { const b = e.target.closest('[data-s
 /* =====================================================================
    NAVIGATION (tab bar on a phone, top menu on a computer)
    ===================================================================== */
-const VIEWS = ['orders', 'sale', 'perfumes', 'more', 'houses', 'payment', 'calc', 'calcset', 'buys', 'links', 'coupons', 'sets', 'site', 'restock', 'sizes', 'notify', 'import', 'bottles', 'dashboard', 'security'];
-const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', calc: 'Calculator', calcset: 'Calculator settings', buys: 'Inventory', links: 'Share links', coupons: 'Coupons', sets: 'Discovery sets', site: 'Website text', restock: 'Notify me requests', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
+const VIEWS = ['orders', 'sale', 'perfumes', 'more', 'houses', 'payment', 'calc', 'acalc', 'calcset', 'buys', 'links', 'coupons', 'sets', 'site', 'restock', 'sizes', 'notify', 'import', 'bottles', 'dashboard', 'security'];
+const TITLES = {orders: 'Orders', sale: 'New Sale', perfumes: 'Products', more: 'More', houses: 'Houses', payment: 'Payment', calc: 'Calculator', calcset: 'Calculator settings', buys: 'Inventory', acalc: 'Attar Calculator', calc: 'Decanting Calculator', links: 'Share links', coupons: 'Coupons', sets: 'Discovery sets', site: 'Website text', restock: 'Notify me requests', sizes: 'ML Settings', notify: 'Notifications', import: 'CSV Import', bottles: 'Bottle Photos', dashboard: 'Dashboard', security: 'Security'};
 function go(view, opt){
   if(view === 'add'){ if(current !== 'perfumes') go('perfumes'); openEdit(null); return; }
+  if(view === 'abuys'){ bKind = 'attar'; view = 'buys'; } else if(view === 'buys' && !(opt && opt.keepKind)) bKind = 'decant';
   if(!VIEWS.includes(view)) view = 'orders';
   const wide = window.matchMedia('(min-width:900px)').matches;
   if(view === 'more' && wide) view = 'dashboard';
@@ -1720,6 +1752,7 @@ function go(view, opt){
   if(view === 'payment') renderPayment();
   if(view === 'notify') renderNotify();
   if(view === 'calc') renderCalc();
+  if(view === 'acalc') renderACalc();
   if(view === 'calcset') renderCalcSet();
   if(view === 'buys') renderBuys();
   if(view === 'links') renderLinks();
@@ -1741,7 +1774,7 @@ function routeFromHash(){
   try { history.replaceState(null, '', location.pathname + location.search); } catch(_){}
   const m = h.match(/^order=([A-Za-z0-9-]{4,40})$/);
   if(m){ openOrder(m[1]); return true; }
-  if(VIEWS.includes(h)){ go(h); return true; }
+  if(VIEWS.includes(h) || h === 'abuys'){ go(h); return true; }
   return false;
 }
 window.addEventListener('hashchange', () => { if(panelOpen) routeFromHash(); });
@@ -2234,8 +2267,8 @@ function dlgTypeHTML(){
   $('eLegacy').hidden = !(editing && editing.legacy_category);
   $('eLegacy').textContent = editing && editing.legacy_category ? `Old category text "${editing.legacy_category}" did not match a category, so it is not used. Choose one above.` : '';
   $('eHouse').closest('label').hidden = T.key !== 'perfume';
-  $('eGS').hidden = T.key !== 'perfume';
-  $('eScentBox').hidden = T.key !== 'perfume' || !hasV8;
+  $('eGS').hidden = false;                                   // v12: season for attar too
+  $('eScentBox').hidden = !hasV8;
   $('eOut').closest('label').hidden = T.key !== 'perfume';
 }
 function houseHint(){
@@ -2316,7 +2349,7 @@ $('eSave').onclick = () => busy($('eSave'), 'Saving…', async () => {
   const row = {name, house, category, prices, sizes, visible: $('eVisible').checked,
                gender: $('eGender').value, season: $('eSeason').value, similar_to: clean($('eSimilar').value).slice(0, 80), fragrantica_url: frag.slice(0, 300),
                stock_out: T.key === 'perfume' ? $('eOut').checked : !!(editing && editing.stock_out), stock_out_sizes: outs};
-  if(hasV8 && T.key === 'perfume') Object.assign(row, scentRow());
+  if(hasV8) Object.assign(row, scentRow());
   let id, number;
   if(editing){
     id = editing.id; number = editing.number;
@@ -2644,7 +2677,7 @@ function sourceOf(o){
 const qtyOf = i => Math.max(1, Number(i.qty) || 1);
 function itemLine(i){
   const d = Number(i.discount) || 0, q = qtyOf(i), line = i.price * q;
-  return `<div class="i"><span>${esc(i.name)} · ${esc(i.size)}ml${q > 1 ? ` <b>× ${q}</b>` : ''}${i.house ? `<small>${esc(i.house)}</small>` : ''}</span><span class="mono">${d ? `<s>${price(line)}</s>${price(line - d)}` : price(line)}</span></div>`;
+  return `<div class="i"><span>${esc(i.name)} · ${esc(i.size)}ml${i.premium ? ` <b class="prem-tag">+ Premium bottle (${price(i.premium_price)})</b>` : ''}${q > 1 ? ` <b>× ${q}</b>` : ''}${i.house ? `<small>${esc(i.house)}</small>` : ''}</span><span class="mono">${d ? `<s>${price(line)}</s>${price(line - d)}` : price(line)}</span></div>`;
 }
 function orderCard(o){
   const items = o.items || [];
@@ -2723,7 +2756,7 @@ function openOrder(id){
 function orderPlain(o){
   const items = o.items || [];
   const groups = ['perfume', 'attar'].map(t => ({t, items: items.filter(i => (i.type || 'perfume') === t)})).filter(g => g.items.length);
-  const line = i => { const d = Number(i.discount) || 0, q = qtyOf(i), t = i.price * q; return `${i.name}\n${i.size}ml${q > 1 ? ` × ${q}` : ''} — ${d ? `${price(t - d)} (was ${price(t)})` : price(t)}`; };
+  const line = i => { const d = Number(i.discount) || 0, q = qtyOf(i), t = i.price * q; return `${i.name}\n${i.size}ml${i.premium ? ' + Premium bottle' : ''}${q > 1 ? ` × ${q}` : ''} — ${d ? `${price(t - d)} (was ${price(t)})` : price(t)}`; };
   const disc = Number(o.discount) || 0, fee = Number(o.delivery_fee) || 0;
   return [`KHAYR ORDER`, '', `Order ID: ${o.order_id}`, '',
     o.customer_name ? `Name: ${o.customer_name}` : null, o.phone ? `Phone: ${o.phone}` : null, o.email ? `Email: ${o.email}` : null,
@@ -3379,7 +3412,8 @@ function calcFor(buy){
   if(!range) return {ok: false, perMl, error: `No profit range for ${price(buy)} taka. The calculator does not guess. Add a range for this price in Calculator settings.`};
   const missing = CALC_SIZES.filter(z => range.profit[z] === null);
   if(missing.length) return {ok: false, perMl, range, error: `The range ${price(range.min)}–${price(range.max)} has no profit for ${missing.map(z => z + ' ml').join(', ')}. Fill it in Calculator settings.`};
-  const rows = Object.fromEntries(CALC_SIZES.map(z => { const liquid = perMl * z; return [z, {liquid, bottle: c.bottle[z], box: c.box, profit: range.profit[z], price: roundPrice(liquid + c.bottle[z] + c.box + range.profit[z], c.round)}]; }));
+  // v13: the profit in a range is PER ML, so it is multiplied by the size (3 ml × 20 = 60, 10 ml × 12 = 120)
+  const rows = Object.fromEntries(CALC_SIZES.map(z => { const liquid = perMl * z, profit = range.profit[z] * z; return [z, {liquid, bottle: c.bottle[z], box: c.box, perMlProfit: range.profit[z], profit, price: roundPrice(liquid + c.bottle[z] + c.box + profit, c.round)}]; }));
   return {ok: true, perMl, range, rows, round: true};
 }
 const calcPrices = buy => { const r = calcFor(buy); return r.ok ? Object.fromEntries(CALC_SIZES.map(z => [z, r.rows[z].price])) : null; };
@@ -3390,10 +3424,10 @@ function renderCalc(){
   const buy = cBuyVal(), r = calcFor(buy);
   $('cPerMl').innerHTML = buy > 0 ? `Cost per ml = ${price(buy)} ÷ 100 = <b id="cPm">${money2(buy / 100)}</b> taka${r.range ? ` · price range <b>${price(r.range.min)}–${price(r.range.max)}</b>` : ''}` : '';
   $('cWarn').innerHTML = r.error ? `<div class="msg warn" id="cWarnMsg">${esc(r.error)}<br><button class="link" type="button" data-go="calcset">Open Calculator settings</button></div>` : '';
-  $('cTable').innerHTML = `<table class="ctab"><thead><tr><th>Size</th><th>Perfume (liquid)</th><th>Bottle</th><th>Box</th><th>Profit</th><th>Price</th></tr></thead><tbody>
+  $('cTable').innerHTML = `<table class="ctab"><thead><tr><th>Size</th><th>Perfume (liquid)</th><th>Bottle</th><th>Box</th><th>Profit (per ml × ml)</th><th>Price</th></tr></thead><tbody>
     ${CALC_SIZES.map(z => { const x = r.ok ? r.rows[z] : null; return `<tr><td><b>${z} ml</b></td><td>${x ? money2(x.liquid) : '—'}</td><td>${x ? price(x.bottle) : '—'}</td><td>${x ? price(x.box) : '—'}</td><td>${x ? price(x.profit) : '—'}</td><td class="big" data-cp="${z}">${x ? price(x.price) : '—'}</td></tr>`; }).join('')}
   </tbody></table>`;
-  $('cHow').innerHTML = r.ok ? `3 ml: ${money2(r.perMl)} × 3 = ${money2(r.rows[3].liquid)} + bottle ${price(r.rows[3].bottle)} + box ${price(r.rows[3].box)} + profit ${price(r.rows[3].profit)} = <b>${money2(r.rows[3].liquid + r.rows[3].bottle + r.rows[3].box + r.rows[3].profit)}</b>${r.round ? ` → rounded <b>${price(r.rows[3].price)}</b>` : ''}`
+  $('cHow').innerHTML = r.ok ? `3 ml: ${money2(r.perMl)} × 3 = ${money2(r.rows[3].liquid)} + bottle ${price(r.rows[3].bottle)} + box ${price(r.rows[3].box)} + profit ${price(r.rows[3].perMlProfit)} × 3 = ${price(r.rows[3].profit)} = <b>${money2(r.rows[3].liquid + r.rows[3].bottle + r.rows[3].box + r.rows[3].profit)}</b>${r.round ? ` → rounded <b>${price(r.rows[3].price)}</b>` : ''}`
     : (buy > 0 ? '' : 'Type what you paid for the 100 ml bottle. All 5 prices appear at once.');
   renderCalcList(); renderCalcPick(); renderCalcNew();
 }
@@ -3450,7 +3484,7 @@ function paintRanges(){
         <label><span>To (taka)</span><input type="number" min="0" step="1" inputmode="numeric" data-rf="max" value="${r.max ?? ''}" aria-label="Range ${k + 1} to"></label>
         <button class="btn sm" type="button" data-rdel="${k}" aria-label="Delete range ${k + 1}">Delete</button></div>
       <div class="rlbl">Profit (taka)</div>
-      <div class="rprof">${CALC_SIZES.map(z => `<label><span>${z} ml</span><input type="number" min="0" step="1" inputmode="numeric" data-rp="${z}" value="${r.profit[z] ?? ''}" aria-label="Range ${k + 1} profit ${z}ml"></label>`).join('')}</div>
+      <div class="rprof">${CALC_SIZES.map(z => `<label><span>${z} ml</span><input type="number" min="0" step="1" inputmode="numeric" data-rp="${z}" value="${r.profit[z] ?? ''}" aria-label="Range ${k + 1} profit per ml for ${z}ml"></label>`).join('')}</div>
     </div>`).join('') || '<p class="help">No ranges yet. Press + Add range.</p>';
   const valid = cleanRanges(csRanges);
   $('csGaps').innerHTML = `<p class="help" id="csGapTxt">No profit range for: <b>${rangeGaps(valid).map(esc).join(', ')}</b>. A buying price there shows a warning.</p>`;
@@ -3537,8 +3571,10 @@ $('cpSave').onclick = () => busy($('cpSave'), 'Saving…', async () => {
 const SCENTS8 = [['fresh', 'Fresh'], ['citrus', 'Citrus'], ['aquatic', 'Aquatic'], ['green', 'Green'], ['floral', 'Floral'], ['fruity', 'Fruity'], ['sweet', 'Sweet'], ['vanilla', 'Vanilla'],
                  ['spicy', 'Spicy'], ['woody', 'Woody'], ['oud', 'Oud'], ['amber', 'Amber'], ['leather', 'Leather'], ['musky', 'Musky']];
 const OCC8 = [['day', 'Day'], ['night', 'Night'], ['office', 'Office'], ['party', 'Party'], ['date', 'Date night']];
+const SCENTS_ATTAR = [['rose', 'Rose'], ['oud', 'Oud'], ['musky', 'Musk'], ['amber', 'Amber'], ['sandalwood', 'Sandalwood'], ['saffron', 'Saffron'], ['jasmine', 'Jasmine'],
+  ['incense', 'Incense'], ['floral', 'Floral'], ['woody', 'Woody'], ['spicy', 'Spicy'], ['sweet', 'Sweet'], ['vanilla', 'Vanilla'], ['fruity', 'Fruity'], ['fresh', 'Fresh'], ['citrus', 'Citrus'], ['green', 'Green'], ['leather', 'Leather']];
 function paintScentInputs(p){
-  $('eScent').innerHTML = SCENTS8.map(([k, l]) => `<label class="chk"><input type="checkbox" data-sc="${k}" ${(p.scent || []).includes(k) ? 'checked' : ''}><span>${l}</span></label>`).join('');
+  $('eScent').innerHTML = (dlgT.key === 'attar' ? SCENTS_ATTAR : SCENTS8).map(([k, l]) => `<label class="chk"><input type="checkbox" data-sc="${k}" ${(p.scent || []).includes(k) ? 'checked' : ''}><span>${l}</span></label>`).join('');
   $('eOcc').innerHTML = OCC8.map(([k, l]) => `<label class="chk"><input type="checkbox" data-oc="${k}" ${(p.occasions || []).includes(k) ? 'checked' : ''}><span>${l}</span></label>`).join('');
   $('eNotes').value = p.notes || ''; $('eLong').value = p.longevity || ''; $('eStrength').value = p.strength || ''; $('eBadge').value = p.badge || '';
 }
@@ -3813,7 +3849,8 @@ $('lkList').addEventListener('click', async e => { const b = e.target.closest('[
    MY PURCHASES (admin only, table perfume_purchases, RLS = is_admin)
    Perfume Price = purchase price + delivery cost + bought below market
    ===================================================================== */
-let buys = [], buysLoaded = false, buyEdit = null;
+let buys = [], buysLoaded = false, buyEdit = null, bKind = 'decant';
+const kindOf = b => b.kind === 'attar' ? 'attar' : 'decant';
 const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 const intOr0 = v => { const n = Number(v); return v === '' || v === null || !Number.isFinite(n) ? 0 : Math.round(n); };
 const perMlOf = b => b.bottle_ml > 0 ? Math.round(b.total / b.bottle_ml * 10) / 10 : null;
@@ -3829,6 +3866,7 @@ async function loadBuys(){
   return true;
 }
 function lastBuyFor(id){ return buys.find(b => b.product_id === id && perMlOf(b) !== null) || null; }
+const bType = () => bKind === 'attar' ? 'attar' : 'perfume';
 function buyForm(){
   const buy = intOr0($('bBuy').value), del = intOr0($('bDel').value), below = intOr0($('bBelow').value), ml = Number($('bMl').value);
   return {buy, del, below, ml: $('bMl').value === '' ? null : ml, total: buy + del + below};
@@ -3851,7 +3889,10 @@ function fillBuyForm(b){
   paintBuyTotal();
 }
 function renderBuys(){
-  $('bNames').innerHTML = allProducts.filter(p => p.product_type === 'perfume').map(p => `<option value="${esc(p.name)}">`).join('');
+  $('bHead').textContent = bKind === 'attar' ? 'Attar Inventory' : 'Decanting Inventory';
+  document.querySelectorAll('#bSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.bkind === bKind));
+  $('bName').placeholder = bKind === 'attar' ? 'Start typing, e.g. Dehn Al Oud' : 'Start typing, e.g. Hawas Ice';
+  $('bNames').innerHTML = allProducts.filter(p => p.product_type === bType()).map(p => `<option value="${esc(p.name)}">`).join('');
   if(!buyEdit) fillBuyForm(null);
   renderBuyList();
   loadBuys();
@@ -3859,7 +3900,7 @@ function renderBuys(){
 function renderBuyList(){
   if(!buysLoaded){ $('bSum').innerHTML = ''; if(!$('bList').querySelector('.msg')) $('bList').innerHTML = '<p class="help">Loading…</p>'; return; }
   const words = norm($('bFind').value).split(' ').filter(Boolean);
-  const list = buys.filter(b => words.every(w => norm(`${b.product_name} ${b.note} ${b.bought_from || ''}`).includes(w)));
+  const list = buys.filter(b => kindOf(b) === bKind).filter(b => words.every(w => norm(`${b.product_name} ${b.note} ${b.bought_from || ''}`).includes(w)));
   $('bFroms').innerHTML = [...new Set(buys.map(b => clean(b.bought_from || '')).filter(Boolean))].map(x => `<option value="${esc(x)}">`).join('');
   const sum = k => list.reduce((a, b) => a + (Number(b[k]) || 0), 0);
   $('bSum').innerHTML = list.length ? `<div class="bsum">
@@ -3892,11 +3933,12 @@ $('bSave').onclick = () => busy($('bSave'), 'Saving…', async () => {
   if(!($('bBuy').value !== '')) return msg('Type the buying price.');
   if(f.ml !== null && !(f.ml > 0 && f.ml <= 10000)) return msg('Bottle size must be more than 0 ml.');
   if(!/^\d{4}-\d{2}-\d{2}$/.test($('bDate').value)) return msg('Choose the date.');
-  const p = allProducts.find(x => x.product_type === 'perfume' && keyOf(x.name) === keyOf(name));
+  const p = allProducts.find(x => x.product_type === bType() && keyOf(x.name) === keyOf(name));
   const row = {product_id: p ? p.id : null, product_name: p ? p.name : name.slice(0, 120), bought_on: $('bDate').value, bottle_ml: f.ml,
                purchase_price: f.buy, delivery_cost: f.del, below_market: f.below, market_price: $('bMkt').value === '' ? null : intOr0($('bMkt').value), note: clean($('bNote').value).slice(0, 200)};
   const from = clean($('bFrom').value).slice(0, 120);
   if(from || buys.some(b => 'bought_from' in b)) row.bought_from = from;   // works before and after the v11 SQL
+  if(bKind === 'attar' || buys.some(b => 'kind' in b)) row.kind = bKind;      // v12: Decanting or Attar inventory
   const ok = buyEdit ? await run('Purchase', sb.from('perfume_purchases').update(row).eq('id', buyEdit)) : await run('Purchase', sb.from('perfume_purchases').insert(row));
   if(!ok) return;
   toast(`${buyEdit ? 'Purchase updated' : 'Purchase saved'} ✓ Total buying ${price(f.total)} taka`);
@@ -3911,6 +3953,7 @@ $('bList').addEventListener('click', async e => {
     if(await run('Delete purchase', sb.from('perfume_purchases').delete().eq('id', b.id))){ if(buyEdit === b.id) fillBuyForm(null); toast('Purchase deleted'); await loadBuys(); }
     return;
   }
+  if(e.target.closest('[data-bcalc]') && kindOf(b) === 'attar'){ go('acalc'); $('aPerMl').value = Math.round(b.total / b.bottle_ml * 100) / 100; aPickId = b.product_id; renderACalc(); return; }
   if(e.target.closest('[data-bcalc]')){ go('calc'); $('cBuy').value = per100Of(b); cPickId = b.product_id; renderCalc(); $('cPick').scrollIntoView({block: 'nearest'}); }
 });
 
@@ -4081,7 +4124,7 @@ function renderGallery(){
   document.querySelectorAll('#gSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.kind === gKind));
   $('gView').href = 'bottles.html';
   const list = gallery.filter(g => g.kind === gKind);
-  $('gMsg').innerHTML = gKind === 'attar' ? '<div class="msg warn">Attar Bottle photos are kept, but the website does not show them any more (decants only).</div>' : '';
+  $('gMsg').innerHTML = gKind === 'attar' ? '<div class="msg ok">These show on the Attar website\'s Bottle Photos page. Add your premium bottles here too.</div>' : '';
   $('gList').innerHTML = list.length ? list.map((g, i) => `<div class="gcard ${g.visible ? '' : 'off'}" data-gid="${esc(g.id)}">
       <div class="gimg"><img src="${esc(imgUrl(g.thumb_path || g.image_path))}" alt="" loading="lazy" width="400" height="400"></div>
       <input type="text" maxlength="120" placeholder="Caption (optional), e.g. 6ml glass spray" value="${esc(g.caption || '')}" data-gcap aria-label="Caption">
@@ -4206,6 +4249,69 @@ async function renderSecurity(){
 /* =====================================================================
    START
    ===================================================================== */
+/* v12: Decanting / Attar inventory switch */
+$('bSeg').addEventListener('click', e => { const b = e.target.closest('[data-bkind]'); if(!b || b.dataset.bkind === bKind) return; bKind = b.dataset.bkind; fillBuyForm(null); renderBuys(); });
+
+/* =====================================================================
+   v12: ATTAR CALCULATOR
+   3, 6, 12 ml = (price of 1 ml × ml) + 120% profit + bottle 40 + packaging 40, down to the round 10.
+   1.5 ml = half of the 3 ml price.
+   ===================================================================== */
+const A_SIZES = [1.5, 3, 6, 12], A_BOTTLE = 40, A_PACK = 40, A_PROFIT = 1.2;
+let aPickId = null;
+const aPer = () => { const v = $('aPerMl').value; return v === '' ? NaN : Number(v); };
+function attarPrices(per){
+  if(!(per > 0 && per <= 100000)) return null;
+  const row = ml => { const liquid = per * ml, profit = liquid * A_PROFIT; return {liquid, profit, price: roundPrice(liquid + profit + A_BOTTLE + A_PACK)}; };
+  const out = {3: row(3), 6: row(6), 12: row(12)};
+  out[1.5] = {half: true, price: Math.floor(out[3].price / 2)};
+  return out;
+}
+function renderACalc(){
+  const per = aPer(), r = attarPrices(per);
+  $('aTable').innerHTML = `<table class="ctab"><thead><tr><th>Size</th><th>Attar</th><th>Profit 120%</th><th>Bottle</th><th>Packaging</th><th>Price</th></tr></thead><tbody>
+    ${A_SIZES.map(z => { const x = r && r[z]; if(z === 1.5) return `<tr><td><b>1.5 ml</b></td><td colspan="4">half of the 3 ml price</td><td class="big" data-ap="1.5">${x ? price(x.price) : '—'}</td></tr>`;
+      return `<tr><td><b>${z} ml</b></td><td>${x ? money2(x.liquid) : '—'}</td><td>${x ? money2(x.profit) : '—'}</td><td>${A_BOTTLE}</td><td>${A_PACK}</td><td class="big" data-ap="${z}">${x ? price(x.price) : '—'}</td></tr>`; }).join('')}
+  </tbody></table>`;
+  $('aHow').innerHTML = r ? `3 ml: ${money2(per)} × 3 = ${money2(r[3].liquid)} + profit ${money2(r[3].profit)} + bottle ${A_BOTTLE} + packaging ${A_PACK} = <b>${money2(r[3].liquid + r[3].profit + A_BOTTLE + A_PACK)}</b> → <b>${price(r[3].price)}</b>. 1.5 ml = ${price(r[3].price)} ÷ 2 = <b>${price(r[1.5].price)}</b>` : 'Type your price of 1 ml. All 4 prices appear at once.';
+  $('aNew').disabled = !r;
+  renderAList(); renderAPick();
+}
+const aPriceMap = () => { const r = attarPrices(aPer()); return r ? Object.fromEntries(A_SIZES.map(z => [z, r[z].price])) : null; };
+function renderAList(){
+  const words = norm($('aFind').value).split(' ').filter(Boolean);
+  if(!words.length){ $('aList').innerHTML = ''; return; }
+  const list = allProducts.filter(p => p.product_type === 'attar' && words.every(w => norm(p.name).includes(w))).slice(0, 8);
+  $('aList').innerHTML = list.length ? list.map(p => `<button type="button" data-apick="${esc(p.id)}">${esc(p.name)}<small>now ${A_SIZES.map(z => p.prices[z] ? price(p.prices[z]) : '—').join(' / ')}</small></button>`).join('') : '<p class="help">No attar found.</p>';
+}
+function renderAPick(){
+  const p = aPickId && allProducts.find(x => x.id === aPickId), box = $('aPick');
+  if(!p){ box.innerHTML = ''; return; }
+  const pr = aPriceMap();
+  box.innerHTML = `<div class="panel" style="border:1px solid var(--line)"><h3>${esc(p.name)}</h3>
+    <table class="ctab"><thead><tr><th>Size</th><th>Now</th><th>New</th></tr></thead><tbody>
+      ${A_SIZES.map(z => `<tr><td>${z} ml</td><td>${p.prices[z] ? price(p.prices[z]) : '—'}</td><td class="big">${pr ? price(pr[z]) : '—'}</td></tr>`).join('')}
+    </tbody></table>
+    ${pr ? `<button class="btn dark block" type="button" id="aApply">Apply these prices to ${esc(p.name)}</button>` : '<p class="help">Type your price of 1 ml above first.</p>'}
+    <button class="link" type="button" id="aUnpick">Choose another attar</button></div>`;
+  if($('aApply')) $('aApply').onclick = () => busy($('aApply'), 'Saving…', async () => {
+    if(!confirm(`Change the prices of ${p.name}?\n\n` + A_SIZES.map(z => `${z}ml: ${p.prices[z] || '—'} → ${pr[z]}`).join('\n'))) return;
+    const next = {...p.prices}; A_SIZES.forEach(z => { next[z] = pr[z]; });
+    if(await run('Prices', sb.from('products').update({prices: next}).eq('id', p.id))){ p.prices = next; useType(); saveCache(); toast(`New prices saved for ${p.name} ✓`); renderAPick(); renderAList(); }
+  });
+  $('aUnpick').onclick = () => { aPickId = null; renderAPick(); $('aFind').focus(); };
+}
+$('aPerMl').addEventListener('input', renderACalc);
+$('aFind').addEventListener('input', renderAList);
+$('aList').addEventListener('click', e => { const b = e.target.closest('[data-apick]'); if(!b) return; aPickId = b.dataset.apick; $('aFind').value = ''; renderAList(); renderAPick(); });
+$('aNew').onclick = () => {
+  const pr = aPriceMap(); if(!pr){ toast('Type your price of 1 ml first.', true); return; }
+  if(F.key !== 'attar') switchFolder('attar');
+  openEdit(null);
+  A_SIZES.forEach(z => { const i = $('ePrices').querySelector(`[data-p="${z}"]`); if(i) i.value = pr[z]; });
+  $('eMsg').innerHTML = `<div class="msg ok">Prices from the Attar Calculator (${money2(aPer())} taka for 1 ml). Type the attar name, then Save.</div>`;
+};
+
 (async () => {
   if(!configured()){
     loginStep('credentials', window.supabase ? 'Supabase is not connected yet. Put your project URL and publishable key in config.js, then reload this page.' : 'Could not load the login system. Check your internet and reload.', 'warn');

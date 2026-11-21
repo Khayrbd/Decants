@@ -473,3 +473,10 @@ body.open .msfloat,body.lock .msfloat,body.menu .msfloat{display:none}
 .policy .nolist li::before{content:'✕';position:absolute;left:4px;top:8px;color:var(--red);font-weight:700}
 .policy .tip{background:var(--soft);border-radius:12px;padding:10px 14px}
 .policy ol li{margin:8px 0}
+
+/* ===== v12: attar premium bottle ===== */
+.prem{display:flex;align-items:center;gap:10px;width:100%;margin:8px 0 2px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);text-align:left;font-size:.9rem;min-height:44px}
+.prem .tick{flex:none;width:20px;height:20px;border:1.5px solid var(--ink);border-radius:5px;display:grid;place-items:center}
+.prem.on{border-color:var(--ink);background:var(--soft)}
+.prem.on .tick{background:var(--ink)}
+.prem.on .tick::after{content:'';width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
